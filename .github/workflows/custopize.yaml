@@ -80,7 +80,10 @@ jobs:
 
     - name: 📨 Export zip name to env LW
       run: |
+        IMAGE_LEADER_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-lw.outputs.zip_name }}
         echo "IMAGE_LEADER_WORKER_ZIP=${{ steps.package-image-lw.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_LEADER_WORKER_URL=$IMAGE_LEADER_WORKER_URL" >> $GITHUB_ENV
+        echo "Link to leader image: $IMAGE_LEADER_WORKER_URL" >> $GITHUB_STEP_SUMMARY
 
 
 
@@ -108,12 +111,13 @@ jobs:
     - name: 📨 Export zip name to env W
       run: |
         echo "IMAGE_WORKER_ZIP=${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
-
+        echo "IMAGE_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
 
 
 
     - name: "🔖 Create release & attach assets"
       uses: softprops/action-gh-release@v1
+      if: github.event_name == "repository_dispatch"
       with:
         name: "${{ env.RELEASE_NAME }}"
         tag_name: "${{ env.RELEASE_TAG }}"
