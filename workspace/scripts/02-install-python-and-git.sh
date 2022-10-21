@@ -17,4 +17,3 @@ pip3 install pip -U  # update to latest pip
 pip3 config set global.disable-pip-version-check true
 pip3 config set global.root-user-action "ignore"
 pip3 install wheel
-apt autoremove -y
