@@ -18,8 +18,6 @@ if [ "$WORKER" == "1" ]; then
 
     # move config
     mkdir /usr/local/share/openocd/
-    cp -r /files/system/openocd/contrib   /usr/local/share/openocd/
-    cp -r /files/system/openocd/OpenULINK /usr/local/share/openocd/
     cp -r /files/system/openocd/scripts   /usr/local/share/openocd/
 
     # TODO: move .elf image here too
