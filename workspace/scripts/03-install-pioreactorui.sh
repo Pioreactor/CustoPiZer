@@ -19,11 +19,7 @@ if [ "$LEADER" == "1" ]; then
     sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
 
     # get latest pioreactorUI code from Github.
-    # git clone https://github.com/Pioreactor/pioreactorui.git $UI_FOLDER  --depth 1
-    curl https://github.com/Pioreactor/pioreactorui/archive/refs/tags/22.10.0.tar.gz --output /tmp/pui.tar.gz
-    tar -xvzf /tmp/pui.tar.gz -C $UI_FOLDER
-    mkdir -p $UI_FOLDER
-
+    git clone https://github.com/Pioreactor/pioreactorui.git $UI_FOLDER  --depth 1
 
     # install the dependencies
     sudo pip3 install -r $UI_FOLDER/requirements.txt
