@@ -1,0 +1,14 @@
+[Unit]
+Description=Load program into RP2040
+Before=basic.target
+After=local-fs.target sysinit.target
+DefaultDependencies=no
+
+[Service]
+ExecStart=/bin/bash /usr/local/bin/load_rp2040.sh
+ExecStartPost=pio log -m "%n successful" -n systemd --local-only
+Type=oneshot
+RemainAfterExit=no
+
+[Install]
+WantedBy=basic.target

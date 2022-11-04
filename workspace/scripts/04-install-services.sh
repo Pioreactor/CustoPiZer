@@ -55,6 +55,13 @@ fi
 if [ "$WORKER" == "1" ]; then
     # add avahi services
     sudo cp /files/system/avahi/pioreactor_worker.service /etc/avahi/services/
+
+    # systemd: add rp2040 chip load
+    cp /files/bash/load_rp2040.sh /usr/local/bin/load_rp2040.sh
+    sudo cp /files/system/systemd/load_rp2040.service $SYSTEMD_DIR
+    sudo systemctl enable load_rp2040.service
+
+
 fi
 
 
