@@ -59,7 +59,7 @@ if [ "$WORKER" == "1" ]; then
     # systemd: add rp2040 chip load
     cp /files/bash/load_rp2040.sh /usr/local/bin/load_rp2040.sh
     sudo cp /files/system/systemd/load_rp2040.service $SYSTEMD_DIR
-    sudo systemctl enable load_rp2040.service
+    # sudo systemctl enable load_rp2040.service #TODO: enable when we start delivery of rp2040
 
 
 fi
