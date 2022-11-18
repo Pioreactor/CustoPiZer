@@ -6,7 +6,6 @@ set -e
 export LC_ALL=C
 
 
-WPA_FILE=/etc/wpa_supplicant/wpa_supplicant.conf
 FLAG_FILE=/boot/local_access_point
 
 # first, always update the SSID and passphrase to what's in the config.ini
@@ -14,6 +13,8 @@ sed -i "s/ssid=.*/ssid=$(crudini --get /home/pioreactor/.pioreactor/config.ini l
 sed -i "s/wpa_passphrase=.*/wpa_passphrase=$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)/" /etc/hostapd/hostapd.conf
 
 if [[ (! -f $FLAG_FILE) ]]; then
+    export LOCAL_ACCESS_POINT=0
+
     # only execute if is enabled
     if [[ $(systemctl is-enabled hostapd.service) == "enabled" ]]; then
         # this order seems to be important.
@@ -29,10 +30,11 @@ if [[ (! -f $FLAG_FILE) ]]; then
 fi
 
 if [[ (-f $FLAG_FILE) ]]; then
+    export LOCAL_ACCESS_POINT=1
     # only execute if not enabled
     if [[ $(systemctl is-enabled hostapd.service) == "disabled" ]]; then
         # use the country code
-        raspi-config nonint do_wifi_country $(sudo cat /boot/local_access_point)
+        raspi-config nonint do_wifi_country "$(sudo cat "$FLAG_FILE")"
         cp /etc/raspap/backups/dhcpcd.conf.raspap /etc/dhcpcd.conf
         systemctl daemon-reload
         systemctl restart dhcpcd.service
