@@ -41,7 +41,7 @@ jobs:
         now=$(date +"%Y%m%d%H%M%S")
         RELEASE_NAME="Pioreactor ${{ env.PIOREACTOR_VERSION }} (build $now)"
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
-        RELEASE_TAG="${{ env.PIOREACTOR_VERSION }}-$now"
+        RELEASE_TAG="${{ env.PIOREACTOR_VERSION }}"
         echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
         
         # release body
