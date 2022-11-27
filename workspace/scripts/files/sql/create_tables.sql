@@ -270,4 +270,14 @@ ON calibrations (pioreactor_unit, type, created_at);
 
 
 
-
+-- this isn't being populated currently, maybe in the future...
+CREATE TABLE IF NOT EXISTS pwm_dcs (
+    experiment               TEXT NOT NULL,
+    pioreactor_unit          TEXT NOT NULL,
+    timestamp                TEXT NOT NULL,
+    channel_1                REAL,
+    channel_2                REAL,
+    channel_3                REAL,
+    channel_4                REAL,
+    channel_5                REAL
+);
