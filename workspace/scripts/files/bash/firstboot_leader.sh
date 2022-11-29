@@ -28,5 +28,5 @@ crudini --set $PIO_DIR/config.ini cluster.topology leader_hostname "$(hostname)"
 crudini --set $PIO_DIR/config.ini cluster.topology leader_address "$(hostname)".local
 
 sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around. When you are ready, click the [New experiment] above.');"
-mosquitto_pub -t "pioreactor/latest_experiment/experiment" -m "Demo experiment" -r -q 1
-mosquitto_pub -t "pioreactor/latest_experiment/created_at" -m "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" -r -q 1
+mosquitto_pub -t "pioreactor/latest_experiment/experiment" -m "Demo experiment" -r -q 1 -u pioreactor -P raspberry
+mosquitto_pub -t "pioreactor/latest_experiment/created_at" -m "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" -r -q 1 -u pioreactor -P raspberry

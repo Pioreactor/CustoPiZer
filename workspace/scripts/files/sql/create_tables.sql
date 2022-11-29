@@ -269,8 +269,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS calibrations_ix
 ON calibrations (pioreactor_unit, type, created_at);
 
 
-
--- this isn't being populated currently, maybe in the future...
 CREATE TABLE IF NOT EXISTS pwm_dcs (
     experiment               TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
