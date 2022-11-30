@@ -48,7 +48,7 @@ crudini --set /home/$USERNAME/.pioreactor/config.ini cluster.inventory "$HOSTNAM
 ssh-keyscan "$HOSTNAME.local" >> "/home/$USERNAME/.ssh/known_hosts"
 
 # sync-configs
-pios sync-configs --units "$HOSTNAME" --no-save
+pios sync-configs --units "$HOSTNAME" --skip-save
 sleep 2
 
 # check we have config.ini file to confirm the device has the necessary configuration
