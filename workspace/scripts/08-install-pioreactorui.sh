@@ -19,7 +19,12 @@ if [ "$LEADER" == "1" ]; then
     sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
 
     # get latest pioreactorUI code from Github.
-    git clone https://github.com/Pioreactor/pioreactorui.git $UI_FOLDER  --depth 1
+    latest_tag=$(curl -s https://api.github.com/repos/pioreactor/pioreactorui/releases/latest | sed -Ene '/^ *"tag_name": *"(.+)",$/s//\1/p')
+    echo "Installing UI version $latest_tag"
+    curl -JLO https://github.com/pioreactor/pioreactorui/archive/"$latest_tag".tar.gz
+    tar -xvzf pioreactorui-"$latest_tag".tar.gz
+    mv pioreactorui-"$latest_tag" $UI_FOLDER
+
     # install the dependencies
     sudo pip3 install -r $UI_FOLDER/requirements.txt
 
@@ -47,7 +52,7 @@ if [ "$LEADER" == "1" ]; then
     lighttpd-enable-mod rewrite
     lighttpd-enable-mod pioreactorui
 
-    # update_ui.sh is a bash script for updating pioreactorui from tar.gz files.
+    # Note: update_ui.sh is a bash script for updating pioreactorui from tar.gz files.
 
     # we add entries to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi_aliases.service for how this works
