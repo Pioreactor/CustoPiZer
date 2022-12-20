@@ -31,7 +31,6 @@ if [ "$LEADER" == "1" ]; then
     touch $UI_FOLDER/huey.db-shm
     touch $UI_FOLDER/huey.db-wal
 
-
     # make correct permissions in new www folders and files
     # https://superuser.com/questions/19318/how-can-i-give-write-access-of-a-folder-to-all-users-in-linux
     chgrp -R www-data /var/www
@@ -39,7 +38,6 @@ if [ "$LEADER" == "1" ]; then
     find /var/www -type d -exec chmod 2775 {} \;
     find /var/www -type f -exec chmod ug+rw {} \;
     chmod +x $UI_FOLDER/main.fcgi
-
 
     # install lighttp and set up mods
     apt-get install lighttpd -y
@@ -49,6 +47,7 @@ if [ "$LEADER" == "1" ]; then
     lighttpd-enable-mod rewrite
     lighttpd-enable-mod pioreactorui
 
+    # update_ui.sh is a bash script for updating pioreactorui from tar.gz files.
 
     # we add entries to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi_aliases.service for how this works
