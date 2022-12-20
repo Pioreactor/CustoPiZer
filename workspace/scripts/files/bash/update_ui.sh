@@ -1,6 +1,10 @@
 #!/bin/bash
+set -x
+set -e
 
-URL=$1
+export LC_ALL=C
+
+SOURCE=$1
 TAG=$2
 
 UI_FOLDER=/var/www/pioreactorui
@@ -9,26 +13,24 @@ UI_FOLDER=/var/www/pioreactorui
 sudo systemctl stop lighttpd.service
 sudo systemctl stop huey.service
 
-# download
-wget $URL -O pioreactorui.tar.gz
 # & unpack
-tar -xvzf pioreactorui.tar.gz
+tar -xvzf "$SOURCE" -C /tmp
 
 # move data over
-cp -rp $UI_FOLDER/contrib/    /tmp/pioreactorui-$TAG
-cp -p $UI_FOLDER/huey.db      /tmp/pioreactorui-$TAG
-cp -p $UI_FOLDER/huey.db-shm  /tmp/pioreactorui-$TAG
-cp -p $UI_FOLDER/huey.db-wal  /tmp/pioreactorui-$TAG
-cp -p $UI_FOLDER/.env         /tmp/pioreactorui-$TAG
+cp -rp $UI_FOLDER/contrib/    /tmp/pioreactorui-"$TAG" 2>/dev/null || :
+cp -p $UI_FOLDER/huey.db      /tmp/pioreactorui-"$TAG" 2>/dev/null || :
+cp -p $UI_FOLDER/huey.db-shm  /tmp/pioreactorui-"$TAG" 2>/dev/null || :
+cp -p $UI_FOLDER/huey.db-wal  /tmp/pioreactorui-"$TAG" 2>/dev/null || :
+cp -p $UI_FOLDER/.env         /tmp/pioreactorui-"$TAG" 2>/dev/null || :
 
 # swap folders
 rm -rf $UI_FOLDER
-mkdir $UI_FOLDER 
-mv /tmp/pioreactorui-$TAG/* $UI_FOLDER # TODO: this line is broken
+mkdir $UI_FOLDER
+cp -rp /tmp/pioreactorui-"$TAG"/. $UI_FOLDER
+sudo chgrp -R www-data $UI_FOLDER
 
 # cleanup
-rm -rf /tmp/pioreactorui-$TAG
-rm pioreactorui.tar.gz
+rm -rf /tmp/pioreactorui-"$TAG"
 
 # start services again
 sudo systemctl start huey.service
