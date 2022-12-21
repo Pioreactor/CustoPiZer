@@ -13,7 +13,7 @@ UI_FOLDER=/var/www/pioreactorui
 sudo systemctl stop lighttpd.service
 sudo systemctl stop huey.service
 
-# & unpack
+# unpack source provided
 tar -xvzf "$SOURCE" -C /tmp
 
 # move data over

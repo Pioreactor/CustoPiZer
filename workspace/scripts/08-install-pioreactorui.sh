@@ -12,6 +12,7 @@ install_cleanup_trap
 UI_FOLDER=/var/www/pioreactorui
 
 if [ "$LEADER" == "1" ]; then
+    mkdir /var/www
 
     # needed for fast yaml
     apt-get install libyaml-dev -y
@@ -21,9 +22,11 @@ if [ "$LEADER" == "1" ]; then
     # get latest pioreactorUI code from Github.
     latest_tag=$(curl -s https://api.github.com/repos/pioreactor/pioreactorui/releases/latest | sed -Ene '/^ *"tag_name": *"(.+)",$/s//\1/p')
     echo "Installing UI version $latest_tag"
-    curl -JLO https://github.com/pioreactor/pioreactorui/archive/"$latest_tag".tar.gz
-    tar -xvzf pioreactorui-"$latest_tag".tar.gz
-    mv pioreactorui-"$latest_tag" $UI_FOLDER
+    curl -o pioreactorui.tar.gz -JLO https://github.com/pioreactor/pioreactorui/archive/"$latest_tag".tar.gz
+    tar -xzf pioreactorui.tar.gz
+    mv pioreactorui-"$latest_tag" /var/www
+    mv /var/www/pioreactorui-"$latest_tag" $UI_FOLDER
+    rm pioreactorui.tar.gz
 
     # install the dependencies
     sudo pip3 install -r $UI_FOLDER/requirements.txt
