@@ -13,8 +13,7 @@ plugin_name=$1
 plugin_name_with_underscores=${plugin_name//-/_}
 (cd /usr/local/lib/python3.9/dist-packages/"$plugin_name_with_underscores"/ui/contrib/ && find * -type f) | awk '{print "/var/www/pioreactorui/contrib/"$1}' | xargs rm
 
-# remove config.ini
-# TODO. crudini isn't much help here.
+# remove sections from config.ini TODO
 
 sudo pip3 uninstall  --root-user-action=ignore  -y "$plugin_name"
 

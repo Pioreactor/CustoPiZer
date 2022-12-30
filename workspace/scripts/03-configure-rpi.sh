@@ -28,8 +28,12 @@ if [ "$WORKER" == "1" ]; then
     # disable USB. This fails for the RPi Zero and A models, hence the starting "-"" to ignore error
     # TODO: -echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
 
-    # disable HDMI
+    # disable HDMI:
+    #  https://www.cnx-software.com/2021/12/09/raspberry-pi-zero-2-w-power-consumption/
+    sed -i '/dtoverlay=vc4-kms-v3d/d' /boot/config.txt
     echo "hdmi_blanking=2" | sudo tee -a /boot/config.txt
+    # https://forums.raspberrypi.com/viewtopic.php?p=2063523
+    echo "dtoverlay=vc4-kms-v3d,nohdmi" | sudo tee -a /boot/config.txt
 
     # remove activelow LED
     # TODO this doesn't work for RPi Zero, https://mlagerberg.gitbooks.io/raspberry-pi/content/5.2-leds.html
@@ -46,6 +50,7 @@ fi
 # the below will remove swap, which should help extend the life of SD cards:
 # https://raspberrypi.stackexchange.com/questions/169/how-can-i-extend-the-life-of-my-sd-card
 sudo apt-get remove dphys-swapfile -y
+sudo apt autoremove -y
 
 # put /tmp into memory, as we write to it a lot.
 echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
