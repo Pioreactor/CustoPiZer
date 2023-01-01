@@ -20,6 +20,8 @@ if [ "$WORKER" == "1" ]; then
     mkdir /usr/local/share/openocd/
     cp -r /files/system/openocd/scripts   /usr/local/share/openocd/
 
-    # TODO: move .elf image here too
+    # pull latest .elf image
+    wget -O /usr/local/bin/main.elf https://github.com/pioreactor/pico-build/releases/latest/download/main.elf
+
 
 fi
