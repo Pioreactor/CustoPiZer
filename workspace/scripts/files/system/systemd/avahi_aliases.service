@@ -1,11 +1,11 @@
 [Unit]
 Description=Publish an alias for %H.local via mdns
 Wants=network-online.target
-After=network-online.target start_raspap.service avahi-daemon.service
+After=network-online.target firstboot.service start_raspap.service avahi-daemon.service
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/avahi_aliases.sh
-ExecStartPost=pio log -m "%n successful" -n systemd
+ExecStartPost=pio log -m "%n successful" -n systemd  --local-only
 Type=forking
 Restart=on-abnormal
 RuntimeMaxSec=1d

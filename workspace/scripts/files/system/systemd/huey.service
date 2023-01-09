@@ -1,13 +1,15 @@
 [Unit]
-Description=Huey service
-After=network.target
+Description=Huey service for PioreactorUI
+After=network.target firstboot.service
 
 [Service]
 User=pioreactor
 WorkingDirectory=/var/www/pioreactorui
 ExecStart=huey_consumer tasks.huey -s 60 -n -b 1.0 -w 2
-ExecStartPost=pio log -m "%n successful" -n systemd
+ExecStartPost=pio log -m "%n successful" -n systemd  --local-only
 Restart=always
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=multi-user.target

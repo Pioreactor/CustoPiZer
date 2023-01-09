@@ -1,13 +1,12 @@
 [Unit]
 Description=Runs everyboot.sh on every boot of the Raspberry Pi.
 Before=basic.target
-After=local-fs.target sysinit.target
+After=local-fs.target sysinit.target firstboot.service
 DefaultDependencies=no
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/everyboot.sh
 Type=oneshot
-RemainAfterExit=no
 
 [Install]
 WantedBy=basic.target

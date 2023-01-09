@@ -2,6 +2,7 @@
 Description=Start local access point using RaspAP
 Before=network-pre.target
 Wants=network-pre.target
+After=firstboot.service
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/conditionally_start_raspap.sh

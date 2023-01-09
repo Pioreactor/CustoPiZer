@@ -9,7 +9,6 @@ ExecStart=/bin/bash /usr/local/bin/firstboot.sh
 ExecStartPost=/bin/mv /usr/local/bin/firstboot.sh /usr/local/bin/firstboot.sh.done
 ExecStartPost=pio log -m "%n successful" -n systemd --local-only
 Type=oneshot
-RemainAfterExit=no
 
 [Install]
 WantedBy=multi-user.target

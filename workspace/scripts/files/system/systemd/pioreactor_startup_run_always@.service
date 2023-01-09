@@ -1,8 +1,7 @@
 [Unit]
 Description=Start up %I on boot. Used for run-always jobs.
 Wants=network-online.target
-After=network-online.target
-After=firstboot.service
+After=network-online.target firstboot.service
 
 [Service]
 User=pioreactor
