@@ -1,39 +1,39 @@
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings AFTER INSERT ON od_readings
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_od_readings AFTER INSERT ON od_readings
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,od_reading) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.od_reading)
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET od_reading=excluded.od_reading;
 END;
 
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings_filtered AFTER INSERT ON od_readings_filtered
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_od_readings_filtered AFTER INSERT ON od_readings_filtered
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,normalized_od_reading) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.normalized_od_reading)
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET normalized_od_reading=excluded.normalized_od_reading;
 END;
 
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_growth_rates AFTER INSERT ON growth_rates
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_growth_rates AFTER INSERT ON growth_rates
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,growth_rate) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.rate)
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET growth_rate=excluded.growth_rate;
 END;
 
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_temperature_readings AFTER INSERT ON temperature_readings
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_temperature_readings AFTER INSERT ON temperature_readings
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,temperature_c) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.temperature_c)
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET temperature_c=excluded.temperature_c;
 END;
 
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_stirring_rates AFTER INSERT ON stirring_rates
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_stirring_rates AFTER INSERT ON stirring_rates
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,measured_rpm) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.measured_rpm)
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET measured_rpm=excluded.measured_rpm;
 END;
 
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_led_change_events AFTER INSERT ON led_change_events
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_led_change_events AFTER INSERT ON led_change_events
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit, experiment, timestamp, led_A_intensity_update, led_B_intensity_update, led_C_intensity_update, led_D_intensity_update) VALUES (
         new.pioreactor_unit, new.experiment, new.timestamp,
@@ -51,7 +51,7 @@ BEGIN
 END;
 
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_dosing_events AFTER INSERT ON dosing_events
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_dosing_events AFTER INSERT ON dosing_events
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit, experiment, timestamp, add_media_ml, remove_waste_ml, add_alt_media_ml) VALUES (
         new.pioreactor_unit, new.experiment, new.timestamp,
