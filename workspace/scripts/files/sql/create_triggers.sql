@@ -60,8 +60,8 @@ BEGIN
         CASE WHEN new.event = "add_alt_media" THEN new.volume_change_ml END
     )
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET
-        add_media_ml=COALESCE(excluded.volume_change_ml, pioreactor_unit_activity_data.add_media_ml),
-        remove_waste_ml=COALESCE(excluded.volume_change_ml, pioreactor_unit_activity_data.remove_waste_ml),
-        add_alt_media_ml=COALESCE(excluded.volume_change_ml, pioreactor_unit_activity_data.add_alt_media_ml)
+        add_media_ml=COALESCE(excluded.add_media_ml, pioreactor_unit_activity_data.add_media_ml),
+        remove_waste_ml=COALESCE(excluded.remove_waste_ml, pioreactor_unit_activity_data.remove_waste_ml),
+        add_alt_media_ml=COALESCE(excluded.add_alt_media_ml, pioreactor_unit_activity_data.add_alt_media_ml)
     ;
 END;
