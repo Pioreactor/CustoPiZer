@@ -30,5 +30,5 @@ sudo chgrp -R www-data $UI_FOLDER
 rm -rf /tmp/pioreactorui-"$TAG"
 
 # restart services
-sudo systemctl restart huey.service
 sudo systemctl restart lighttpd.service
+sudo systemctl restart huey.service
