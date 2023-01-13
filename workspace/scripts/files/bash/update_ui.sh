@@ -9,9 +9,6 @@ TAG=$2
 
 UI_FOLDER=/var/www/pioreactorui
 
-# stop services
-sudo systemctl stop lighttpd.service
-sudo systemctl stop huey.service
 
 # unpack source provided
 tar -xvzf "$SOURCE" -C /tmp
@@ -32,6 +29,6 @@ sudo chgrp -R www-data $UI_FOLDER
 # cleanup
 rm -rf /tmp/pioreactorui-"$TAG"
 
-# start services again
-sudo systemctl start huey.service
-sudo systemctl start lighttpd.service
+# restart services
+sudo systemctl restart huey.service
+sudo systemctl restart lighttpd.service

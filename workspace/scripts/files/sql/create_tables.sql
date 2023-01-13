@@ -92,14 +92,15 @@ CREATE TABLE IF NOT EXISTS experiments (
     organism_used          TEXT
 );
 
--- since we are almost always calling this like "SELECT * FROM experiments ORDER BY timestamp DESC LIMIT 1",
+-- since we are almost always calling this like "SELECT * FROM experiments ORDER BY created_at DESC LIMIT 1",
 -- a index on all columns is much faster, BigO(n). This table is critical for the entire webpage performance.
 -- not the order of the values in the index is important to get this performance.
 -- https://medium.com/@JasonWyatt/squeezing-performance-from-sqlite-indexes-indexes-c4e175f3c346
 CREATE UNIQUE INDEX IF NOT EXISTS experiments_ix ON experiments (created_at, experiment, description);
 
-
-CREATE VIEW IF NOT EXISTS latest_experiment AS SELECT experiment, created_at, description, media_used, organism_used, round( (strftime("%s","now") - strftime("%s", created_at))/60/60, 0) as delta_hours FROM experiments ORDER BY created_at DESC LIMIT 1;
+-- the latest experiment is defined as the on that is most recently inserted into the database. Why not use created_at?
+-- it's possible that an experiment can be created_at ORDER != rowid order if users are playing with the times (or using local access point)
+CREATE VIEW IF NOT EXISTS latest_experiment AS SELECT experiment, created_at, description, media_used, organism_used, round( (strftime("%s","now") - strftime("%s", created_at))/60/60, 0) as delta_hours FROM experiments ORDER BY ROWID DESC LIMIT 1;
 
 
 CREATE TABLE IF NOT EXISTS dosing_automation_settings (
