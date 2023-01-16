@@ -15,7 +15,7 @@ plugin_name_with_underscores=${plugin_name//-/_}
 
 # remove sections from config.ini TODO
 
-sudo pip3 uninstall  --root-user-action=ignore  -y "$plugin_name"
+sudo pip3 uninstall  -y "$plugin_name"
 
 # broadcast to cluster
 pios sync-configs
