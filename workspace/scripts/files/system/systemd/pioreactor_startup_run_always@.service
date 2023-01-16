@@ -8,7 +8,6 @@ User=pioreactor
 ExecStart=pio run-always %I
 Restart=no
 Environment="PATH=/home/pioreactor/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
-KillMode=none
 
 [Install]
 WantedBy=multi-user.target
