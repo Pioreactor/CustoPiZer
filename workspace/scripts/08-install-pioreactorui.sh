@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# See also: update_ui.sh is a bash script for updating pioreactorui from tar.gz files.
+
 set -x
 set -e
 
@@ -54,8 +56,6 @@ if [ "$LEADER" == "1" ]; then
     lighttpd-enable-mod fastcgi
     lighttpd-enable-mod rewrite
     lighttpd-enable-mod pioreactorui
-
-    # Note: update_ui.sh is a bash script for updating pioreactorui from tar.gz files.
 
     # we add entries to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi_aliases.service for how this works
