@@ -24,7 +24,10 @@ leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.
 
 if [ "$leader_hostname" == "$(hostname)" ]; then
     # merge new config.ini
-    crudini --merge /home/$USERNAME/.pioreactor/config.ini < "$install_folder/additional_config.ini"
+    # add any new sql, restart mqtt_to_db job, too
+    if test -f "$install_folder/additional_config.ini"; then
+        crudini --merge /home/$USERNAME/.pioreactor/config.ini < "$install_folder/additional_config.ini"
+    fi
 
     # add any new sql, restart mqtt_to_db job, too
     if test -f "$install_folder/additional_sql.sql"; then
