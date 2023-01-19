@@ -36,7 +36,9 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
     fi
 
     # merge UI contribs
-    rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
+    if [ -d "$install_folder/ui/contrib/" ]; then
+        rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
+    fi
 
     # broadcast to cluster
     pios sync-configs
