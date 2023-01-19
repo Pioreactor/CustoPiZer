@@ -19,19 +19,25 @@ else
 fi
 
 
-# the below can fail, and will fail on a worker
-set +e
 
-# merge new config.ini
-crudini --merge /home/$USERNAME/.pioreactor/config.ini < "$install_folder/additional_config.ini"
+leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
-# add any new sql
-sqlite3 "$(crudini --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
+if [ "$leader_hostname" == "$(hostname)" ]; then
+    # merge new config.ini
+    crudini --merge /home/$USERNAME/.pioreactor/config.ini < "$install_folder/additional_config.ini"
 
-# merge UI contribs
-rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
+    # add any new sql, restart mqtt_to_db job, too
+    if test -f "$install_folder/additional_sql.sql"; then
+        sqlite3 "$(crudini --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
+        sudo systemctl restart pioreactor_startup_run_always@mqtt_to_db_streaming.service
+    fi
 
-# broadcast to cluster
-pios sync-configs
+    # merge UI contribs
+    rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
+
+    # broadcast to cluster
+    pios sync-configs
+fi
+
 
 exit 0
