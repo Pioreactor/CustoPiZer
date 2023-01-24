@@ -32,7 +32,7 @@ jobs:
     - name: "⬇ Download RPi image"
       id: download_rpi_image
       run: |
-        mkdir build
+        mkdir -p build
         cd build
         wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-09-26/2022-09-22-raspios-bullseye-armhf-lite.img.xz -q -O input.img.xz
         unxz input.img.xz
@@ -118,7 +118,7 @@ jobs:
     - name: "⬇ Download RPi 64-bit image"
       id: download_rpi_image_64
       run: |
-        mkdir build
+        mkdir -p build
         cd build
         wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_arm64-2022-09-26/2022-09-22-raspios-bullseye-arm64-lite.img.xz -q -O input.img.xz
         unxz input.img.xz
@@ -144,7 +144,7 @@ jobs:
       with:
         image_path: "build/${{ env.IMAGE_LEADER_WORKER_64 }}"
 
-    - name: 📨 Export zip name to env LW
+    - name: 📨 Export zip name to env LW 64
       run: |
         IMAGE_LEADER_WORKER_64_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-lw-64.outputs.zip_name }}
         echo "IMAGE_LEADER_WORKER_64_ZIP=${{ steps.package-image-lw-64.outputs.zip_name }}" >> $GITHUB_ENV
