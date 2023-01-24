@@ -35,7 +35,7 @@ jobs:
         mkdir -p build
         cd build
         wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-09-26/2022-09-22-raspios-bullseye-armhf-lite.img.xz -q -O input.img.xz
-        unxz input.img.xz
+        unxz -f input.img.xz
     - name: "📝 Prepare release"
       run: |
         now=$(date +"%Y%m%d%H%M%S")
@@ -121,7 +121,7 @@ jobs:
         mkdir -p build
         cd build
         wget https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-09-26/2022-09-22-raspios-bullseye-arm64-lite.img.xz -q -O input.img.xz
-        unxz input.img.xz
+        unxz -f input.img.xz
 
     - name: "🏗 Run CustoPiZer LW 64"
       uses: Pioreactor/CustoPiZer@pioreactor
