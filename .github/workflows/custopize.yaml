@@ -50,10 +50,10 @@ jobs:
           * Pioreactor ${{ env.PIOREACTOR_VERSION }}
 
         Created with [CustoPiZer](https://github.com/Pioreactor/CustoPiZer)
+        Includes *experimental* leader-worker 64-bit image.
 
         <!-- mark:untested -->
         EOF
-
 
 
 
@@ -115,6 +115,47 @@ jobs:
 
 
 
+    - name: "⬇ Download RPi 64-bit image"
+      id: download_rpi_image_64
+      run: |
+        mkdir build
+        cd build
+        wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_arm64-2022-09-26/2022-09-22-raspios-bullseye-arm64-lite.img.xz -q -O input.img.xz
+        unxz input.img.xz
+
+    - name: "🏗 Run CustoPiZer LW 64"
+      uses: Pioreactor/CustoPiZer@pioreactor
+      with:
+        workspace: "${{ github.workspace }}/build"
+        scripts:  "${{ github.workspace }}/workspace/scripts"
+        config: "${{ github.workspace }}/config_64.local"
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1 }'
+
+    - name: "✏ Rename image LW 64"
+      run: |
+        IMAGE_LEADER_WORKER_64="pioreactor_leader_worker_64.img"
+        echo "IMAGE_LEADER_WORKER_64=$IMAGE_LEADER_WORKER_64" >> $GITHUB_ENV
+        cd build
+        mv output.img $IMAGE_LEADER_WORKER_64
+
+    - name: "📦 Package the image LW 64"
+      id: package-image-lw-64
+      uses: OctoPrint/actions/package-rpi-image@main
+      with:
+        image_path: "build/${{ env.IMAGE_LEADER_WORKER_64 }}"
+
+    - name: 📨 Export zip name to env LW
+      run: |
+        IMAGE_LEADER_WORKER_64_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-lw-64.outputs.zip_name }}
+        echo "IMAGE_LEADER_WORKER_64_ZIP=${{ steps.package-image-lw-64.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_LEADER_WORKER_64_URL=$IMAGE_LEADER_WORKER_64_URL" >> $GITHUB_ENV
+        echo "Link to leader 64bit image: $IMAGE_LEADER_WORKER_64_URL" >> $GITHUB_STEP_SUMMARY
+
+
+
+
+
+
     - name: "🔖 Create release & attach assets"
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'repository_dispatch'
@@ -128,6 +169,9 @@ jobs:
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.md5
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.sha256
+          build/${{ env.IMAGE_LEADER_WORKER_64_ZIP }}
+          build/${{ env.IMAGE_LEADER_WORKER_64_ZIP }}.md5
+          build/${{ env.IMAGE_LEADER_WORKER_64_ZIP }}.sha256
           build/${{ env.IMAGE_WORKER_ZIP }}
           build/${{ env.IMAGE_WORKER_ZIP }}.md5
           build/${{ env.IMAGE_WORKER_ZIP }}.sha256
