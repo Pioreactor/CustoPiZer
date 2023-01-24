@@ -8,5 +8,3 @@ DefaultDependencies=no
 ExecStart=/bin/bash /usr/local/bin/everyboot.sh
 Type=oneshot
 
-[Install]
-WantedBy=basic.target
