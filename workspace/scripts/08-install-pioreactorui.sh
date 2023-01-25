@@ -22,7 +22,9 @@ if [ "$LEADER" == "1" ]; then
     sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
 
     # get latest pioreactorUI code from Github.
-    latest_tag=$(curl -sS https://api.github.com/repos/pioreactor/pioreactorui/releases/latest | sed -Ene '/^ *"tag_name": *"(.+)",$/s//\1/p')
+    latest_release=$(curl -sS https://api.github.com/repos/pioreactor/pioreactorui/releases/latest)
+    echo "Release data: $latest_release"
+    latest_tag=$(echo "$latest_release" | sed -Ene '/^ *"tag_name": *"(.+)",$/s//\1/p')
     echo "Installing UI version $latest_tag"
     curl -sS -o pioreactorui.tar.gz -JLO https://github.com/pioreactor/pioreactorui/archive/"$latest_tag".tar.gz
     tar -xzf pioreactorui.tar.gz
