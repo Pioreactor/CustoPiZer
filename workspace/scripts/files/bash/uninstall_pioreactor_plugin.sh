@@ -9,9 +9,10 @@ plugin_name=$1
 
 
 # the below can fail, and will fail on a worker
+
 # delete yamls from pioreactorui
 plugin_name_with_underscores=${plugin_name//-/_}
-(cd /usr/local/lib/python3.9/dist-packages/"$plugin_name_with_underscores"/ui/contrib/ && find * -type f) | awk '{print "/var/www/pioreactorui/contrib/"$1}' | xargs rm
+(cd /usr/local/lib/python3.9/dist-packages/"$plugin_name_with_underscores"/ui/contrib/ && find ./* -type f) | awk '{print "/var/www/pioreactorui/contrib/"$1}' | xargs rm
 
 # remove sections from config.ini TODO
 
