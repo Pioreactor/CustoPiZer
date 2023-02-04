@@ -17,6 +17,7 @@ sudo -u $USERNAME mkdir -p $PIO_DIR/storage
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/jobs
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/automations/{dosing,led,temperature}
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/charts
 echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" > $PIO_DIR/plugins/README.txt
 echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" > $PIO_DIR/plugins/ui/README.txt
 
