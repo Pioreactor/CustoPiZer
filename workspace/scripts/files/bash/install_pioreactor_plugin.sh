@@ -32,7 +32,7 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
     # add any new sql, restart mqtt_to_db job, too
     if test -f "$install_folder/additional_sql.sql"; then
         sqlite3 "$(crudini --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
-        sudo systemctl restart pioreactor_startup_run_always@mqtt_to_db_streaming.service
+        sudo systemctl restart pioreactor_startup_run@mqtt_to_db_streaming.service
     fi
 
     # merge UI contribs

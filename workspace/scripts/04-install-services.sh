@@ -13,8 +13,8 @@ install_cleanup_trap
 
 SYSTEMD_DIR=/lib/systemd/system/
 
-sudo cp /files/system/systemd/pioreactor_startup_run_always@.service $SYSTEMD_DIR
-sudo systemctl enable pioreactor_startup_run_always@monitor.service
+sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
+sudo systemctl enable pioreactor_startup_run@monitor.service
 
 sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 sudo systemctl enable pioreactor_startup_run@monitor.service
@@ -35,8 +35,8 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl enable huey.service
 
     # systemd: add long running pioreactor jobs
-    sudo systemctl enable pioreactor_startup_run_always@watchdog.service
-    sudo systemctl enable pioreactor_startup_run_always@mqtt_to_db_streaming.service
+    sudo systemctl enable pioreactor_startup_run@watchdog.service
+    sudo systemctl enable pioreactor_startup_run@mqtt_to_db_streaming.service
 
     # systemd: alias hostname to pioreactor.local
     sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
