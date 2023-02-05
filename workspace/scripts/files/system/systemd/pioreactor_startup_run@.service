@@ -1,0 +1,13 @@
+[Unit]
+Description=Start up %I on boot.
+Wants=network-online.target
+After=network-online.target firstboot.service
+
+[Service]
+User=pioreactor
+ExecStart=pio run %I
+Restart=no
+Environment="PATH=/home/pioreactor/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+
+[Install]
+WantedBy=multi-user.target

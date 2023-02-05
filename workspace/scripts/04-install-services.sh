@@ -16,6 +16,9 @@ SYSTEMD_DIR=/lib/systemd/system/
 sudo cp /files/system/systemd/pioreactor_startup_run_always@.service $SYSTEMD_DIR
 sudo systemctl enable pioreactor_startup_run_always@monitor.service
 
+sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
+sudo systemctl enable pioreactor_startup_run@monitor.service
+
 # systemd: remove wifi powersave - helps with mdns discovery
 sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 sudo systemctl enable wifi_powersave.service
