@@ -5,7 +5,3 @@ repos:
     - id: script-must-have-extension
     - id: script-must-not-have-extension
     - id: shellcheck
--   repo: https://github.com/sqlfluff/sqlfluff
-    rev: 0.9.1
-    hooks:
-    -   id: sqlfluff-lint
