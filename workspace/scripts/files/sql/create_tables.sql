@@ -259,6 +259,23 @@ CREATE UNIQUE INDEX IF NOT EXISTS pioreactor_unit_activity_data_ix
 ON pioreactor_unit_activity_data (experiment, pioreactor_unit, timestamp);
 
 
+CREATE VIEW IF NOT EXISTS pioreactor_unit_activity_data_rollup AS
+    SELECT
+        experiment,
+        pioreactor_unit,
+        datetime(strftime('%Y-%m-%dT%H:%M:00', timestamp)) as timestamp,
+        AVG(od_reading) as avg_od_reading,
+        AVG(normalized_od_reading) as avg_normalized_od_reading,
+        AVG(temperature_c) as avg_temperature_c,
+        AVG(growth_rate) as avg_growth_rate,
+        AVG(measured_rpm) as avg_measured_rpm,
+        SUM(add_media_ml) as sum_add_media_ml,
+        SUM(remove_waste_ml) as sum_remove_waste_ml,
+        SUM(add_alt_media_ml) as sum_add_alt_media_ml
+    FROM pioreactor_unit_activity_data
+    GROUP BY 1, 2, 3;
+
+
 CREATE TABLE IF NOT EXISTS calibrations (
     pioreactor_unit          TEXT NOT NULL,
     created_at               TEXT NOT NULL,
