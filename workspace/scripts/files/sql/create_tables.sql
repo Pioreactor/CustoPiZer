@@ -258,7 +258,7 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
 CREATE UNIQUE INDEX IF NOT EXISTS pioreactor_unit_activity_data_ix
 ON pioreactor_unit_activity_data (experiment, pioreactor_unit, timestamp);
 
-# a rollup of the pioreactor_unit_activity_data to the minute
+-- a rollup of the pioreactor_unit_activity_data to the minute
 CREATE VIEW IF NOT EXISTS pioreactor_unit_activity_data_rollup AS
     SELECT
         experiment,
