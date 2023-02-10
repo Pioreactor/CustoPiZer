@@ -14,7 +14,8 @@ UI_FOLDER=/var/www/pioreactorui
 tar -xvzf "$SOURCE" -C /tmp
 
 # copy data over
-cp -rp $UI_FOLDER/contrib/    /tmp/pioreactorui-"$TAG" 2>/dev/null || :
+# use rsync because we want to merge custom yamls the user has, we any updates to our own yamls.
+rsync -ap --ignore-existing $UI_FOLDER/contrib/ /tmp/pioreactorui-"$TAG" 2>/dev/null || :
 cp -p $UI_FOLDER/huey.db      /tmp/pioreactorui-"$TAG" 2>/dev/null || :
 cp -p $UI_FOLDER/huey.db-shm  /tmp/pioreactorui-"$TAG" 2>/dev/null || :
 cp -p $UI_FOLDER/huey.db-wal  /tmp/pioreactorui-"$TAG" 2>/dev/null || :
@@ -25,6 +26,9 @@ sudo rm -rf $UI_FOLDER
 mkdir $UI_FOLDER
 cp -rp /tmp/pioreactorui-"$TAG"/. $UI_FOLDER
 sudo chgrp -R www-data $UI_FOLDER
+
+# install any new requirements
+sudo pip install -r $UI_FOLDER/requirements.txt
 
 # cleanup
 rm -rf /tmp/pioreactorui-"$TAG"
