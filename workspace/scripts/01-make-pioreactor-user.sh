@@ -19,6 +19,7 @@ usermod -a -G gpio $USERNAME
 usermod -a -G spi $USERNAME
 usermod -a -G i2c $USERNAME
 usermod -a -G www-data $USERNAME
+usermod -a -G video $USERNAME
 # Note that the following also occurs in firstboot.sh that is created by the RPi imager:
 # We should move this into our image eventually...
 
