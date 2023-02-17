@@ -29,7 +29,7 @@ cp -rp "$SRC_FOLDER"/. $UI_FOLDER
 sudo chgrp -R www-data $UI_FOLDER
 
 # install any new requirements
-sudo pip install -r $UI_FOLDER/requirements.txt
+# sudo pip install -r $UI_FOLDER/requirements.txt
 
 # cleanup
 rm -rf "$SRC_FOLDER"
