@@ -15,7 +15,7 @@ tar -xvzf "$SOURCE" -C /tmp
 
 # copy data over
 # use rsync because we want to merge custom yamls the user has, we any updates to our own yamls.
-rsync -ap --ignore-existing $UI_FOLDER/contrib/ /tmp/pioreactorui-"$TAG" 2>/dev/null || :
+rsync -ap --ignore-existing $UI_FOLDER/contrib/ /tmp/pioreactorui-"$TAG"/contrib/ 2>/dev/null || :
 cp -p $UI_FOLDER/huey.db      /tmp/pioreactorui-"$TAG" 2>/dev/null || :
 cp -p $UI_FOLDER/huey.db-shm  /tmp/pioreactorui-"$TAG" 2>/dev/null || :
 cp -p $UI_FOLDER/huey.db-wal  /tmp/pioreactorui-"$TAG" 2>/dev/null || :
