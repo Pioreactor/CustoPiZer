@@ -33,7 +33,8 @@ if [ "$LEADER" == "1" ]; then
     rm pioreactorui.tar.gz
 
     # install the dependencies
-    sudo pip3 install -r $UI_FOLDER/requirements.txt
+    # new: dependencies are installed with Pioreactor app
+    # sudo pip3 install -r $UI_FOLDER/requirements.txt
 
     # init .env
     mv $UI_FOLDER/.env.example $UI_FOLDER/.env
