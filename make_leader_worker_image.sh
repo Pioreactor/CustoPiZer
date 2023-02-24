@@ -17,5 +17,5 @@ docker run --rm --privileged \
     -v $(pwd)/workspace:/CustoPiZer/workspace/  -v $(pwd)/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
     && (cd workspace/; zip $OUTPUT output.img) \
     && echo $OUTPUT \
-    && md5sum -q workspace/$OUTPUT \
+    && md5sum workspace/$OUTPUT \
     && rm workspace/output.img
