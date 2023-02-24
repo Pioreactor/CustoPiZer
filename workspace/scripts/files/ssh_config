@@ -3,5 +3,5 @@ CheckHostIP no
 
 Host *
     ControlMaster auto
-    ControlPath  ~/.ssh/sockets/%r@%h-%p
+    ControlPath  /tmp/%r@%h:%p
     ControlPersist 600
