@@ -8,9 +8,6 @@ export LC_ALL=C
 USERNAME=pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
 
-sudo -u $USERNAME rm -rf $SSH_DIR # remove if already exists.
-
-sudo -u $USERNAME mkdir -p $SSH_DIR
 sudo -u $USERNAME touch $SSH_DIR/authorized_keys
 sudo -u $USERNAME touch $SSH_DIR/known_hosts
 
