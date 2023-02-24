@@ -11,7 +11,9 @@ The following url will point to a specific asset in the latest release:
 https://github.com/pioreactor/custopizer/releases/latest/download/<asset_name>
 ```
 
+### Nightlies
 
+Available at [nightly.pioreactor.com/](http://nightly.pioreactor.com/)
 
 ### Local build:
 

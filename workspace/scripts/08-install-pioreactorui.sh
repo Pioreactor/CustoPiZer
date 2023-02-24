@@ -25,7 +25,6 @@ if [ "$LEADER" == "1" ]; then
 
 
     latest_release=$(curl -sS https://api.github.com/repos/pioreactor/pioreactorui/releases/latest)
-    echo "Release data: $latest_release"
 
     tag=$(echo "$latest_release" | sed -Ene '/^ *"tag_name": *"(.+)",$/s//\1/p')
 
