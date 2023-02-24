@@ -38,3 +38,8 @@ if [ "$WORKER" == "1" ]; then
     sudo pip3 install --ignore-installed "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
 fi
 
+
+if [ "$PIO_VERSION" == "develop" ]; then
+    sudo pip3 install -U --force-reinstall https://github.com/pioreactor/pioreactor/archive/develop.zip
+fi
+

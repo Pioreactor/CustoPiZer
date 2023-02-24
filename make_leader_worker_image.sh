@@ -14,7 +14,7 @@ docker run --rm --privileged \
     -e CUSTOPIZER_GIT_COMMIT=$GIT_COMMIT \
     -e WORKER=1 \
     -e LEADER=1 \
-    -v /Users/camerondavidson-pilon/code/CustoPiZer/workspace:/CustoPiZer/workspace/  -v /Users/camerondavidson-pilon/code/CustoPiZer/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
+    -v $(pwd)/workspace:/CustoPiZer/workspace/  -v $(pwd)/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
     && (cd workspace/; zip $OUTPUT output.img) \
     && echo $OUTPUT \
     && md5 -q workspace/$OUTPUT \
