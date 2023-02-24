@@ -4,4 +4,4 @@ CheckHostIP no
 Host *
     ControlMaster auto
     ControlPath  /tmp/%r@%h:%p
-    ControlPersist 600
+    ControlPersist yes
