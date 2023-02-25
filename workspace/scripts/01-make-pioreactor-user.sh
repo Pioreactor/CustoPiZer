@@ -37,3 +37,7 @@ usermod -a -G video $USERNAME
 #         sed -i "s/^$FIRSTUSER /pioreactor /" /etc/sudoers.d/010_pi-nopasswd
 #      fi
 #   fi
+
+
+# change default password for the pi user
+

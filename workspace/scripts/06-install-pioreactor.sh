@@ -25,21 +25,29 @@ echo "Directory for adding to the UI using yaml files, see docs: https://docs.pi
 sudo pip3 install wheel
 sudo pip3 install crudini
 
-if [ "$PIO_VERSION" == "develop" ]; then
-    sudo pip3 install -U --force-reinstall https://github.com/pioreactor/pioreactor/archive/develop.zip
-else
-    if [ "$LEADER" == "1" ]; then
-        sudo apt-get install sshpass
-        sudo -u $USERNAME cp /files/config.example.ini $PIO_DIR/config.ini
+
+if [ "$LEADER" == "1" ]; then
+    sudo apt-get install sshpass
+    sudo -u $USERNAME cp /files/config.example.ini $PIO_DIR/config.ini
+
+    if [ "$PIO_VERSION" == "develop" ]; then
+        sudo pip3 install -U --force-reinstall "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip"
+    else
         sudo pip3 install --ignore-installed "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
     fi
+fi
 
 
-    if [ "$WORKER" == "1" ]; then
-        sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
-        sudo apt-get install -y python3-numpy
+if [ "$WORKER" == "1" ]; then
+    sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
+    sudo apt-get install -y python3-numpy
+
+    if [ "$PIO_VERSION" == "develop" ]; then
+        sudo pip3 install -U --force-reinstall "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip"
+    else
         sudo pip3 install --ignore-installed "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
     fi
+
 fi
 
 

@@ -1,8 +1,7 @@
 [Unit]
 Description=Load program into RP2040
-Before=basic.target
-After=local-fs.target sysinit.target firstboot.service
-DefaultDependencies=no
+Wants=network-online.target
+After=network-online.target firstboot.service
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/load_rp2040.sh
