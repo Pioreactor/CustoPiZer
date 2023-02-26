@@ -58,3 +58,13 @@ echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
 # add environment variable for TMPDIR
 echo "TMPDIR=/tmp/" | sudo tee -a /etc/environment
 
+
+### faster boot
+
+# from http://himeshp.blogspot.com/2018/08/fast-boot-with-raspberry-pi.html
+echo "boot_delay=0" | sudo tee -a /boot/config.txt
+echo "disable_splash=1" | sudo tee -a /boot/config.txt
+
+# from https://raspberrypi.stackexchange.com/questions/78099/how-can-i-lower-my-boot-time-more
+sed -i 's/tty1/tty3/g' /boot/cmdline.txt
+echo -n ' loglevel=3 quiet logo.nologo' | sudo tee -a /boot/cmdline.txt
