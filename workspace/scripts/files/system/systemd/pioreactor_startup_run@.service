@@ -1,4 +1,4 @@
-_[Unit]
+[Unit]
 Description=Start up %I on boot.
 Wants=network-online.target
 After=network-online.target firstboot.service load_rp2040.service
