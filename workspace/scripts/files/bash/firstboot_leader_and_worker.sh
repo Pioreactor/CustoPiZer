@@ -10,6 +10,8 @@ PIO_DIR=/home/$USERNAME/.pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
 DB_LOC=$(crudini --get $PIO_DIR/config.ini storage database)
 
+# clean up if this needs to run again.
+sudo -u $USERNAME rm -f $SSH_DIR/{authorized_keys,known_hosts,id_rsa,id_rsa.pub}
 
 sudo -u $USERNAME touch $SSH_DIR/authorized_keys
 sudo -u $USERNAME touch $SSH_DIR/known_hosts
