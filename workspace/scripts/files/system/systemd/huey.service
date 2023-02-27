@@ -1,6 +1,7 @@
 [Unit]
 Description=Huey service for PioreactorUI
 After=network.target firstboot.service
+WantedBy=lighttpd.service
 
 [Service]
 User=pioreactor
