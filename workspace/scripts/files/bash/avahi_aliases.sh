@@ -5,7 +5,7 @@ IP=$(hostname -I | awk '{print $1}')
 
 while [ "$IP" == "127.0.0.1" ]
 do
-    sleep 2
+    sleep 1
     IP=$(hostname -I | awk '{print $1}')
 done
 

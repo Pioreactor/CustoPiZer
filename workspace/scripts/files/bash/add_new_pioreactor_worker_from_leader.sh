@@ -25,7 +25,7 @@ ssh-keygen -R "$(getent hosts $HOSTNAME.local | cut -d' ' -f1)"                 
 # check we have .pioreactor folder to confirm the device has the pioreactor image
 while ! sshpass -e ssh "$HOSTNAME".local "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
     do echo "Connection to $HOSTNAME.local missed - $(date)"
-    sleep 2
+    sleep 1
 done
 
 # check if it is a worker
@@ -49,12 +49,12 @@ ssh-keyscan "$HOSTNAME.local" >> "/home/$USERNAME/.ssh/known_hosts"
 
 # sync-configs
 pios sync-configs --units "$HOSTNAME" --skip-save
-sleep 2
+sleep 1
 
 # check we have config.ini file to confirm the device has the necessary configuration
 while ! sshpass -e ssh "$HOSTNAME.local" "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
     do echo "Looking for config.ini - $(date)"
-    sleep 2
+    sleep 1
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
