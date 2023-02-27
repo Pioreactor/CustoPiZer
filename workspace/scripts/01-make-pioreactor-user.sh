@@ -39,3 +39,4 @@ usermod -a -G video $USERNAME
 
 # change default password for the pi user, as per RPi Foundations recommendation
 chpasswd <<<"pi:notaraspberry"
+rm /etc/ssh/sshd_config.d/rename_user.conf
