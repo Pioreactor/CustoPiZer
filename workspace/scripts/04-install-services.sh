@@ -66,14 +66,4 @@ if [ "$WORKER" == "1" ]; then
 fi
 
 
-# disable things that slow down boot
-sudo systemctl disable raspi-config.service
-sudo systemctl disable triggerhappy.service
-sudo systemctl disable keyboard-setup.service
-sudo systemctl disable apt-daily-upgrade.service
-sudo systemctl disable alsa-restore.service
-sudo systemctl disable bluetooth.service
-sudo systemctl disable hciuart.service
-sudo systemctl disable alsa-state.service
-
 

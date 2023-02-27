@@ -66,5 +66,17 @@ echo "boot_delay=0" | sudo tee -a /boot/config.txt
 echo "disable_splash=1" | sudo tee -a /boot/config.txt
 
 # from https://raspberrypi.stackexchange.com/questions/78099/how-can-i-lower-my-boot-time-more
-sed -i 's/tty1/tty3/g' /boot/cmdline.txt
-echo -n ' loglevel=3 quiet logo.nologo' | sudo tee -a /boot/cmdline.txt
+# this needs more testing. The imager edits this too, post flashing.
+# sed -i 's/tty1/tty3/g' /boot/cmdline.txt
+# echo -n ' loglevel=3 quiet logo.nologo' | sudo tee -a /boot/cmdline.txt
+
+
+# disable services that slow down boot
+sudo systemctl disable raspi-config.service
+sudo systemctl disable triggerhappy.service
+sudo systemctl disable keyboard-setup.service
+sudo systemctl disable apt-daily-upgrade.service
+sudo systemctl disable alsa-restore.service
+sudo systemctl disable bluetooth.service
+sudo systemctl disable hciuart.service
+sudo systemctl disable alsa-state.service
