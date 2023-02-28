@@ -42,7 +42,7 @@ sshpass -e ssh-copy-id "$HOSTNAME.local"
 rm -f "/home/$USERNAME/.pioreactor/config_$HOSTNAME.ini"
 touch "/home/$USERNAME/.pioreactor/config_$HOSTNAME.ini"
 echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> /home/$USERNAME/.pioreactor/config_$HOSTNAME.ini
-crudini --set /home/$USERNAME/.pioreactor/config.ini cluster.inventory "$HOSTNAME" 1
+crudini --set --ini-options=nospace /home/$USERNAME/.pioreactor/config.ini cluster.inventory "$HOSTNAME" 1
 
 # add worker to known hosts on leader
 ssh-keyscan "$HOSTNAME.local" >> "/home/$USERNAME/.ssh/known_hosts"

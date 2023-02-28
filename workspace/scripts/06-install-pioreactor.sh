@@ -22,8 +22,8 @@ echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/de
 echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" > $PIO_DIR/plugins/ui/README.txt
 
 
-sudo pip3 install wheel
-sudo pip3 install crudini
+sudo pip3 install wheel==0.38.4
+sudo pip3 install crudini==0.9.4
 
 
 if [ "$LEADER" == "1" ]; then

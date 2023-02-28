@@ -12,6 +12,7 @@ FLAG_FILE=/boot/local_access_point
 sed -i "s/ssid=.*/ssid=$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point ssid)/" /etc/hostapd/hostapd.conf
 sed -i "s/wpa_passphrase=.*/wpa_passphrase=$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)/" /etc/hostapd/hostapd.conf
 
+
 if [[ (! -f $FLAG_FILE) ]]; then
     export LOCAL_ACCESS_POINT=0
 
@@ -31,6 +32,10 @@ fi
 
 if [[ (-f $FLAG_FILE) ]]; then
     export LOCAL_ACCESS_POINT=1
+
+    # populate this field
+    sed -i "s/country_code=.*/country_code=$(sudo cat "$FLAG_FILE")/" /etc/hostapd/hostapd.conf
+
     # only execute if not enabled
     if [[ $(systemctl is-enabled hostapd.service) == "disabled" ]]; then
         # use the country code
