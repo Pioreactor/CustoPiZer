@@ -30,7 +30,7 @@ if [ "$LEADER" == "1" ]; then
     # systemd: web UI
     sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
     sudo systemctl enable huey.service
-    cp /files/bash/start_huey.sh /usr/local/bin/start_huey.sh
+    cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
 
     # systemd: add long running pioreactor jobs
     sudo systemctl enable pioreactor_startup_run@watchdog.service
