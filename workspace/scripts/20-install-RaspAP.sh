@@ -9,6 +9,8 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+exit 0
+
 
 INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/installers/raspbian.sh
 
