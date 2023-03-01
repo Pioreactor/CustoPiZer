@@ -7,6 +7,7 @@ WantedBy=lighttpd.service
 User=pioreactor
 ExecStart=/bin/bash /usr/local/bin/start_huey.sh
 ExecStartPost=pio log -m "%n successful" -n systemd --local-only
+type=oneshot
 Restart=on-failure
 StandardOutput=null
 StandardError=null
