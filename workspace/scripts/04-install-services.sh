@@ -27,9 +27,12 @@ sudo systemctl enable wifi_powersave.service
 if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
-    # systemd: web UI
+    # systemd: web UI stuff
     sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
     sudo systemctl enable huey.service
+
+    sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
+    sudo systemctl enable create_diskcache.service
     cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
 
     # systemd: add long running pioreactor jobs

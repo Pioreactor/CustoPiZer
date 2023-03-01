@@ -1,13 +1,13 @@
 [Unit]
-Description=Huey service for PioreactorUI
+Description=Prepare diskcache for UI
 After=network.target firstboot.service
-Before=lighttpd.service
+Before=lighttpd.service huey.service
 
 [Service]
 User=pioreactor
-WorkingDirectory=/var/www/pioreactorui
-ExecStart=huey_consumer tasks.huey -s 60 -n -b 1.0 -w 2 -f -C
+ExecStart=/bin/bash /usr/local/bin/create_diskcache.sh
 ExecStartPost=pio log -m "%n successful" -n systemd --local-only
+Type=oneshot
 StandardOutput=null
 StandardError=null
 
