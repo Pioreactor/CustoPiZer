@@ -2,6 +2,9 @@
 
 : ${1?"Usage: $0 PIO_VERSION"}
 
+PIO_VERSION=$1
+CONFIG=$2
+
 GIT_COMMIT="$(git show --format="%h" --no-patch)"
 DATE=$(date '+%Y-%m-%d')
 
@@ -14,7 +17,7 @@ docker run --rm --privileged \
     -e CUSTOPIZER_GIT_COMMIT=$GIT_COMMIT \
     -e WORKER=0 \
     -e LEADER=1 \
-    -v $(pwd)/workspace:/CustoPiZer/workspace/  -v $(pwd)/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
+    -v $(pwd)/workspace:/CustoPiZer/workspace/  -v $CONFIG:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
     && (cd workspace/; zip $OUTPUT output.img) \
     && echo $OUTPUT \
     && md5sum workspace/$OUTPUT \
