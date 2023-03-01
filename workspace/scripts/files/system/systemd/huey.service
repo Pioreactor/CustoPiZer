@@ -9,8 +9,6 @@ WorkingDirectory=/var/www/pioreactorui
 ExecStartPre=/bin/bash /usr/local/bin/create_diskcache.sh
 ExecStart=huey_consumer tasks.huey -s 60 -n -b 1.0 -w 2 -f -C
 ExecStartPost=pio log -m "%n successful" -n systemd --local-only
-Restart=on-failure
-Type=oneshot
 StandardOutput=null
 StandardError=null
 
