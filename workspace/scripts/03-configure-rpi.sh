@@ -62,7 +62,7 @@ echo "TMPDIR=/tmp/" | sudo tee -a /etc/environment
 ### faster boot
 
 # from http://himeshp.blogspot.com/2018/08/fast-boot-with-raspberry-pi.html
-echo "boot_delay=0" | sudo tee -a /boot/config.txt
+echo "boot_delay=0.5" | sudo tee -a /boot/config.txt
 echo "disable_splash=1" | sudo tee -a /boot/config.txt
 
 # from https://raspberrypi.stackexchange.com/questions/78099/how-can-i-lower-my-boot-time-more
