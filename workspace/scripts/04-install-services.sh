@@ -28,11 +28,9 @@ if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
     # systemd: web UI
-    # sudo cp /files/system/systemd/start_pioreactorui.service $SYSTEMD_DIR
-    # sudo systemctl enable start_pioreactorui.service
-    # TODO: do I need a lighttp service??
     sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
     sudo systemctl enable huey.service
+    cp /files/bash/start_huey.sh /usr/local/bin/start_huey.sh
 
     # systemd: add long running pioreactor jobs
     sudo systemctl enable pioreactor_startup_run@watchdog.service
