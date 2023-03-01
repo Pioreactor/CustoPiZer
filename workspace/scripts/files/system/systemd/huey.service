@@ -5,10 +5,12 @@ WantedBy=lighttpd.service
 
 [Service]
 User=pioreactor
-ExecStart=/bin/bash /usr/local/bin/start_huey.sh
+WorkingDirectory=/var/www/pioreactorui
+ExecStartPre=/bin/bash /usr/local/bin/start_huey.sh
+ExecStart=huey_consumer tasks.huey -s 60 -n -b 1.0 -w 2 -f -C
 ExecStartPost=pio log -m "%n successful" -n systemd --local-only
-Type=oneshot
 Restart=on-failure
+Type=oneshot
 StandardOutput=null
 StandardError=null
 

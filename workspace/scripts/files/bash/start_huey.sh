@@ -10,6 +10,5 @@ touch /tmp/pioreactorui_cache/cache.db
 touch /tmp/pioreactorui_cache/cache.db-shm
 touch /tmp/pioreactorui_cache/cache.db-wal
 chmod -R 770 /tmp/pioreactorui_cache/
-chown -R pioreactor:www-data /tmp/pioreactorui_cache
-
-(cd /var/www/pioreactorui/; huey_consumer tasks.huey -s 60 -n -b 1.0 -w 2 -f -C &)
+chown -R pioreactor:www-data /tmp/pioreactorui_cache/
+chmod g+s /tmp/pioreactorui_cache
