@@ -126,9 +126,6 @@ jobs:
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.md5
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.sha256
-          build/${{ env.IMAGE_LEADER_WORKER_64_ZIP }}
-          build/${{ env.IMAGE_LEADER_WORKER_64_ZIP }}.md5
-          build/${{ env.IMAGE_LEADER_WORKER_64_ZIP }}.sha256
           build/${{ env.IMAGE_WORKER_ZIP }}
           build/${{ env.IMAGE_WORKER_ZIP }}.md5
           build/${{ env.IMAGE_WORKER_ZIP }}.sha256

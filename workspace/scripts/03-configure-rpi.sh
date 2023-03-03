@@ -50,7 +50,7 @@ fi
 # the below will remove swap, which should help extend the life of SD cards:
 # https://raspberrypi.stackexchange.com/questions/169/how-can-i-extend-the-life-of-my-sd-card
 sudo apt-get remove dphys-swapfile -y
-sudo apt autoremove -y
+sudo apt-get autoremove -y
 
 # put /tmp into memory, as we write to it a lot.
 echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
