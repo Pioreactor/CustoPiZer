@@ -1,5 +1,5 @@
 [Unit]
-Description=Prepare diskcache for UI
+Description=Prepare cache for UI
 After=network.target firstboot.service
 Before=lighttpd.service huey.service
 
