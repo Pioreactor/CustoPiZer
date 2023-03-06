@@ -62,7 +62,7 @@ jobs:
         workspace: "${{ github.workspace }}/build"
         scripts:  "${{ github.workspace }}/workspace/scripts"
         config: "${{ github.workspace }}/config.local"
-        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1 }'
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1, "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}"}'
     
     - name: "✏ Rename image LW"
       run: |
@@ -92,7 +92,7 @@ jobs:
         workspace: "${{ github.workspace }}/build"
         scripts:  "${{ github.workspace }}/workspace/scripts"
         config: "${{ github.workspace }}/config.local"
-        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 0, "WORKER": 1 }'
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 0, "WORKER": 1, "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}" }'
 
     - name: "✏ Rename image W"
       run: |
