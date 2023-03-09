@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# arg1 is the name of the plugin to install
+# arg1 is the name of the plugin to uninstall
 set +e
 set -x
 export LC_ALL=C
