@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS od_readings (
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_ix
-ON od_readings (experiment);
+ON od_readings (experiment, pioreactor_unit, timestamp);
 
 
 CREATE TABLE IF NOT EXISTS alt_media_fractions (
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS od_readings_filtered (
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_filtered_ix
-ON od_readings_filtered (experiment);
+ON od_readings_filtered (experiment, pioreactor_unit, timestamp);
 
 
 
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS growth_rates (
 );
 
 CREATE INDEX IF NOT EXISTS growth_rates_ix
-ON growth_rates (experiment);
+ON growth_rates (experiment, pioreactor_unit, timestamp);
 
 
 
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS temperature_readings (
 
 
 CREATE INDEX IF NOT EXISTS temperature_readings_ix
-ON temperature_readings (experiment);
+ON temperature_readings (experiment, pioreactor_unit);
 
 
 
@@ -180,6 +180,10 @@ CREATE TABLE IF NOT EXISTS config_files_histories (
     filename                 TEXT NOT NULL,
     data                     TEXT NOT NULL
 );
+
+CREATE INDEX IF NOT EXISTS config_files_histories_ix
+ON config_files_histories (filename);
+
 
 CREATE TABLE IF NOT EXISTS od_blanks (
     experiment               TEXT NOT NULL,
