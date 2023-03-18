@@ -37,7 +37,7 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
 
     # merge UI contribs
     if [ -d "$install_folder/ui/contrib/" ]; then
-        sudo rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
+        rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
     fi
 
     # broadcast to cluster
