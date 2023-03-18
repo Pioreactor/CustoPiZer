@@ -12,7 +12,7 @@ plugin_name=$1
 
 # delete yamls from pioreactorui
 plugin_name_with_underscores=${plugin_name//-/_}
-(cd /usr/local/lib/python3.9/dist-packages/"$plugin_name_with_underscores"/ui/contrib/ && find ./* -type f) | awk '{print "/var/www/pioreactorui/contrib/"$1}' | xargs rm
+(cd /usr/local/lib/python3.9/dist-packages/"$plugin_name_with_underscores"/ui/contrib/ && find ./ -type f) | awk '{print "/var/www/pioreactorui/contrib/"$1}' | xargs rm
 
 # TODO: remove sections from config.ini
 
