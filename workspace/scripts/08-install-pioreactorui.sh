@@ -62,7 +62,7 @@ if [ "$LEADER" == "1" ]; then
     # install lighttp and set up mods
     apt-get install lighttpd -y
     cp /files/system/lighttpd/50-pioreactorui.conf /etc/lighttpd/conf-available/50-pioreactorui.conf
-    cp /files/system/lighttpd/10-expire.conf /etc/lighttpd/conf-available/10-expire.conf
+    cp /files/system/lighttpd/10-expire.conf       /etc/lighttpd/conf-available/10-expire.conf
 
     lighttpd-enable-mod expire
     lighttpd-enable-mod fastcgi

@@ -8,12 +8,11 @@ export LC_ALL=C
 
 USERNAME=pioreactor
 plugin_name=$1
-other=$2
-install_folder=/usr/local/lib/python3.9/dist-packages/${plugin_name//-/_}
+source=$2
+install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${plugin_name//-/_}
 
-if [ -n "$other" ]
-then
-    sudo pip3 install -U --force-reinstall -I "$other"
+if [ -n "$source" ]; then
+    sudo pip3 install -U --force-reinstall -I "$source"
 else
     sudo pip3 install -U --force-reinstall -I "$plugin_name"
 fi
