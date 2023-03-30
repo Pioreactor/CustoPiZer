@@ -174,7 +174,6 @@ CREATE TABLE IF NOT EXISTS stirring_rates (
 );
 
 
-
 CREATE TABLE IF NOT EXISTS config_files_histories (
     timestamp                TEXT NOT NULL,
     filename                 TEXT NOT NULL,
@@ -284,11 +283,15 @@ CREATE TABLE IF NOT EXISTS calibrations (
     pioreactor_unit          TEXT NOT NULL,
     created_at               TEXT NOT NULL,
     type                     TEXT NOT NULL,
-    data                     TEXT NOT NULL
+    data                     TEXT NOT NULL,
+    name                     TEXT NOT NULL,
+    is_current               INTEGER DEFAULT 0 NOT NULL,
+    set_to_current_at        TEXT,
+    UNIQUE(pioreactor_unit, type, name)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS calibrations_ix
-ON calibrations (pioreactor_unit, type, created_at);
+ON calibrations (pioreactor_unit, type, name);
 
 
 CREATE TABLE IF NOT EXISTS pwm_dcs (
