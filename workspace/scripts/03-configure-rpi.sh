@@ -80,3 +80,4 @@ sudo systemctl disable alsa-restore.service
 sudo systemctl disable bluetooth.service
 sudo systemctl disable hciuart.service
 sudo systemctl disable alsa-state.service
+sudo systemctl disable userconfig.service
