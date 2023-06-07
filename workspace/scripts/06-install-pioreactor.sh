@@ -36,7 +36,7 @@ common:
     actions:
       - type: start
         hours_elapsed: 0.0
-        parameters:
+        options:
           target_rpm: 400.0
       - type: update
         hours_elapsed: 0.025
