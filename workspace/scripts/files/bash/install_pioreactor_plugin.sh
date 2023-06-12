@@ -8,7 +8,9 @@ export LC_ALL=C
 
 plugin_name=$1
 source=$2
-install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${plugin_name//-/_}
+clean_plugin_name=${plugin_name,,}
+clean_plugin_name=${clean_plugin_name//-/_}
+install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 if [ -n "$source" ]; then
