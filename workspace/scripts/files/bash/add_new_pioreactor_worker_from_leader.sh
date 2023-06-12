@@ -1,14 +1,13 @@
 #!/bin/bash
-# this script "connects" the leader to the worker. It's possible (I think, because this appends to worker files),
-# for more than one leader to "connect" to the
-# same worker, so the worker can be used in multiple clusters.
+# this script "connects" the leader to the worker.
 # first argument is the hostname of the new pioreactor worker
+# second optional argument is the worker password, default "raspberry"
 
 set -x
 set -e
 export LC_ALL=C
 
-export SSHPASS=raspberry
+SSHPASS=${2:-raspberry}
 
 HOSTNAME=$1
 HOSTNAME_local="$HOSTNAME".local
@@ -24,8 +23,13 @@ ssh-keygen -R "$(getent hosts "$HOSTNAME_local" | cut -d' ' -f1)"               
 
 # allow us to SSH in, but make sure we can first before continuing.
 # check we have .pioreactor folder to confirm the device has the pioreactor image
-while ! sshpass -e ssh "$HOSTNAME_local" "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
+while ! sshpass -p $SSHPASS ssh "$HOSTNAME_local" "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
     do echo "Connection to $HOSTNAME_local missed - $(date)"
+
+    if  sshpass -v -p $SSHPASS ssh "$HOSTNAME_local" |& grep "Wrong password"; then
+        echo "Wrong password provided. Exiting"
+        exit 1
+    fi
     sleep 1
 done
 
@@ -36,7 +40,7 @@ if ! pio discover-workers -t | grep -q "$HOSTNAME"; then
 fi
 
 # copy public key over
-sshpass -e ssh-copy-id "$HOSTNAME_local"
+sshpass -p $SSHPASS ssh-copy-id "$HOSTNAME_local"
 
 # remove any existing config (for idempotent)
 # we do this first so the user can see it on the Pioreactors/ page
@@ -53,7 +57,7 @@ pios sync-configs --units "$HOSTNAME" --skip-save
 sleep 1
 
 # check we have config.ini file to confirm the device has the necessary configuration
-while ! sshpass -e ssh "$HOSTNAME_local" "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
+while ! sshpass -p $SSHPASS ssh "$HOSTNAME_local" "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
     do echo "Looking for config.ini - $(date)"
     sleep 1
 done
