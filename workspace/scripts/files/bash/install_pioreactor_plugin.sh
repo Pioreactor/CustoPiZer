@@ -41,7 +41,7 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
     fi
 
     # broadcast to cluster
-    pios sync-configs
+    pios sync-configs --shared
 fi
 
 # run a post install scripts.

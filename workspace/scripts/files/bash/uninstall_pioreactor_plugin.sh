@@ -27,7 +27,7 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
 
     sudo pip3 uninstall  -y "$plugin_name"
     # broadcast to cluster
-    pios sync-configs
+    pios sync-configs --shared
 else
     sudo pip3 uninstall  -y "$plugin_name"
 fi

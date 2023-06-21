@@ -10,6 +10,14 @@ TAG=$2
 UI_FOLDER=/var/www/pioreactorui
 SRC_FOLDER=/tmp/pioreactorui-"$TAG"
 
+function finish {
+    # cleanup
+    rm -rf "$SRC_FOLDER" || true
+    sudo systemctl restart lighttpd.service
+    sudo systemctl restart huey.service
+}
+trap finish EXIT
+
 
 # unpack source provided
 tar -xvzf "$SRC_TAR" -C /tmp
@@ -25,9 +33,4 @@ mkdir $UI_FOLDER
 cp -rp "$SRC_FOLDER"/. $UI_FOLDER
 sudo chgrp -R www-data $UI_FOLDER
 
-# cleanup
-rm -rf "$SRC_FOLDER"
 
-# restart services
-sudo systemctl restart lighttpd.service
-sudo systemctl restart huey.service

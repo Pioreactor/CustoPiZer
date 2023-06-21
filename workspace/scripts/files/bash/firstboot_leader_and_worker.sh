@@ -20,7 +20,6 @@ sudo -u $USERNAME ssh-keygen -q -t rsa -N '' -f $SSH_DIR/id_rsa
 sudo -u $USERNAME cat $SSH_DIR/id_rsa.pub > $SSH_DIR/authorized_keys
 sudo -u $USERNAME ssh-keyscan "$(hostname)".local >> $SSH_DIR/known_hosts
 
-
 crudini --set --ini-options=nospace $PIO_DIR/config.ini cluster.topology leader_hostname "$(hostname)"
 crudini --set --ini-options=nospace $PIO_DIR/config.ini cluster.topology leader_address "$(hostname)".local
 
