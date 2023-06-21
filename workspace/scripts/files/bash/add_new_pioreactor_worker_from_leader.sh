@@ -23,13 +23,25 @@ ssh-keygen -R "$(getent hosts "$HOSTNAME_local" | cut -d' ' -f1)"               
 
 # allow us to SSH in, but make sure we can first before continuing.
 # check we have .pioreactor folder to confirm the device has the pioreactor image
-while ! sshpass -p $SSHPASS ssh "$HOSTNAME_local" "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
-    do echo "Connection to $HOSTNAME_local missed - $(date)"
+N=120
+counter=0
 
-    if  sshpass -v -p $SSHPASS ssh "$HOSTNAME_local" |& grep "Wrong password"; then
+while ! sshpass -p $SSHPASS ssh "$HOSTNAME_local" "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
+do
+    echo "Connection to $HOSTNAME_local missed - $(date)"
+
+    if sshpass -v -p $SSHPASS ssh "$HOSTNAME_local" |& grep "Wrong password"; then
         echo "Wrong password provided. Exiting"
         exit 1
     fi
+
+    counter=$((counter + 1))
+
+    if [ "$counter" -eq "$N" ]; then
+        echo "Attempted to connect $N times, but failed. Exiting."
+        exit 1
+    fi
+
     sleep 1
 done
 
@@ -57,8 +69,20 @@ pios sync-configs --units "$HOSTNAME" --skip-save
 sleep 1
 
 # check we have config.ini file to confirm the device has the necessary configuration
+N=120
+counter=0
+
 while ! sshpass -p $SSHPASS ssh "$HOSTNAME_local" "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
-    do echo "Looking for config.ini - $(date)"
+do
+    echo "Looking for config.ini - $(date)"
+
+    counter=$((counter + 1))
+
+    if [ "$counter" -eq "$N" ]; then
+        echo "Attempted to find config.ini $N times, but failed. Exiting."
+        exit 1
+    fi
+
     sleep 1
 done
 
