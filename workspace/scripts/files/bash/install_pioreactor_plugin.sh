@@ -8,15 +8,18 @@ export LC_ALL=C
 
 plugin_name=$1
 source=$2
-clean_plugin_name=${plugin_name,,}
-clean_plugin_name=${clean_plugin_name//-/_}
-install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name}
+
+clean_plugin_name=${plugin_name,,} # lower cased
+
+clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
+clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
+install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 if [ -n "$source" ]; then
     sudo pip3 install -U --force-reinstall -I "$source"
 else
-    sudo pip3 install -U --force-reinstall -I "$plugin_name"
+    sudo pip3 install -U --force-reinstall -I "$clean_plugin_name_with_dashes"
 fi
 
 

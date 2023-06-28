@@ -6,9 +6,12 @@ set -x
 export LC_ALL=C
 
 plugin_name=$1
-clean_plugin_name=${plugin_name,,}
-clean_plugin_name=${clean_plugin_name//-/_}
-install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name}
+
+clean_plugin_name=${plugin_name,,} # lower cased
+
+clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
+clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
+install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 
@@ -24,12 +27,10 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
 
     # TODO: remove sections from config.ini
     # this is complicated because sometimes we edit sections, instead of adding full sections. Ex: we edit [PWM] in relay plugin.
-
-    sudo pip3 uninstall  -y "$plugin_name"
     # broadcast to cluster
     pios sync-configs --shared
-else
-    sudo pip3 uninstall  -y "$plugin_name"
 fi
+
+sudo pip3 uninstall  -y "$clean_plugin_name_with_dashes"
 
 exit 0
