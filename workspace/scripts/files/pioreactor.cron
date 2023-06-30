@@ -1,2 +1,2 @@
 0 0 */5 * * /usr/local/bin/pio run backup_database
-0 0 */29 * * rm /var/www/pioreactorui/static/exports/*.zip /var/www/pioreactorui/static/exports/*.csv
+0 0 */29 * * pio log -m "Emptying UI's static dir" -l info && rm /var/www/pioreactorui/static/exports/*.zip /var/www/pioreactorui/static/exports/*.csv
