@@ -15,17 +15,62 @@ clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
 install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
+am_i_leader=$([ "$leader_hostname" = "$(hostname)" ]) && echo true || echo false
+
+function download_and_check_if_leader_only {
+    # define the package name
+    local PACKAGE_NAME=$1
+    # clean package name to match pip's conversion
+    local CLEAN_PACKAGE_NAME=${PACKAGE_NAME//-/_}
+
+    # Download the wheel file without dependencies
+    pip download -qq --no-deps --dest /tmp $PACKAGE_NAME
+
+    # Get the file name of the downloaded package
+    local WHL_FILE
+    WHL_FILE=$(ls /tmp/$CLEAN_PACKAGE_NAME*.whl)
+
+    # create a temp directory
+    local TEMPDIR
+    TEMPDIR=$(mktemp -d)
+
+    # unzip the wheel file into temp directory
+    unzip $WHL_FILE -d $TEMPDIR
+
+    # check if LEADER_ONLY file exists
+    if [ -f $TEMPDIR/LEADER_ONLY ]; then
+        # if file exists, return 0 (true in bash)
+        # remove the temp directory
+        rm -rf $TEMPDIR
+        return 0
+    else
+        # if file does not exist, return 1 (false in bash)
+        # remove the temp directory
+        rm -rf $TEMPDIR
+        return 1
+    fi
+
+}
+
+
 
 if [ -n "$source" ]; then
-    sudo pip3 install -U --force-reinstall -I "$source"
+    sudo pip3 install --force-reinstall --no-index "$source"
 else
-    sudo pip3 install -U --force-reinstall -I "$clean_plugin_name_with_dashes"
+    if download_and_check_if_leader_only $clean_plugin_name_with_dashes; then
+        if [ "$am_i_leader" = true ]; then
+            echo "Not installing LEADER_ONLY plugin on worker"
+            exit 0
+        fi
+        echo "Installing LEADER_ONLY plugin on worker"
+    fi
+    sudo pip3 install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
 fi
 
 
 
 
-if [ "$leader_hostname" == "$(hostname)" ]; then
+if [ "$am_i_leader" = true ]; then
     # merge new config.ini
     # add any new sql, restart mqtt_to_db job, too
     if test -f "$install_folder/additional_config.ini"; then
