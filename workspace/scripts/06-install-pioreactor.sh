@@ -18,11 +18,11 @@ sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/charts
-echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" > $PIO_DIR/plugins/README.txt
-echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" > $PIO_DIR/plugins/ui/README.txt
+echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" >                       sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt
+echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" > sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt
 
 sudo -u $USERNAME mkdir -p $PIO_DIR/experiment_profiles
-echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" > $PIO_DIR/experiment_profiles/README.txt
+echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" >                   sudo -u $USERNAME tee $PIO_DIR/experiment_profiles/README.txt
 
 cat <<EOT >> $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
 experiment_profile_name: demo_stirring_example
@@ -45,6 +45,7 @@ common:
       - type: stop
         hours_elapsed: 0.05
 EOT
+sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
 
 
 if [ "$LEADER" == "1" ]; then

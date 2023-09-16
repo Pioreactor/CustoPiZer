@@ -15,7 +15,13 @@ clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
 install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
-am_i_leader=$([ "$leader_hostname" = "$(hostname)" ]) && echo true || echo false
+
+if [ "$leader_hostname" = "$(hostname)" ]; then
+  am_i_leader=true
+else
+  am_i_leader=false
+fi
+
 
 function download_and_check_if_leader_only {
     # define the package name
@@ -72,7 +78,6 @@ fi
 
 if [ "$am_i_leader" = true ]; then
     # merge new config.ini
-    # add any new sql, restart mqtt_to_db job, too
     if test -f "$install_folder/additional_config.ini"; then
         crudini --merge /home/pioreactor/.pioreactor/config.ini < "$install_folder/additional_config.ini"
     fi
