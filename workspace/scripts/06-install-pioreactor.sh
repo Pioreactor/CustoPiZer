@@ -73,3 +73,5 @@ if [ "$WORKER" == "1" ]; then
 fi
 
 
+# useful libs
+sudo apt-get install jq
