@@ -74,4 +74,4 @@ fi
 
 
 # useful libs
-sudo apt-get install jq
+sudo apt-get install -y jq
