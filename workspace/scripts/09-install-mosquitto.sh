@@ -26,4 +26,7 @@ if [ "$LEADER" == "1" ]; then
     grep -qxF 'protocol websockets'    /etc/mosquitto/mosquitto.conf || echo "protocol websockets"   | sudo tee /etc/mosquitto/mosquitto.conf -a
     grep -qxF 'allow_anonymous false'  /etc/mosquitto/mosquitto.conf || echo "allow_anonymous false" | sudo tee /etc/mosquitto/mosquitto.conf -a
     grep -qxF 'password_file /etc/mosquitto/pw.txt'  /etc/mosquitto/mosquitto.conf || echo "password_file /etc/mosquitto/pw.txt" | sudo tee /etc/mosquitto/mosquitto.conf -a
+
+    # test that mosquitto works
+    mosquitto --help
 fi

@@ -75,4 +75,9 @@ if [ "$LEADER" == "1" ]; then
     # see avahi_aliases.service for how this works
     sudo apt-get install avahi-utils -y
 
+    # test that tools works:
+    flask --help
+    lighttpd -h
+    huey_consumer -h
+
 fi
