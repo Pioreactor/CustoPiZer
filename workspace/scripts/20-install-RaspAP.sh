@@ -10,8 +10,8 @@ source /common.sh
 install_cleanup_trap
 
 
-# skip for now
-exit 0
+## skip for now
+#exit 0
 
 INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/installers/raspbian.sh
 
