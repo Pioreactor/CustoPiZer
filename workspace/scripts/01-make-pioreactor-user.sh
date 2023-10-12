@@ -23,6 +23,8 @@ usermod -a -G video $USERNAME
 # Note that the following also occurs in firstboot.sh that is created by the RPi imager:
 # We should move this into our image eventually...
 
+chmod 755 /home/$USERNAME
+
 # usermod -l "pioreactor" "$FIRSTUSER"
 # usermod -m -d "/home/pioreactor" "pioreactor"
 # groupmod -n "pioreactor" "$FIRSTUSER"
@@ -37,6 +39,6 @@ usermod -a -G video $USERNAME
 # fi
 
 
-# change default password for the pi user, as per RPi Foundations recommendation
+# change default password for the pi user, as per RPi Foundations recommendation. Not sure if this works...
 chpasswd <<<"pi:notaraspberry"
 rm /etc/ssh/sshd_config.d/rename_user.conf

@@ -13,10 +13,10 @@ install_cleanup_trap
 USERNAME=pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
 
-sudo rm -rf /usr/lib/python3.11/EXTERNALLY-MANAGED
 
 apt-get install -y python3-pip
 apt-get install -y python3-dev # needed to build CLoader in pyyaml
+sudo rm -rf /usr/lib/python3.11/EXTERNALLY-MANAGED || true # see jeff gerlings blog post
 pip3 install pip -U # update to latest
 pip3 config set global.disable-pip-version-check true # don't check for latest pip
 pip3 config set global.root-user-action "ignore"

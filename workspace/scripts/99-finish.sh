@@ -12,8 +12,10 @@ install_cleanup_trap
 
 sudo apt-get clean
 
+USERNAME=pioreactor
+PIO_DIR=/home/$USERNAME/.pioreactor
 
-touch /home/pioreactor/.pioreactor/.image_info
-echo -e "CUSTOPIZER_GIT_COMMIT=$CUSTOPIZER_GIT_COMMIT"  >> /home/pioreactor/.pioreactor/.image_info
+sudo -u $USERNAME touch $PIO_DIR/.image_info
+sudo -u $USERNAME echo -e "CUSTOPIZER_GIT_COMMIT=$CUSTOPIZER_GIT_COMMIT"  >> $PIO_DIR/.image_info
 
 echo_green "Complete!"
