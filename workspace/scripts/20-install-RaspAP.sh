@@ -10,8 +10,11 @@ source /common.sh
 install_cleanup_trap
 
 
-## skip for now
-#exit 0
+# skip for bookworm
+DEBIAN_VERSION=$(cat /etc/debian_version | cut -d'.' -f1)
+if [ "$DEBIAN_VERSION" -gt 12 ]; then
+    exit 0
+fi
 
 INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/installers/raspbian.sh
 
