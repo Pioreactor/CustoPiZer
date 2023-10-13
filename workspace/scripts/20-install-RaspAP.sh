@@ -12,7 +12,7 @@ install_cleanup_trap
 
 # skip for bookworm
 DEBIAN_VERSION=$(cat /etc/debian_version | cut -d'.' -f1)
-if [ "$DEBIAN_VERSION" -gt 12 ]; then
+if [ "$DEBIAN_VERSION" -gt 11 ]; then
     exit 0
 fi
 
