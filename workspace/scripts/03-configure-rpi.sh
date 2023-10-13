@@ -57,6 +57,8 @@ echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
 
 # add environment variable for TMPDIR
 echo "TMPDIR=/tmp/" | sudo tee -a /etc/environment
+# add env variable for lgpio working dir
+echo "LG_WD=/tmp/" | sudo tee -a /etc/environment
 
 
 ### faster boot
@@ -75,6 +77,9 @@ echo "disable_splash=1" | sudo tee -a /boot/config.txt
 sudo systemctl disable raspi-config.service
 sudo systemctl disable triggerhappy.service
 sudo systemctl disable keyboard-setup.service
+sudo systemctl disable apt-daily.service
+sudo systemctl disable apt-daily.timer
+sudo systemctl disable apt-daily-upgrade.timer
 sudo systemctl disable apt-daily-upgrade.service
 sudo systemctl disable alsa-restore.service
 sudo systemctl disable bluetooth.service
