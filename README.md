@@ -13,7 +13,7 @@ https://github.com/pioreactor/custopizer/releases/latest/download/<asset_name>
 
 ### Nightlies
 
-Available at [nightly.pioreactor.com/](http://nightly.pioreactor.com/)
+Available at [nightly.pioreactor.com/](https://nightly.pioreactor.com/)
 
 ### Local build:
 
