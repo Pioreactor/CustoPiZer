@@ -51,6 +51,7 @@ if [ "$LEADER" == "1" ]; then
 
     # install hotspot service
     sudo cp /files/system/systemd/start_local_access_point.service $SYSTEMD_DIR
+    cp /files/bash/start_local_access_point.sh /usr/local/bin/start_local_access_point.sh
     sudo systemctl enable start_local_access_point.service
 fi
 

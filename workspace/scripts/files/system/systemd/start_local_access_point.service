@@ -5,10 +5,14 @@ Wants=network.target
 ConditionPathExists=/boot/local_access_point
 
 [Service]
-ExecStartPre=iw reg set $(cat /boot/local_access_point)
-ExecStart=nmcli device wifi hotspot ssid $(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point ssid) password $(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)
+ExecStart=/bin/bash /usr/local/bin/start_local_access_point.sh
+ExecStartPost=pio log -m "%n successful" -n systemd  --local-only
 Type=oneshot
 RemainAfterExit=yes
+# if this start too early, it fails. Keep trying until it succeeds. Note that if ConditionPathExists fails, this won't restart.
+Restart=on-failure
+RestartSec=15
+
 
 [Install]
 WantedBy=multi-user.target
