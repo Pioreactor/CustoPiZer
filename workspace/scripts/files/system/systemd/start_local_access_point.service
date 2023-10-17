@@ -1,5 +1,5 @@
 [Unit]
-Description=Start local access point using RaspAP
+Description=Start local access point conditionally
 Before=network.target
 Wants=network.target
 ConditionPathExists=/boot/local_access_point

@@ -49,7 +49,7 @@ if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/
     sudo cp /files/system/avahi/pioreactorui.service /etc/avahi/services/
 
-    # install raspap service check
+    # install hotspot service
     sudo cp /files/system/systemd/start_local_access_point.service $SYSTEMD_DIR
     sudo systemctl enable start_local_access_point.service
 fi

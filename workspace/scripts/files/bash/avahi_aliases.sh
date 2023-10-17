@@ -11,4 +11,3 @@ done
 
 
 /usr/bin/avahi-publish -a -R        "$DOMAIN_ALIAS" "$IP" &
-/usr/bin/avahi-publish -a -R "raspap.$DOMAIN_ALIAS" "$IP" &
