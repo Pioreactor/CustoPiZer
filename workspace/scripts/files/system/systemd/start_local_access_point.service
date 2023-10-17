@@ -1,0 +1,15 @@
+[Unit]
+Description=Start local access point using RaspAP
+Before=network.target
+Wants=network.target
+ConditionPathExists=/boot/local_access_point
+
+[Service]
+ExecStartPre=iw reg set $(cat /boot/local_access_point)
+ExecStart=nmcli device wifi hotspot ssid $(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point ssid) password $(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

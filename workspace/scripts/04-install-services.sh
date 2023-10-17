@@ -50,9 +50,8 @@ if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/avahi/pioreactorui.service /etc/avahi/services/
 
     # install raspap service check
-    sudo cp /files/system/systemd/start_raspap.service $SYSTEMD_DIR
-    sudo systemctl enable start_raspap.service
-    cp /files/bash/conditionally_start_raspap.sh /usr/local/bin/conditionally_start_raspap.sh
+    sudo cp /files/system/systemd/start_local_access_point.service $SYSTEMD_DIR
+    sudo systemctl enable start_local_access_point.service
 fi
 
 
