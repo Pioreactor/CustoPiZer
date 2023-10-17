@@ -19,5 +19,3 @@ echo 'interface = wlan0' >> /etc/watchdog.conf
 
 
 sudo systemctl enable watchdog
-sudo systemctl start watchdog
-sudo systemctl status watchdog
