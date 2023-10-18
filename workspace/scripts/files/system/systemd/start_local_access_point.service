@@ -1,8 +1,8 @@
 [Unit]
 Description=Start local access point conditionally
-Before=network-pre.target
-Wants=network-pre.target
-ConditionPathExists=/boot/local_access_point
+Before=network.target
+Wants=network.target
+ConditionPathExists=/boot/firmware/local_access_point
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/start_local_access_point.sh

@@ -9,15 +9,14 @@ export LC_ALL=C
 
 
 # Check if the file exists
-if [ -f "/boot/config.ini" ]; then
+if [ -f "/boot/firmware/config.ini" ]; then
     # If it exists, merge the configurations and remove the file
-    crudini --merge /home/pioreactor/.pioreactor/config.ini < /boot/config.ini
-    rm /boot/config.ini
+    crudini --merge /home/pioreactor/.pioreactor/config.ini < /boot/firmware/config.ini
+    rm /boot/firmware/config.ini
 fi
 
-# write ip address to /boot/ip
 # Get the IPv4 address
 IP=$(hostname -I | awk '{print $1}')
 
-# Write the IP address to /boot/ip
-echo "$IP" > /boot/ip
+# Write the IP address to be accessible outside
+echo "$IP" > /boot/firmware/ip
