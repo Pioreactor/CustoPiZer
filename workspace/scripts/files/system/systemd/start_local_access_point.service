@@ -1,12 +1,11 @@
 [Unit]
 Description=Start local access point conditionally
-Before=network.target
-Wants=network.target
+Before=network-pre.target
+Wants=network-pre.target
 ConditionPathExists=/boot/local_access_point
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/start_local_access_point.sh
-ExecStartPost=pio log -m "%n successful" -n systemd  --local-only
 Type=oneshot
 RemainAfterExit=yes
 # if this start too early, it fails. Keep trying until it succeeds. Note that if ConditionPathExists fails, this won't restart.

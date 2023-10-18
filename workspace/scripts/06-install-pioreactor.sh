@@ -18,11 +18,11 @@ sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/charts
-echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" >                       sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt
-echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" > sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt
+echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" |                       sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
+echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" | sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt > /dev/null
 
 sudo -u $USERNAME mkdir -p $PIO_DIR/experiment_profiles
-echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" >                   sudo -u $USERNAME tee $PIO_DIR/experiment_profiles/README.txt
+echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $PIO_DIR/experiment_profiles/README.txt > /dev/null
 
 cat <<EOT >> $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
 experiment_profile_name: demo_stirring_example
