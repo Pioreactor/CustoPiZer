@@ -304,3 +304,9 @@ CREATE TABLE IF NOT EXISTS pwm_dcs (
     channel_4                REAL,
     channel_5                REAL
 );
+
+
+CREATE TABLE IF NOT EXISTS experiment_profile_runs (
+    started_at               TEXT NOT NULL,
+    experiment_profile_name  TEXT NOT NULL
+);
