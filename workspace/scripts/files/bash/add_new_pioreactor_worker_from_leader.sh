@@ -16,9 +16,9 @@ USERNAME=pioreactor
 
 
 # remove from known_hosts if already present
-ssh-keygen -R "$HOSTNAME_local"          >/dev/null 2>&1
+ssh-keygen -R $HOSTNAME_local          >/dev/null 2>&1
 ssh-keygen -R "$HOSTNAME"                >/dev/null 2>&1
-ssh-keygen -R "$(getent hosts "$HOSTNAME_local" | cut -d' ' -f1)"                 >/dev/null 2>&1
+ssh-keygen -R "$(getent hosts $HOSTNAME_local | cut -d' ' -f1)"                 >/dev/null 2>&1
 
 
 # allow us to SSH in, but make sure we can first before continuing.
@@ -26,11 +26,11 @@ ssh-keygen -R "$(getent hosts "$HOSTNAME_local" | cut -d' ' -f1)"               
 N=120
 counter=0
 
-while ! sshpass -p $SSHPASS ssh "$HOSTNAME_local" "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
+while ! sshpass -p $SSHPASS ssh $USERNAME@$HOSTNAME_local "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
 do
     echo "Connection to $HOSTNAME_local missed - $(date)"
 
-    if sshpass -v -p $SSHPASS ssh "$HOSTNAME_local" |& grep "Wrong password"; then
+    if sshpass -v -p $SSHPASS ssh $USERNAME@$HOSTNAME_local  |& grep "Wrong password"; then
         echo "Wrong password provided. Exiting"
         exit 1
     fi
@@ -52,7 +52,7 @@ if ! pio discover-workers -t | grep -q "$HOSTNAME"; then
 fi
 
 # copy public key over
-sshpass -p $SSHPASS ssh-copy-id "$HOSTNAME_local"
+sshpass -p $SSHPASS ssh-copy-id $USERNAME@$HOSTNAME_local
 
 # remove any existing config (for idempotent)
 # we do this first so the user can see it on the Pioreactors/ page
@@ -62,7 +62,7 @@ echo -e "# Any settings here are specific to $HOSTNAME, and override the setting
 crudini --set --ini-options=nospace /home/$USERNAME/.pioreactor/config.ini cluster.inventory "$HOSTNAME" 1
 
 # add worker to known hosts on leader
-ssh-keyscan "$HOSTNAME_local" >> "/home/$USERNAME/.ssh/known_hosts"
+ssh-keyscan $HOSTNAME_local >> "/home/$USERNAME/.ssh/known_hosts"
 
 # sync-configs
 pios sync-configs --units "$HOSTNAME" --skip-save
@@ -72,7 +72,7 @@ sleep 1
 N=120
 counter=0
 
-while ! sshpass -p $SSHPASS ssh "$HOSTNAME_local" "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
+while ! sshpass -p $SSHPASS ssh $USERNAME@$HOSTNAME_local "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
 do
     echo "Looking for config.ini - $(date)"
 
@@ -87,11 +87,11 @@ do
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
-ssh "$HOSTNAME_local" "sudo date --set \"$(date)\""
+ssh $HOSTNAME_local "sudo date --set \"$(date)\""
 
 
 # reboot to set configuration
 # the || true is because the connection fails, which returns as -1.
-ssh "$HOSTNAME_local" 'sudo reboot;' || true
+ssh $HOSTNAME_local 'sudo reboot;' || true
 
 exit 0

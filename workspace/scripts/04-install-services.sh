@@ -49,11 +49,13 @@ if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/
     sudo cp /files/system/avahi/pioreactorui.service /etc/avahi/services/
 
-    # install hotspot service
-    sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
-    cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
-    sudo systemctl enable local_access_point.service
 fi
+
+# install optional hotspot service, both workers and leaders can do this.
+sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
+cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
+sudo systemctl enable local_access_point.service
+
 
 
 if [ "$WORKER" == "1" ]; then
