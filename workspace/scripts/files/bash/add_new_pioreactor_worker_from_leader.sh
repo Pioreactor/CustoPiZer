@@ -87,11 +87,11 @@ do
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
-ssh $HOSTNAME_local "sudo date --set \"$(date)\""
+ssh $USERNAME@$HOSTNAME_local "sudo date --set \"$(date)\""
 
 
 # reboot to set configuration
 # the || true is because the connection fails, which returns as -1.
-ssh $HOSTNAME_local 'sudo reboot;' || true
+ssh $USERNAME@$HOSTNAME_local 'sudo reboot;' || true
 
 exit 0
