@@ -53,9 +53,9 @@ if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME cp /files/config.example.ini $PIO_DIR/config.ini
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install --ignore-installed "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip"
+        sudo pip3 install "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip"
     else
-        sudo pip3 install --ignore-installed "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
+        sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
     fi
 fi
 
@@ -65,9 +65,9 @@ if [ "$WORKER" == "1" ]; then
     sudo apt-get install -y python3-numpy
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install --ignore-installed "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip"
+        sudo pip3 install "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip"
     else
-        sudo pip3 install --ignore-installed "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
+        sudo pip3 install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
     fi
 
 fi

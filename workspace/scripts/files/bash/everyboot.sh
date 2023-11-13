@@ -19,7 +19,7 @@ if [ -f "/boot/firmware/config.ini" ]; then
 fi
 
 # Get the IPv4 address
-IP=$(hostname -I | awk '{print $1}')
+IP=$(hostname -I)
 
 # Check if the IP variable is empty
 if [ -z "$IP" ]; then
