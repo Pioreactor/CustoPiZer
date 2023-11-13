@@ -24,3 +24,15 @@ sudo nmcli connection modify PioreactorAP 802-11-wireless-security.psk "$(crudin
 sudo nmcli connection modify PioreactorAP 802-11-wireless.band bg
 
 sudo nmcli con up PioreactorAP
+
+# rewrite the IP file now, same as in everyboot.sh
+# Get the IPv4 address
+IP=$(hostname -I | awk '{print $1}')
+
+# Check if the IP variable is empty
+if [ -z "$IP" ]; then
+    echo "Error: No IP address found." > /boot/firmware/ip
+else
+    # Write the IP address to be accessible outside
+    echo "$IP" > /boot/firmware/ip
+fi

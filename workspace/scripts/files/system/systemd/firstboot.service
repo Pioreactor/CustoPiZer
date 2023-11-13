@@ -1,7 +1,7 @@
 [Unit]
 Description=Runs firstboot.sh on the first boot of the Raspberry Pi. If successful, it will modify itself to not run again.
 Before=rc-local.service
-After=systemd-hostnamed.service network-online.target
+After=systemd-hostnamed.service
 ConditionFileNotEmpty=/usr/local/bin/firstboot.sh
 
 [Service]

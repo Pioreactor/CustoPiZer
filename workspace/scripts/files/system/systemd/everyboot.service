@@ -1,6 +1,6 @@
 [Unit]
 Description=Runs everyboot.sh on every boot of the Raspberry Pi.
-After=network.target firstboot.service
+After=firstboot.service
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/everyboot.sh
