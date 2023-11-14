@@ -61,16 +61,18 @@ if [ "$LEADER" == "1" ]; then
 
     # install lighttp and set up mods
     apt-get install lighttpd -y
-    cp /files/system/lighttpd/lighttpd.conf         /etc/lighttpd/lighttpd.conf
+    cp /files/system/lighttpd/lighttpd.conf        /etc/lighttpd/lighttpd.conf
     cp /files/system/lighttpd/10-expire.conf       /etc/lighttpd/conf-available/10-expire.conf
     cp /files/system/lighttpd/50-pioreactorui.conf /etc/lighttpd/conf-available/50-pioreactorui.conf
     cp /files/system/lighttpd/51-cors.conf         /etc/lighttpd/conf-available/51-cors.conf
+    cp /files/system/lighttpd/20-compress.conf     /etc/lighttpd/conf-available/20-compress.conf
 
     lighttpd-enable-mod expire
     lighttpd-enable-mod fastcgi
     lighttpd-enable-mod rewrite
     lighttpd-enable-mod pioreactorui
     lighttpd-enable-mod cors
+    lighttpd-enable-mod compress
 
     # we add entries to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi_aliases.service for how this works
