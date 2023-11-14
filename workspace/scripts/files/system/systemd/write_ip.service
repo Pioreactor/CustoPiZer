@@ -1,0 +1,10 @@
+[Unit]
+Description=Writes the ip to /boot/firmware/ip
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /usr/local/bin/write_ip.sh
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
