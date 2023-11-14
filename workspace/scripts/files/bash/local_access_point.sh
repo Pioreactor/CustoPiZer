@@ -20,7 +20,6 @@ sudo nmcli connection add type wifi con-name PioreactorAP autoconnect no wifi.mo
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.key-mgmt wpa-psk
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.proto "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point proto  2> /dev/null || echo 'rsn')"
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.psk "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)"
-
 sudo nmcli connection modify PioreactorAP 802-11-wireless.band bg
 
 sudo nmcli con up PioreactorAP
