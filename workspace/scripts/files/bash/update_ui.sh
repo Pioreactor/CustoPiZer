@@ -5,14 +5,12 @@ set -e
 export LC_ALL=C
 
 SRC_TAR=$1
-TAG=$2
-
+TEMP_DIR=$(mktemp -d -t "pioreactorui_XXXX")
 UI_FOLDER=/var/www/pioreactorui
-SRC_FOLDER=/tmp/pioreactorui-"$TAG"
 
 function finish {
     # cleanup
-    rm -rf "$SRC_FOLDER" || true
+    rm -rf "$TEMP_DIR" || true
     sudo systemctl restart lighttpd.service
     sudo systemctl restart huey.service
 }
@@ -20,17 +18,23 @@ trap finish EXIT
 
 
 # unpack source provided
-tar -xvzf "$SRC_TAR" -C /tmp
+tar -xzf "$SRC_TAR" -C $TEMP_DIR
+WORK_DIR=$(find "$TEMP_DIR" -mindepth 1 -maxdepth 1 -type d) # get the directory inside the archive, name is not predictable.
+
+echo $WORK_DIR
+# Verify that WORK_DIR is valid
+if [[ -z "$WORK_DIR" ]]; then
+    echo "Failed to find the working directory inside TEMP_DIR"
+    exit 1
+fi
 
 # copy data over
 # use rsync because we want to merge custom yamls the user has, we any updates to our own yamls.
-rsync -ap --ignore-existing $UI_FOLDER/contrib/ "$SRC_FOLDER"/contrib/ 2>/dev/null || :
-cp -p $UI_FOLDER/.env         "$SRC_FOLDER" 2>/dev/null || :
+rsync -ap --ignore-existing $UI_FOLDER/contrib/ $WORK_DIR/contrib/ 2>/dev/null || :
+cp -p $UI_FOLDER/.env $WORK_DIR 2>/dev/null || :
 
 # swap folders
-sudo rm -rf $UI_FOLDER
+rm -rf $UI_FOLDER
 mkdir $UI_FOLDER
-cp -rp "$SRC_FOLDER"/. $UI_FOLDER
-sudo chgrp -R www-data $UI_FOLDER
-
-
+cp -rp $WORK_DIR/. $UI_FOLDER
+chgrp -R www-data $UI_FOLDER
