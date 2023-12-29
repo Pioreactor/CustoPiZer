@@ -11,6 +11,7 @@ install_cleanup_trap
 
 USERNAME=pioreactor
 PASS=raspberry
+SSH_DIR=/home/$USERNAME/.ssh
 
 adduser --gecos "" --disabled-password $USERNAME
 chpasswd <<<"$USERNAME:$PASS"
@@ -42,3 +43,10 @@ chmod 755 /home/$USERNAME
 # change default password for the pi user, as per RPi Foundations recommendation. Not sure if this works...
 chpasswd <<<"pi:notaraspberry"
 rm /etc/ssh/sshd_config.d/rename_user.conf
+
+##### set some SSH stuff, populated on firstboot.
+sudo -u $USERNAME rm -rf $SSH_DIR # remove if already exists.
+
+sudo -u $USERNAME mkdir -p $SSH_DIR
+sudo cp /files/ssh_config $SSH_DIR/config
+sudo chown pioreactor:pioreactor $SSH_DIR/config

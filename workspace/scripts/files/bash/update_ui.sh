@@ -38,3 +38,10 @@ rm -rf $UI_FOLDER
 mkdir $UI_FOLDER
 cp -rp $WORK_DIR/. $UI_FOLDER
 chgrp -R www-data $UI_FOLDER
+
+ENV=$UI_FOLDER/.env
+if [ -f "$ENV" ]; then
+    echo "$FILE exists."
+else
+    mv $UI_FOLDER/.env.example ENV
+fi
