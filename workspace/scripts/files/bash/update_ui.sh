@@ -43,5 +43,5 @@ ENV=$UI_FOLDER/.env
 if [ -f "$ENV" ]; then
     echo "$FILE exists."
 else
-    mv $UI_FOLDER/.env.example ENV
+    mv $UI_FOLDER/.env.example $ENV
 fi
