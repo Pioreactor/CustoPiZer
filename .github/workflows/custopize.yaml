@@ -34,7 +34,7 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        wget https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-10-10/2023-10-10-raspios-bookworm-armhf-lite.img.xz -q -O input.img.xz
+        wget https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
         unxz -f input.img.xz
     - name: "📝 Prepare release"
       run: |
