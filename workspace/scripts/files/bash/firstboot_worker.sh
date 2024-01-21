@@ -16,3 +16,5 @@ sudo -u $USERNAME touch $SSH_DIR/known_hosts
 
 sudo -u $USERNAME ssh-keygen -q -t rsa -N '' -f $SSH_DIR/id_rsa
 sudo -u $USERNAME cat $SSH_DIR/id_rsa.pub > $SSH_DIR/authorized_keys
+
+

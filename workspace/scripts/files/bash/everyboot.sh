@@ -7,8 +7,21 @@ set -e
 
 export LC_ALL=C
 
+# Check if config file exists (if not: likely a worker)
+if [ ! -f "/home/pioreactor/.pioreactor/config.ini" ]; then
+    # start the blue LED to signal to the user that it's working.
+    python << EOF &
+    from gpiozero import LED
+    led = LED(23)
+    led.on()
+    while True:
+        pass
+EOF
 
-# Check if the file exists
+fi
+
+
+# Check if a new config file exists
 if [ -f "/boot/firmware/config.ini" ]; then
     # Merge the configurations and remove the extra file
     # if config.ini doesn't exist, this creates it.
