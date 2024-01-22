@@ -15,25 +15,14 @@ if [ "$WORKER" == "1" ]; then
     # Optimize power consumption of Rpi - mostly turn off peripherals
     ######################################################################
 
-    # assign minimal memory to GPU
-    echo "gpu_mem=16"            | sudo tee /boot/config.txt -a
-
     # disable bluetooth, audio, camera and display autodetects
     sudo systemctl disable hciuart
     echo "dtoverlay=disable-bt" | sudo tee -a /boot/config.txt
     echo "dtparam=audio=off"    | sudo tee -a /boot/config.txt
     echo "camera_auto_detect=0" | sudo tee -a /boot/config.txt
-    echo "display_auto_detect=0" | sudo tee -a /boot/config.txt
 
     # disable USB. This fails for the RPi Zero and A models, hence the starting "-"" to ignore error
     # TODO: -echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
-
-    # disable HDMI:
-    #  https://www.cnx-software.com/2021/12/09/raspberry-pi-zero-2-w-power-consumption/
-    sed -i '/dtoverlay=vc4-kms-v3d/d' /boot/config.txt
-    echo "hdmi_blanking=2" | sudo tee -a /boot/config.txt
-    # https://forums.raspberrypi.com/viewtopic.php?p=2063523
-    echo "dtoverlay=vc4-kms-v3d,nohdmi" | sudo tee -a /boot/config.txt
 
     # remove activelow LED
     # TODO this doesn't work for RPi Zero, https://mlagerberg.gitbooks.io/raspberry-pi/content/5.2-leds.html
@@ -45,6 +34,22 @@ if [ "$WORKER" == "1" ]; then
 
     # add hardware pwm
     echo "dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4" | sudo tee -a /boot/config.txt
+
+    if [ "$HEADLESS" == "1" ]; then
+
+        # assign minimal memory to GPU
+        echo "gpu_mem=16"            | sudo tee /boot/config.txt -a
+        echo "display_auto_detect=0" | sudo tee -a /boot/config.txt
+        # disable HDMI:
+        #  https://www.cnx-software.com/2021/12/09/raspberry-pi-zero-2-w-power-consumption/
+        sed -i '/dtoverlay=vc4-kms-v3d/d' /boot/config.txt
+        echo "hdmi_blanking=2" | sudo tee -a /boot/config.txt
+        # https://forums.raspberrypi.com/viewtopic.php?p=2063523
+        echo "dtoverlay=vc4-kms-v3d,nohdmi" | sudo tee -a /boot/config.txt
+
+        sudo systemctl disable keyboard-setup.service
+    fi
+
 fi
 
 # the below will remove swap, which should help extend the life of SD cards:
@@ -76,7 +81,6 @@ echo "disable_splash=1" | sudo tee -a /boot/config.txt
 # disable services that slow down boot
 sudo systemctl disable raspi-config.service
 sudo systemctl disable triggerhappy.service
-sudo systemctl disable keyboard-setup.service
 sudo systemctl disable apt-daily.service
 sudo systemctl disable apt-daily.timer
 sudo systemctl disable apt-daily-upgrade.timer
