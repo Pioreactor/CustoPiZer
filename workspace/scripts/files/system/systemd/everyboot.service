@@ -4,6 +4,7 @@ Description=Runs everyboot.sh on every boot of the Raspberry Pi.
 [Service]
 ExecStart=/bin/bash /usr/local/bin/everyboot.sh
 Type=oneshot
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target

@@ -11,11 +11,11 @@ export LC_ALL=C
 if [ ! -f "/home/pioreactor/.pioreactor/config.ini" ]; then
     # start the blue LED to signal to the user that it's working.
     python << EOF &
-    from gpiozero import LED
-    led = LED(23)
-    led.on()
-    while True:
-        pass
+from gpiozero import LED
+led = LED(23)
+led.on()
+while True:
+    pass
 EOF
 
 fi

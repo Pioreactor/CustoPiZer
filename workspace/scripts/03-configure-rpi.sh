@@ -15,9 +15,7 @@ if [ "$WORKER" == "1" ]; then
     # Optimize power consumption of Rpi - mostly turn off peripherals
     ######################################################################
 
-    # disable bluetooth, audio, camera and display autodetects
-    sudo systemctl disable hciuart
-    echo "dtoverlay=disable-bt" | sudo tee -a /boot/config.txt
+    # disable audio, camera autodetects
     echo "dtparam=audio=off"    | sudo tee -a /boot/config.txt
     echo "camera_auto_detect=0" | sudo tee -a /boot/config.txt
 
@@ -46,6 +44,11 @@ if [ "$WORKER" == "1" ]; then
         echo "hdmi_blanking=2" | sudo tee -a /boot/config.txt
         # https://forums.raspberrypi.com/viewtopic.php?p=2063523
         echo "dtoverlay=vc4-kms-v3d,nohdmi" | sudo tee -a /boot/config.txt
+
+        # disable bluetooth
+        sudo systemctl disable hciuart
+        echo "dtoverlay=disable-bt" | sudo tee -a /boot/config.txt
+        sudo systemctl disable bluetooth.service
 
         sudo systemctl disable keyboard-setup.service
     fi
@@ -86,6 +89,5 @@ sudo systemctl disable apt-daily.timer
 sudo systemctl disable apt-daily-upgrade.timer
 sudo systemctl disable apt-daily-upgrade.service
 sudo systemctl disable alsa-restore.service
-sudo systemctl disable bluetooth.service
 sudo systemctl disable alsa-state.service
 sudo systemctl disable userconfig.service
