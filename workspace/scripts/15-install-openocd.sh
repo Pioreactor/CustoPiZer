@@ -14,7 +14,14 @@ if [ "$WORKER" == "1" ]; then
     apt-get install -y libftdi-dev libusb-1.0-0-dev
 
     # move executable
-    cp /files/system/openocd/openocd /usr/local/bin/
+
+    arch=$(dpkg --print-architecture)
+    echo "$arch"
+    if [ "$arch" = "arm64" ]; then
+        cp /files/system/openocd/openocd64 /usr/local/bin/openocd
+    else
+        cp /files/system/openocd/openocd /usr/local/bin/openocd
+    fi
 
     # move config
     mkdir /usr/local/share/openocd/
