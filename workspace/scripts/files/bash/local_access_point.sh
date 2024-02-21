@@ -21,6 +21,7 @@ sudo nmcli connection modify PioreactorAP 802-11-wireless-security.key-mgmt wpa-
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.proto "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point proto  2> /dev/null || echo 'rsn')"
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.psk "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)"
 sudo nmcli connection modify PioreactorAP 802-11-wireless.band bg
+sudo nmcli connection modify PioreactorAP 802-11-wireless.powersave 2
 #sudo nmcli connection modify PioreactorAP wifi-sec.pmf disable
 #sudo nmcli connection modify PioreactorAP 802-11-wireless-security.pmf 1
 

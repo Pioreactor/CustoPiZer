@@ -31,8 +31,7 @@ do
     echo "Connection to $HOSTNAME_local missed - $(date)"
 
     if sshpass -v -p $SSHPASS ssh $USERNAME@$HOSTNAME_local  |& grep "Wrong password"; then
-        echo "Wrong password provided. Exiting"
-        exit 1
+        echo "Wrong password provided."
     fi
 
     counter=$((counter + 1))

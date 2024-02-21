@@ -72,7 +72,7 @@ if [ "$LEADER" == "1" ]; then
     lighttpd-enable-mod rewrite
     lighttpd-enable-mod pioreactorui
     lighttpd-enable-mod cors
-    lighttpd-enable-mod compress
+    # lighttpd-enable-mod compress # this wasn't working, and was causing binary data to leak into json responses...
 
     # we add entries to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi_aliases.service for how this works
