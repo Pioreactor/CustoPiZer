@@ -49,7 +49,7 @@ if [ "$WORKER" == "1" ]; then
         sudo systemctl disable hciuart
         echo "dtoverlay=disable-bt" | sudo tee -a /boot/config.txt
         sudo systemctl disable bluetooth.service
-
+        sudo apt remove --purge bluez -y
         sudo systemctl disable keyboard-setup.service
     fi
 
@@ -87,17 +87,21 @@ sudo systemctl disable alsa-restore.service
 sudo systemctl disable alsa-state.service
 sudo systemctl disable userconfig.service
 
+sudo systemctl mask apt-daily-upgrade
+sudo systemctl mask apt-daily
+sudo systemctl disable apt-daily-upgrade.timer
+sudo systemctl disable apt-daily.timer
 
 
 # turn off ipv6
-# File to be modified
 file="/etc/sysctl.d/90-disable-ipv6.conf"
 
-# Lines to be added
 lines="net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1"
 
 echo "$lines" | sudo tee "$file" > /dev/null
 
+# remove man page refreshes
+sudo rm /var/lib/man-db/auto-update
 
