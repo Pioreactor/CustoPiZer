@@ -66,7 +66,7 @@ echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
 # add environment variable for TMPDIR
 echo "TMPDIR=/tmp/" | sudo tee -a /etc/environment
 # add env variable for lgpio working dir
-echo "LG_WD=/tmp/" | sudo tee -a /etc/environment
+echo "LG_WD=/tmp" | sudo tee -a /etc/environment # no trailing slash!
 
 
 ### faster boot

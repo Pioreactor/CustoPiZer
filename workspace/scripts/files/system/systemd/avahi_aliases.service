@@ -4,6 +4,7 @@ Wants=network-online.target
 After=network-online.target firstboot.service local_access_point.service avahi-daemon.service
 
 [Service]
+User=pioreactor
 ExecStart=/bin/bash /usr/local/bin/avahi_aliases.sh
 ExecStartPost=pio log -m "%n successful" -n systemd  --local-only
 Type=forking

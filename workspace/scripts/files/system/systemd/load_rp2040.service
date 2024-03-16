@@ -4,6 +4,8 @@ Wants=network-online.target
 After=network-online.target firstboot.service
 
 [Service]
+User=pioreactor
+EnvironmentFile=/etc/environment
 ExecStart=/bin/bash /usr/local/bin/load_rp2040.sh
 ExecStartPost=pio log -m "%n successful" -n systemd --local-only
 Type=oneshot
