@@ -12,6 +12,8 @@ source /common.sh
 install_cleanup_trap
 
 UI_FOLDER=/var/www/pioreactorui
+SYSTEMD_DIR=/lib/systemd/system/
+
 
 if [ "$LEADER" == "1" ]; then
     mkdir /var/www
@@ -73,6 +75,11 @@ if [ "$LEADER" == "1" ]; then
     lighttpd-enable-mod pioreactorui
     lighttpd-enable-mod cors
     # lighttpd-enable-mod compress # this wasn't working, and was causing binary data to leak into json responses...
+
+    # install our own lighttpd service
+    sudo cp /files/system/systemd/lighttpd.service $SYSTEMD_DIR
+    sudo systemctl enable lighttpd.service
+
 
     # we add entries to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi_aliases.service for how this works

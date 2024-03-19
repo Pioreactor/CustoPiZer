@@ -16,16 +16,24 @@ SYSTEMD_DIR=/lib/systemd/system/
 sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 sudo systemctl enable pioreactor_startup_run@monitor.service
 
+# systemd: add long running pioreactor jobs
 sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 sudo systemctl enable pioreactor_startup_run@monitor.service
+sudo systemctl enable pioreactor_startup_run@watchdog.service # this is leader-only, and will just no-op for workers
+sudo systemctl enable pioreactor_startup_run@mqtt_to_db_streaming.service # this is leader-only, and will just no-op for workers
 
 # systemd: remove wifi powersave - helps with mdns discovery
 sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 sudo systemctl enable wifi_powersave.service
 
+# install optional hotspot service, both workers and leaders can do this.
+sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
+cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
+sudo systemctl enable local_access_point.service
+
+sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
 if [ "$LEADER" == "1" ]; then
-    sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
     # systemd: web UI stuff
     sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
@@ -35,27 +43,16 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl enable create_diskcache.service
     cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
 
-    # systemd: add long running pioreactor jobs
-    sudo systemctl enable pioreactor_startup_run@watchdog.service
-    sudo systemctl enable pioreactor_startup_run@mqtt_to_db_streaming.service
-
     # systemd: alias hostname to pioreactor.local
     sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
     sudo systemctl enable avahi_aliases.service
     cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
 
-
-    # add avahi services
-    sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/
-    sudo cp /files/system/avahi/pioreactorui.service /etc/avahi/services/
+    # an am I leader service. Sometimes leaders become workers, and we don't want to start services.
+    sudo cp /files/system/systemd/am_i_leader.service $SYSTEMD_DIR
+    sudo systemctl enable am_i_leader.service
 
 fi
-
-# install optional hotspot service, both workers and leaders can do this.
-sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
-cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
-sudo systemctl enable local_access_point.service
-
 
 
 if [ "$WORKER" == "1" ]; then

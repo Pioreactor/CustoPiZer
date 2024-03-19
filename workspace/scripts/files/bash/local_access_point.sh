@@ -24,6 +24,7 @@ sudo nmcli connection modify PioreactorAP 802-11-wireless-security.proto "$(crud
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.psk "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)"
 sudo nmcli connection modify PioreactorAP 802-11-wireless.band bg
 sudo nmcli connection modify PioreactorAP 802-11-wireless.powersave 2
+sudo nmcli connection modify PioreactorAP connection.autoconnect-priority -1 # choose a lower value, so that if users add a new wifi, it defaults to that one.
 
 
 sudo nmcli con up PioreactorAP
