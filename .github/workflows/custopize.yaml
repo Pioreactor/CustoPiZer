@@ -85,6 +85,36 @@ jobs:
         echo "Link to leader image: $IMAGE_LEADER_WORKER_URL" >> $GITHUB_STEP_SUMMARY
 
 
+    - name: "🏗 Run CustoPiZer L"
+      uses: Pioreactor/CustoPiZer@pioreactor
+      with:
+        workspace: "${{ github.workspace }}/build"
+        scripts:  "${{ github.workspace }}/workspace/scripts"
+        config: "${{ github.workspace }}/config.local"
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 0, "HEADLESS": 1, "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}"}'
+
+    - name: "✏ Rename image L"
+      run: |
+        IMAGE_LEADER="pioreactor_leader.img"
+        echo "IMAGE_LEADER=$IMAGE_LEADER" >> $GITHUB_ENV
+        cd build
+        mv output.img $IMAGE_LEADER
+
+    - name: "📦 Package the image L"
+      id: package-image-l
+      uses: OctoPrint/actions/package-rpi-image@main
+      with:
+        image_path: "build/${{ env.IMAGE_LEADER }}"
+
+    - name: 📨 Export zip name to env L
+      run: |
+        IMAGE_LEADER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-l.outputs.zip_name }}
+        echo "IMAGE_LEADER_ZIP=${{ steps.package-image-l.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_LEADER_URL=$IMAGE_LEADER_URL" >> $GITHUB_ENV
+        echo "Link to leader image: $IMAGE_LEADER_URL" >> $GITHUB_STEP_SUMMARY
+
+
+
 
     - name: "🏗 Run CustoPiZer W"
       uses: Pioreactor/CustoPiZer@pioreactor
@@ -113,6 +143,8 @@ jobs:
         echo "IMAGE_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
 
 
+
+
     - name: "🔖 Create release & attach assets"
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'repository_dispatch'
@@ -126,6 +158,9 @@ jobs:
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.md5
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.sha256
+          build/${{ env.IMAGE_LEADER_ZIP }}
+          build/${{ env.IMAGE_LEADER_ZIP }}.md5
+          build/${{ env.IMAGE_LEADER_ZIP }}.sha256
           build/${{ env.IMAGE_WORKER_ZIP }}
           build/${{ env.IMAGE_WORKER_ZIP }}.md5
           build/${{ env.IMAGE_WORKER_ZIP }}.sha256
