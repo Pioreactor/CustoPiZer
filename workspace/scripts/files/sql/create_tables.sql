@@ -315,13 +315,13 @@ CREATE TABLE IF NOT EXISTS experiment_profile_runs (
 CREATE TABLE IF NOT EXISTS experiment_worker_assignments (
     pioreactor_unit     TEXT NOT NULL,
     experiment          TEXT NOT NULL,
-    assigned_at         TEXT DEFAULT STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW') NOT NULL,
-    UNIQUE(pioreactor_unit, experiment)
+    assigned_at         TEXT NOT NULL,
+    UNIQUE(pioreactor_unit) -- force a worker to only ever be assigned to a single experiment.
 );
 
-CREATE TABLE IF NOT EXISTS pioreactor_units (
-    pioreactor_unit     TEXT NOT NULL,
-    added_at            TEXT DEFAULT STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW') NOT NULL,
+CREATE TABLE IF NOT EXISTS workers (
+    pioreactor_unit     TEXT NOT NULL, -- id
+    added_at            TEXT NOT NULL,
     is_active           INTEGER DEFAULT 1 NOT NULL,
     UNIQUE(pioreactor_unit)
 );
