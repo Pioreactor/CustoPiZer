@@ -13,18 +13,9 @@ done
 iw reg set "$(head -c 2 /boot/firmware/local_access_point)"
 
 
-sudo nmcli connection delete PioreactorAP || true
-
-sudo nmcli connection add type wifi con-name PioreactorAP autoconnect no wifi.mode ap wifi.ssid "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point ssid)" ipv4.method shared ipv6.method disabled
-
-sudo nmcli connection modify PioreactorAP 802-11-wireless-security.key-mgmt wpa-psk
-# sudo nmcli connection modify PioreactorAP 802-11-wireless-security.pairwise ccmp; # we should not include this for max compatibilituy
-# sudo nmcli connection modify PioreactorAP 802-11-wireless-security.group ccmp;
+sudo nmcli connection modify PioreactorAP wifi.ssid "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point ssid)"
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.proto "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point proto  2> /dev/null || echo 'rsn')"
 sudo nmcli connection modify PioreactorAP 802-11-wireless-security.psk "$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)"
-sudo nmcli connection modify PioreactorAP 802-11-wireless.band bg
-sudo nmcli connection modify PioreactorAP 802-11-wireless.powersave 2
-sudo nmcli connection modify PioreactorAP connection.autoconnect-priority -1 # choose a lower value, so that if users add a new wifi, it defaults to that one.
 
 
 sudo nmcli con up PioreactorAP
