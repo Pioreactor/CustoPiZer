@@ -26,9 +26,9 @@ crudini --ini-options=nospace --set  $PIO_DIR/config.ini cluster.topology leader
                               --set  $PIO_DIR/config.ini mqtt broker_address "$HOSTNAME".local \
                               --set  $PIO_DIR/config.ini local_access_point ssid "pioreactor_$HOSTNAME"
 
-sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around. When you are ready, click the [New experiment] above.');"
-sqlite3 $DB_LOC "INSERT OR IGNORE INTO workers (pioreactor_unit, added_at, is_active) VALUES ($HOSTNAME, STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'), 1);"
-sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiment_worker_assignments (pioreactor_unit, experiment, assigned_at) VALUES ($HOSTNAME, 'Demo experiment', STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'));"
+sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around. When you are ready, click the [New experiment] above.');"
+sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO workers (pioreactor_unit, added_at, is_active) VALUES ('$HOSTNAME', STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'), 1);"
+sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO experiment_worker_assignments (pioreactor_unit, experiment, assigned_at) VALUES ('$HOSTNAME', 'Demo experiment', STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'));"
 
 
 sudo -u $USERNAME touch $PIO_DIR/config_"$HOSTNAME".ini # set with the correct read/write permissions
