@@ -2,9 +2,11 @@
 Description=Publish an alias for %H.local via mdns
 Wants=network-online.target
 After=network-online.target firstboot.service local_access_point.service avahi-daemon.service am_i_leader.service
+Requires=am_i_leader.service
 
 [Service]
 User=pioreactor
+EnvironmentFile=/etc/environment
 ExecStart=/bin/bash /usr/local/bin/avahi_aliases.sh
 ExecStartPost=pio log -m "%n successful" -n systemd  --local-only
 Type=forking

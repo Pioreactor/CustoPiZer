@@ -1,6 +1,7 @@
 [Unit]
 Description=Huey service for PioreactorUI
 After=network.target firstboot.service am_i_leader.service
+Requires=am_i_leader.service
 Before=lighttpd.service
 
 [Service]
