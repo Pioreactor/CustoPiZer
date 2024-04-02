@@ -1,7 +1,7 @@
 [Unit]
 Description=Gatekeeper service for leader services
 Before=lighttpd.service huey.service create_diskcache.service avahi_aliases.service
-After=everyboot.service
+After=everyboot.service firstboot.service
 
 [Service]
 Type=oneshot

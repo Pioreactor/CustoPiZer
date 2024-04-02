@@ -45,8 +45,8 @@ do
 done
 
 # check if it is a worker
-if ! pio discover-workers -t | grep -q "$HOSTNAME"; then
-  echo "Unable to confirm if $HOSTNAME is a Pioreactor worker. Not found in 'pio discover-workers -t'. Did you install the worker image?"
+if ! pio workers discover -t | grep -q "$HOSTNAME"; then
+  echo "Unable to confirm if $HOSTNAME is a Pioreactor worker. Not found in 'pio workers discover -t'. Did you install the worker image?"
   exit 1
 fi
 
