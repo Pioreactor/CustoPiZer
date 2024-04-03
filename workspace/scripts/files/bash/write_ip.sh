@@ -22,12 +22,7 @@ else
 fi
 
 # Write the information to a file in key-value format
-echo "HOSTNAME=$(hostname)" >> /boot/firmware/network_info
-echo "IP=$IP" > /boot/firmware/network_info
-echo "WLAN_MAC=$WLAN_MAC" >> /boot/firmware/network_info
-echo "ETH_MAC=$ETH_MAC" >> /boot/firmware/network_info
-
-# Check if the IP variable is empty and log an error if necessary
-if [ -z "$IP" ]; then
-    echo "Error: No IP address found." >> /boot/firmware/network_info
-fi
+echo "HOSTNAME=$(hostname)" >> /boot/firmware/network_info.txt
+echo "IP=$IP" > /boot/firmware/network_info.txt
+echo "WLAN_MAC=$WLAN_MAC" >> /boot/firmware/network_info.txt
+echo "ETH_MAC=$ETH_MAC" >> /boot/firmware/network_info.txt
