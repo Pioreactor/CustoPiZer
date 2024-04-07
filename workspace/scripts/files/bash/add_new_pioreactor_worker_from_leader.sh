@@ -55,9 +55,11 @@ sshpass -p $SSHPASS ssh-copy-id $USERNAME@$HOSTNAME_local
 
 # remove any existing config (for idempotent)
 # we do this first so the user can see it on the Pioreactors/ page
-rm -f "/home/$USERNAME/.pioreactor/config_$HOSTNAME.ini"
-touch "/home/$USERNAME/.pioreactor/config_$HOSTNAME.ini"
-echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> /home/$USERNAME/.pioreactor/config_"$HOSTNAME".ini
+UNIT_CONFIG=/home/$USERNAME/.pioreactor/config_"$HOSTNAME".ini
+rm -f UNIT_CONFIG
+touch UNIT_CONFIG
+echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> UNIT_CONFIG
+crudini --set UNIT_CONFIG pioreactor version 1.0
 
 # add worker to known hosts on leader
 ssh-keyscan $HOSTNAME_local >> "/home/$USERNAME/.ssh/known_hosts"

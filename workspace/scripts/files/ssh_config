@@ -6,3 +6,5 @@ Host *
     ControlPath  /tmp/%r@%h:%p
     ControlPersist 1h
     Compression yes
+    AddressFamily inet
+    KexAlgorithms ecdh-sha2-nistp256
