@@ -105,3 +105,6 @@ echo "$lines" | sudo tee "$file" > /dev/null
 # remove man page refreshes
 sudo rm /var/lib/man-db/auto-update
 
+
+# reduce the size that journalctl uses. TODO: test this
+sudo crudini --set /etc/systemd/journald.conf Journal SystemMaxUse 20M
