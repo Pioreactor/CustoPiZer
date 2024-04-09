@@ -3,6 +3,7 @@ id=PioreactorAP
 type=wifi
 autoconnect=false
 autoconnect-priority=-1
+uuid=2b6d769e-d8ab-4473-8c79-d3a0978e43bf
 
 [wifi]
 band=bg

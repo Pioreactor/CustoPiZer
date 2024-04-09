@@ -76,6 +76,3 @@ fi
 
 # useful libs
 sudo apt-get install -y jq
-
-# test that crudini works
-crudini --help

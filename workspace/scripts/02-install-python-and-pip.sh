@@ -24,5 +24,9 @@ sudo pip3 config set global.root-user-action "ignore"
 sudo pip3 config set global.extra-index-url 'https://www.piwheels.org/simple'
 
 
+sudo pip3 install crudini==0.9.5
 
+
+# test that crudini works
+crudini --help
 
