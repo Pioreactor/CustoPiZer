@@ -48,11 +48,13 @@ function download_and_check_if_leader_only {
         # if file exists, return 0 (true in bash)
         # remove the temp directory
         rm -rf $TEMPDIR
+        rm  /tmp/$CLEAN_PACKAGE_NAME*.whl
         return 0
     else
         # if file does not exist, return 1 (false in bash)
         # remove the temp directory
         rm -rf $TEMPDIR
+        rm  /tmp/$CLEAN_PACKAGE_NAME*.whl
         return 1
     fi
 
