@@ -2,12 +2,16 @@
 # this script "connects" the leader to the worker.
 # first argument is the hostname of the new pioreactor worker
 # second optional argument is the worker password, default "raspberry"
+# third optional argument is the Pioreactor version, default "1.1"
+# forth optional argument is the Pioreactor model, default "pioreactor_20ml"
 
 set -x
 set -e
 export LC_ALL=C
 
 SSHPASS=${2:-raspberry}
+PIO_VERSION=${3:-"1.0"}
+PIO_MODEL=${4:-pioreactor_20ml}
 
 HOSTNAME=$1
 HOSTNAME_local="$HOSTNAME".local
@@ -59,8 +63,8 @@ UNIT_CONFIG=/home/$USERNAME/.pioreactor/config_"$HOSTNAME".ini
 rm -f $UNIT_CONFIG
 touch $UNIT_CONFIG
 echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> $UNIT_CONFIG
-crudini --set $UNIT_CONFIG pioreactor version 1.0 \
-        --set $UNIT_CONFIG pioreactor bioreactor pioreactor_20ml
+crudini --set $UNIT_CONFIG pioreactor version $PIO_VERSION \
+        --set $UNIT_CONFIG pioreactor model $PIO_MODEL
 
 # add worker to known hosts on leader
 ssh-keyscan $HOSTNAME_local >> "/home/$USERNAME/.ssh/known_hosts"
