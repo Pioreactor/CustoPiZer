@@ -207,7 +207,8 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
     pioreactor_unit          TEXT NOT NULL,
     label                    TEXT NOT NULL,
     created_at               TEXT NOT NULL,
-    UNIQUE(pioreactor_unit, experiment)
+    UNIQUE(pioreactor_unit, experiment),
+    UNIQUE(label, experiment)
 );
 
 CREATE TABLE IF NOT EXISTS temperature_automation_events (

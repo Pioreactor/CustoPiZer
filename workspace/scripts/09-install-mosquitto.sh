@@ -19,7 +19,11 @@ if [ "$LEADER" == "1" ]; then
     # hash password
     mosquitto_passwd -U /etc/mosquitto/pw.txt
 
-    grep -qxF 'autosave_interval 1500'  /etc/mosquitto/mosquitto.conf || echo "autosave_interval 1500" | sudo tee /etc/mosquitto/mosquitto.conf -a
+
+    grep -qxF 'log_type error'     /etc/mosquitto/mosquitto.conf     || echo "log_type error" | sudo tee /etc/mosquitto/mosquitto.conf -a
+    grep -qxF 'log_type warning'   /etc/mosquitto/mosquitto.conf     || echo "log_type warning" | sudo tee /etc/mosquitto/mosquitto.conf -a
+    grep -qxF 'log_type notice'    /etc/mosquitto/mosquitto.conf     || echo "log_type notice" | sudo tee /etc/mosquitto/mosquitto.conf -a
+    grep -qxF 'persistence false'  /etc/mosquitto/mosquitto.conf     || echo "persistence false" | sudo tee /etc/mosquitto/mosquitto.conf -a
     grep -qxF 'listener 1883'          /etc/mosquitto/mosquitto.conf || echo "listener 1883"         | sudo tee /etc/mosquitto/mosquitto.conf -a
     grep -qxF 'protocol mqtt'          /etc/mosquitto/mosquitto.conf || echo "protocol mqtt"         | sudo tee /etc/mosquitto/mosquitto.conf -a
     grep -qxF 'listener 9001'          /etc/mosquitto/mosquitto.conf || echo "listener 9001"         | sudo tee /etc/mosquitto/mosquitto.conf -a

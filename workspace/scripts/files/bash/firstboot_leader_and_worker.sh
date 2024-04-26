@@ -34,7 +34,7 @@ sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO experiment_worker_assignments (pioreact
 sudo -u $USERNAME touch $PIO_DIR/config_"$HOSTNAME".ini # set with the correct read/write permissions
 printf '# Any settings here are specific to %s, and override the settings in config.ini\n\n' "$HOSTNAME" >> $PIO_DIR/config_"$HOSTNAME".ini
 
-crudini --set "$PIO_DIR/config_$HOSTNAME.ini" pioreactor model  \
+crudini --ini-options=nospace --set "$PIO_DIR/config_$HOSTNAME.ini" pioreactor model  \
         --set "$PIO_DIR/config_$HOSTNAME.ini" pioreactor version
 
 cp "$PIO_DIR/config_$HOSTNAME.ini" "$PIO_DIR/unit_config.ini"
