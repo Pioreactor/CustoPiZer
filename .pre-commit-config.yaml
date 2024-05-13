@@ -1,7 +1,12 @@
 repos:
-- repo: https://github.com/jumanjihouse/pre-commit-hooks
-  rev: 3.0.0  # or specific git tag
-  hooks:
-    - id: script-must-have-extension
-    - id: script-must-not-have-extension
-    - id: shellcheck
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0  # or specific git tag
+    hooks:
+      - id: script-must-have-extension
+      - id: script-must-not-have-extension
+      - id: shellcheck
+  -   repo: https://github.com/sqlfluff/sqlfluff
+      rev: 3.0.4
+      hooks:
+        - id: sqlfluff-lint
+          args: [--dialect, "sqlite", -e, "references.keywords,layout.long_lines,references.special_chars"]

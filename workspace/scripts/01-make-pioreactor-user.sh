@@ -19,6 +19,7 @@ usermod -a -G spi pioreactor
 usermod -a -G i2c pioreactor
 usermod -a -G www-data pioreactor
 usermod -a -G video pioreactor
+usermod -a -G dialout pioreactor
 usermod -a -G systemd-journal pioreactor
 
 chmod 755 /home/pioreactor

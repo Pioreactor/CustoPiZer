@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS od_readings (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    od_reading               REAL     NOT NULL,
-    angle                    INTEGER  NOT NULL,
-    channel                  INTEGER CHECK( channel IN (1, 2)) NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    od_reading REAL NOT NULL,
+    angle INTEGER NOT NULL,
+    channel INTEGER CHECK (channel IN (1, 2)) NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_ix
@@ -12,10 +12,10 @@ ON od_readings (experiment, pioreactor_unit, timestamp);
 
 
 CREATE TABLE IF NOT EXISTS alt_media_fractions (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    alt_media_fraction       REAL NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    alt_media_fraction REAL NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS alt_media_fractions_ix
@@ -24,10 +24,10 @@ ON alt_media_fractions (experiment);
 
 
 CREATE TABLE IF NOT EXISTS od_readings_filtered (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    normalized_od_reading    REAL NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    normalized_od_reading REAL NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_filtered_ix
@@ -36,32 +36,32 @@ ON od_readings_filtered (experiment, pioreactor_unit, timestamp);
 
 
 CREATE TABLE IF NOT EXISTS dosing_events (
-    experiment               TEXT  NOT NULL,
-    pioreactor_unit          TEXT  NOT NULL,
-    timestamp                TEXT  NOT NULL,
-    event                    TEXT  NOT NULL,
-    volume_change_ml         REAL  NOT NULL,
-    source_of_event          TEXT
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    event TEXT NOT NULL,
+    volume_change_ml REAL NOT NULL,
+    source_of_event TEXT
 );
 
 
 
 CREATE TABLE IF NOT EXISTS led_change_events (
-    experiment             TEXT                                       NOT NULL,
-    pioreactor_unit        TEXT                                       NOT NULL,
-    timestamp              TEXT                                       NOT NULL,
-    channel                TEXT CHECK(channel IN ('A','B','C','D'))   NOT NULL,
-    intensity              REAL                                       NOT NULL,
-    source_of_event        TEXT
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    channel TEXT CHECK (channel IN ('A', 'B', 'C', 'D')) NOT NULL,
+    intensity REAL NOT NULL,
+    source_of_event TEXT
 );
 
 
 
 CREATE TABLE IF NOT EXISTS growth_rates (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    rate                     REAL  NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    rate REAL NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS growth_rates_ix
@@ -70,13 +70,13 @@ ON growth_rates (experiment, pioreactor_unit, timestamp);
 
 
 CREATE TABLE IF NOT EXISTS logs (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    message                  TEXT  NOT NULL,
-    source                   TEXT  NOT NULL,
-    level                    TEXT,
-    task                     TEXT
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    message TEXT NOT NULL,
+    source TEXT NOT NULL,
+    level TEXT,
+    task TEXT
 );
 
 CREATE INDEX IF NOT EXISTS logs_ix
@@ -85,79 +85,92 @@ ON logs (experiment, level, task);
 
 
 CREATE TABLE IF NOT EXISTS experiments (
-    experiment             TEXT  NOT NULL UNIQUE,
-    created_at             TEXT  NOT NULL,
-    description            TEXT,
-    media_used             TEXT,
-    organism_used          TEXT
+    experiment TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL,
+    description TEXT,
+    media_used TEXT,
+    organism_used TEXT
 );
 
 -- since we are almost always calling this like "SELECT * FROM experiments ORDER BY created_at DESC LIMIT 1",
 -- a index on all columns is much faster, BigO(n). This table is critical for the entire webpage performance.
 -- not the order of the values in the index is important to get this performance.
 -- https://medium.com/@JasonWyatt/squeezing-performance-from-sqlite-indexes-indexes-c4e175f3c346
-CREATE UNIQUE INDEX IF NOT EXISTS experiments_ix ON experiments (created_at, experiment, description);
+CREATE UNIQUE INDEX IF NOT EXISTS experiments_ix ON experiments (
+    created_at, experiment, description
+);
 
 -- the latest experiment is defined as the on that is most recently inserted into the database. Why not use created_at?
 -- it's possible that an experiment can be created_at ORDER != rowid order if users are playing with the times (or using local access point)
-CREATE VIEW IF NOT EXISTS latest_experiment AS SELECT experiment, created_at, description, media_used, organism_used, round( (strftime("%s","now") - strftime("%s", created_at))/60/60, 0) as delta_hours FROM experiments ORDER BY ROWID DESC LIMIT 1;
+CREATE VIEW IF NOT EXISTS latest_experiment AS
+SELECT
+    experiment,
+    created_at,
+    description,
+    media_used,
+    organism_used,
+    round((strftime("%s", now) - strftime("%s", created_at)) / 60 / 60, 0)
+        AS delta_hours
+FROM experiments
+ORDER BY rowid DESC
+LIMIT 1;
 
 
 CREATE TABLE IF NOT EXISTS dosing_automation_settings (
-    experiment               TEXT  NOT NULL,
-    pioreactor_unit          TEXT  NOT NULL,
-    started_at               TEXT  NOT NULL,
-    ended_at                 TEXT,
-    automation_name          TEXT  NOT NULL,
-    settings                 TEXT  NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    started_at TEXT NOT NULL,
+    ended_at TEXT,
+    automation_name TEXT NOT NULL,
+    settings TEXT NOT NULL
 );
 
 
 
 CREATE TABLE IF NOT EXISTS led_automation_settings (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    started_at               TEXT NOT NULL,
-    ended_at                 TEXT,
-    automation_name          TEXT NOT NULL,
-    settings                 TEXT NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    started_at TEXT NOT NULL,
+    ended_at TEXT,
+    automation_name TEXT NOT NULL,
+    settings TEXT NOT NULL
 );
 
 
 
 CREATE TABLE IF NOT EXISTS temperature_automation_settings (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    started_at               TEXT NOT NULL,
-    ended_at                 TEXT,
-    automation_name          TEXT NOT NULL,
-    settings                 TEXT NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    started_at TEXT NOT NULL,
+    ended_at TEXT,
+    automation_name TEXT NOT NULL,
+    settings TEXT NOT NULL
 );
 
 
 
 CREATE TABLE IF NOT EXISTS kalman_filter_outputs (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    state_0                  REAL NOT NULL,
-    state_1                  REAL NOT NULL,
-    state_2                  REAL NOT NULL,
-    cov_00                   REAL NOT NULL,
-    cov_01                   REAL NOT NULL,
-    cov_02                   REAL NOT NULL,
-    cov_11                   REAL NOT NULL,
-    cov_12                   REAL NOT NULL,
-    cov_22                   REAL NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    state_0 REAL NOT NULL,
+    state_1 REAL NOT NULL,
+    state_2 REAL NOT NULL,
+    cov_00 REAL NOT NULL,
+    cov_01 REAL NOT NULL,
+    cov_02 REAL NOT NULL,
+    cov_11 REAL NOT NULL,
+    cov_12 REAL NOT NULL,
+    cov_22 REAL NOT NULL
 );
 
 
 
 CREATE TABLE IF NOT EXISTS temperature_readings (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    temperature_c            REAL NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    temperature_c REAL NOT NULL
 );
 
 
@@ -167,17 +180,17 @@ ON temperature_readings (experiment, pioreactor_unit);
 
 
 CREATE TABLE IF NOT EXISTS stirring_rates (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    measured_rpm             REAL NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    measured_rpm REAL NOT NULL
 );
 
 
 CREATE TABLE IF NOT EXISTS config_files_histories (
-    timestamp                TEXT NOT NULL,
-    filename                 TEXT NOT NULL,
-    data                     TEXT NOT NULL
+    timestamp TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    data TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS config_files_histories_ix
@@ -185,77 +198,77 @@ ON config_files_histories (filename);
 
 
 CREATE TABLE IF NOT EXISTS od_blanks (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    channel                  TEXT CHECK( channel IN ('1', '2')) NOT NULL,
-    angle                    INTEGER NOT NULL,
-    od_reading               REAL NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    channel TEXT CHECK (channel IN ('1', '2')) NOT NULL,
+    angle INTEGER NOT NULL,
+    od_reading REAL NOT NULL
 );
 
 
 CREATE TABLE IF NOT EXISTS ir_led_intensities (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    relative_intensity       REAL NOT NULL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    relative_intensity REAL NOT NULL
 );
 
 
 CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    label                    TEXT NOT NULL,
-    created_at               TEXT NOT NULL,
-    UNIQUE(pioreactor_unit, experiment),
-    UNIQUE(label, experiment)
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    label TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    UNIQUE (pioreactor_unit, experiment),
+    UNIQUE (label, experiment)
 );
 
 CREATE TABLE IF NOT EXISTS temperature_automation_events (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    event_name               TEXT NOT NULL,
-    message                  TEXT,
-    data                     TEXT
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    event_name TEXT NOT NULL,
+    message TEXT,
+    data TEXT
 );
 
 CREATE TABLE IF NOT EXISTS dosing_automation_events (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    event_name               TEXT NOT NULL,
-    message                  TEXT,
-    data                     TEXT
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    event_name TEXT NOT NULL,
+    message TEXT,
+    data TEXT
 );
 
 CREATE TABLE IF NOT EXISTS led_automation_events (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    event_name               TEXT NOT NULL,
-    message                  TEXT,
-    data                     TEXT
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    event_name TEXT NOT NULL,
+    message TEXT,
+    data TEXT
 );
 
 
 
 CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    od_reading               REAL,
-    normalized_od_reading    REAL,
-    temperature_c            REAL,
-    growth_rate              REAL,
-    measured_rpm             REAL,
-    led_A_intensity_update   REAL,
-    led_B_intensity_update   REAL,
-    led_C_intensity_update   REAL,
-    led_D_intensity_update   REAL,
-    add_media_ml             REAL,
-    remove_waste_ml          REAL,
-    add_alt_media_ml         REAL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    od_reading REAL,
+    normalized_od_reading REAL,
+    temperature_c REAL,
+    growth_rate REAL,
+    measured_rpm REAL,
+    led_a_intensity_update REAL,
+    led_b_intensity_update REAL,
+    led_c_intensity_update REAL,
+    led_d_intensity_update REAL,
+    add_media_ml REAL,
+    remove_waste_ml REAL,
+    add_alt_media_ml REAL
 );
 
 
@@ -264,31 +277,31 @@ ON pioreactor_unit_activity_data (experiment, pioreactor_unit, timestamp);
 
 -- a rollup of the pioreactor_unit_activity_data to the minute
 CREATE VIEW IF NOT EXISTS pioreactor_unit_activity_data_rollup AS
-    SELECT
-        experiment,
-        pioreactor_unit,
-        datetime(strftime('%Y-%m-%dT%H:%M:00', timestamp)) as timestamp,
-        AVG(od_reading) as avg_od_reading,
-        AVG(normalized_od_reading) as avg_normalized_od_reading,
-        AVG(temperature_c) as avg_temperature_c,
-        AVG(growth_rate) as avg_growth_rate,
-        AVG(measured_rpm) as avg_measured_rpm,
-        SUM(add_media_ml) as sum_add_media_ml,
-        SUM(remove_waste_ml) as sum_remove_waste_ml,
-        SUM(add_alt_media_ml) as sum_add_alt_media_ml
-    FROM pioreactor_unit_activity_data
-    GROUP BY 1, 2, 3;
+SELECT
+    experiment,
+    pioreactor_unit,
+    datetime(strftime('%Y-%m-%dT%H:%M:00', timestamp)) AS timestamp,
+    avg(od_reading) AS avg_od_reading,
+    avg(normalized_od_reading) AS avg_normalized_od_reading,
+    avg(temperature_c) AS avg_temperature_c,
+    avg(growth_rate) AS avg_growth_rate,
+    avg(measured_rpm) AS avg_measured_rpm,
+    sum(add_media_ml) AS sum_add_media_ml,
+    sum(remove_waste_ml) AS sum_remove_waste_ml,
+    sum(add_alt_media_ml) AS sum_add_alt_media_ml
+FROM pioreactor_unit_activity_data
+GROUP BY experiment, pioreactor_unit, timestamp;
 
 
 CREATE TABLE IF NOT EXISTS calibrations (
-    pioreactor_unit          TEXT NOT NULL,
-    created_at               TEXT NOT NULL,
-    type                     TEXT NOT NULL,
-    data                     TEXT NOT NULL,
-    name                     TEXT NOT NULL,
-    is_current               INTEGER DEFAULT 0 NOT NULL,
-    set_to_current_at        TEXT,
-    UNIQUE(pioreactor_unit, type, name)
+    pioreactor_unit TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    type TEXT NOT NULL,
+    data TEXT NOT NULL,
+    name TEXT NOT NULL,
+    is_current INTEGER DEFAULT 0 NOT NULL,
+    set_to_current_at TEXT,
+    UNIQUE (pioreactor_unit, type, name)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS calibrations_ix
@@ -296,21 +309,21 @@ ON calibrations (pioreactor_unit, type, name);
 
 
 CREATE TABLE IF NOT EXISTS pwm_dcs (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
-    channel_1                REAL,
-    channel_2                REAL,
-    channel_3                REAL,
-    channel_4                REAL,
-    channel_5                REAL
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    channel_1 REAL,
+    channel_2 REAL,
+    channel_3 REAL,
+    channel_4 REAL,
+    channel_5 REAL
 );
 
 
 CREATE TABLE IF NOT EXISTS experiment_profile_runs (
-    started_at               TEXT NOT NULL,
-    experiment_profile_name  TEXT NOT NULL,
-    experiment               TEXT
+    started_at TEXT NOT NULL,
+    experiment_profile_name TEXT NOT NULL,
+    experiment TEXT
 );
 
 
@@ -319,19 +332,22 @@ CREATE TABLE IF NOT EXISTS experiment_profile_runs (
 ---
 
 CREATE TABLE IF NOT EXISTS experiment_worker_assignments (
-    pioreactor_unit     TEXT NOT NULL,
-    experiment          TEXT NOT NULL,
-    assigned_at         TEXT NOT NULL,
-    UNIQUE(pioreactor_unit), -- force a worker to only ever be assigned to a single experiment.
-    FOREIGN KEY (pioreactor_unit) REFERENCES workers(pioreactor_unit)  ON DELETE CASCADE,
-    FOREIGN KEY (experiment) REFERENCES experiments(experiment)  ON DELETE CASCADE
+    pioreactor_unit TEXT NOT NULL,
+    experiment TEXT NOT NULL,
+    assigned_at TEXT NOT NULL,
+    -- force a worker to only ever be assigned to a single experiment.
+    UNIQUE (pioreactor_unit),
+    FOREIGN KEY (pioreactor_unit) REFERENCES workers (
+        pioreactor_unit
+    ) ON DELETE CASCADE,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS workers (
-    pioreactor_unit     TEXT NOT NULL, -- id
-    added_at            TEXT NOT NULL,
-    is_active           INTEGER DEFAULT 1 NOT NULL,
-    UNIQUE(pioreactor_unit)
+    pioreactor_unit TEXT NOT NULL, -- id
+    added_at TEXT NOT NULL,
+    is_active INTEGER DEFAULT 1 NOT NULL,
+    UNIQUE (pioreactor_unit)
 );
-
-
