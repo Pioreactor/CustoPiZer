@@ -109,7 +109,7 @@ SELECT
     description,
     media_used,
     organism_used,
-    round((strftime("%s", now) - strftime("%s", created_at)) / 60 / 60, 0)
+    round((strftime("%s", "now") - strftime("%s", created_at)) / 60 / 60, 0)
         AS delta_hours
 FROM experiments
 ORDER BY rowid DESC
