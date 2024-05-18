@@ -11,4 +11,4 @@ install_cleanup_trap
 
 apt-get update
 
-timedatectl
+date -u
