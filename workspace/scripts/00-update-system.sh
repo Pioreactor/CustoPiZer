@@ -11,4 +11,4 @@ install_cleanup_trap
 
 apt-get update
 
-date -u
+cat /etc/fake-hwclock.data
