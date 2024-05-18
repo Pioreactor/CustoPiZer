@@ -1,0 +1,17 @@
+[connection]
+id=eth0
+uuid=5e55231f-ea1a-484b-88f9-88e3598c66ae
+type=ethernet
+interface-name=eth0
+autoconnect-priority=1
+
+[ethernet]
+
+[ipv4]
+method=auto
+
+[ipv6]
+addr-gen-mode=default
+method=auto
+
+[proxy]

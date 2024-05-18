@@ -3,6 +3,8 @@ id=PioreactorLocalLink
 type=ethernet
 interface-name=eth0
 uuid=89122fc2-2280-43ea-9bc6-005340cf2972
+autoconnect=false
+autoconnect-priority=0
 
 
 [ethernet]
