@@ -11,4 +11,4 @@ install_cleanup_trap
 
 apt-get update
 
-cat /etc/fake-hwclock.data
+sudo fake-hwclock save # save the stored time to the current time
