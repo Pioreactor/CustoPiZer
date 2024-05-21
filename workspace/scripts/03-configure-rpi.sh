@@ -74,6 +74,7 @@ echo "LG_WD=/tmp" | sudo tee -a /etc/environment # no trailing slash!
 # from http://himeshp.blogspot.com/2018/08/fast-boot-with-raspberry-pi.html
 echo "disable_splash=1" | sudo tee -a /boot/config.txt
 echo "initial_turbo=30" | sudo tee -a /boot/config.txt
+echo "force_turbo=1" | sudo tee -a /boot/config.txt
 
 
 # disable services that slow down boot

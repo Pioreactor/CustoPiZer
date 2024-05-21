@@ -85,8 +85,9 @@ if [ "$LEADER" == "1" ]; then
     # see avahi_aliases.service for how this works
     sudo apt-get install avahi-utils -y
     # turn off ipv6. This seems to solve the "hostname-N" problem some users see.
-    sudo crudini --ini-options=nospace --set /etc/avahi/avahi-daemon.conf server use-ipv6 no # nospace is important!
-    sudo crudini --ini-options=nospace --set /etc/avahi/avahi-daemon.conf publish publish-aaaa-on-ipv4 no
+    # nospace is important!
+    sudo crudini --ini-options=nospace --set /etc/avahi/avahi-daemon.conf server use-ipv6 no \
+                                       --set /etc/avahi/avahi-daemon.conf publish publish-aaaa-on-ipv4 no
 
     # test that tools works:
     flask --help
