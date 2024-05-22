@@ -2,7 +2,7 @@
 Description=Start local access point conditionally
 Before=network.target
 Wants=network.target
-After=firstboot.service everyboot.service NetworkManager.service
+After=everyboot.service NetworkManager.service
 ConditionPathExists=/boot/firmware/local_access_point
 
 [Service]
