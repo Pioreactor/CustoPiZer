@@ -40,11 +40,11 @@ common:
           options:
             target_rpm: 400.0
         - type: update
-          hours_elapsed: 0.020
+          hours_elapsed: 0.025
           options:
             target_rpm: 800.0
         - type: stop
-          hours_elapsed: 0.04
+          hours_elapsed: 0.05
 EOT
 sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
 

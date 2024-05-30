@@ -17,3 +17,9 @@ cp /files/system/NetworkManager/PioreactorDefaultEth.nmconnection /etc/NetworkMa
 sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorAP.nmconnection
 sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorLocalLink.nmconnection
 sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorDefaultEth.nmconnection
+
+
+# turn off avahi ipv6. This seems to solve the "hostname-N" problem some users see.
+# nospace is important!
+sudo crudini --ini-options=nospace --set /etc/avahi/avahi-daemon.conf server use-ipv6 no \
+                                   --set /etc/avahi/avahi-daemon.conf publish publish-aaaa-on-ipv4 no

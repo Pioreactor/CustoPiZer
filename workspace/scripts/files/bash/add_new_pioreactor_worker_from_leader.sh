@@ -94,7 +94,7 @@ do
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
-ssh "$USERNAME"@"$HOSTNAME_local" "echo \"server $LEADER_HOSTNAME.local iburst prefer\" | sudo tee -a  /etc/chrony/chrony.conf"
+ssh "$USERNAME"@"$HOSTNAME_local" "echo \"server $LEADER_HOSTNAME.local iburst prefer\" | sudo tee -a /etc/chrony/chrony.conf || :"
 
 
 # reboot to set configuration
