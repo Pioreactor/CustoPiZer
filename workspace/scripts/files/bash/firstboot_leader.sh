@@ -23,6 +23,5 @@ sudo -u $USERNAME ssh-keyscan "$(hostname)".local >> $SSH_DIR/known_hosts
 crudini --set --ini-options=nospace $PIO_DIR/config.ini cluster.topology leader_hostname "$(hostname)"
 crudini --set --ini-options=nospace $PIO_DIR/config.ini cluster.topology leader_address "$(hostname)".local
 crudini --set --ini-options=nospace $PIO_DIR/config.ini mqtt broker_address "$(hostname)".local
-crudini --set --ini-options=nospace $PIO_DIR/config.ini local_access_point ssid "pioreactor_$HOSTNAME"
 
 sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around.  When you are ready, create a new experiment in the dropdown to the left.');"
