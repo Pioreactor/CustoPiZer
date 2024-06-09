@@ -4,7 +4,10 @@ CREATE TABLE IF NOT EXISTS od_readings (
     timestamp TEXT NOT NULL,
     od_reading REAL NOT NULL,
     angle INTEGER NOT NULL,
-    channel INTEGER CHECK (channel IN (1, 2)) NOT NULL
+    channel INTEGER CHECK (channel IN (1, 2)) NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_ix
@@ -15,7 +18,10 @@ CREATE TABLE IF NOT EXISTS alt_media_fractions (
     experiment TEXT NOT NULL,
     pioreactor_unit TEXT NOT NULL,
     timestamp TEXT NOT NULL,
-    alt_media_fraction REAL NOT NULL
+    alt_media_fraction REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS alt_media_fractions_ix
@@ -27,7 +33,10 @@ CREATE TABLE IF NOT EXISTS od_readings_filtered (
     experiment TEXT NOT NULL,
     pioreactor_unit TEXT NOT NULL,
     timestamp TEXT NOT NULL,
-    normalized_od_reading REAL NOT NULL
+    normalized_od_reading REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_filtered_ix
@@ -41,7 +50,10 @@ CREATE TABLE IF NOT EXISTS dosing_events (
     timestamp TEXT NOT NULL,
     event TEXT NOT NULL,
     volume_change_ml REAL NOT NULL,
-    source_of_event TEXT
+    source_of_event TEXT,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -52,7 +64,10 @@ CREATE TABLE IF NOT EXISTS led_change_events (
     timestamp TEXT NOT NULL,
     channel TEXT CHECK (channel IN ('A', 'B', 'C', 'D')) NOT NULL,
     intensity REAL NOT NULL,
-    source_of_event TEXT
+    source_of_event TEXT,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -61,7 +76,10 @@ CREATE TABLE IF NOT EXISTS growth_rates (
     experiment TEXT NOT NULL,
     pioreactor_unit TEXT NOT NULL,
     timestamp TEXT NOT NULL,
-    rate REAL NOT NULL
+    rate REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS growth_rates_ix
@@ -76,7 +94,10 @@ CREATE TABLE IF NOT EXISTS logs (
     message TEXT NOT NULL,
     source TEXT NOT NULL,
     level TEXT,
-    task TEXT
+    task TEXT,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS logs_ix
@@ -122,7 +143,10 @@ CREATE TABLE IF NOT EXISTS dosing_automation_settings (
     started_at TEXT NOT NULL,
     ended_at TEXT,
     automation_name TEXT NOT NULL,
-    settings TEXT NOT NULL
+    settings TEXT NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -133,7 +157,10 @@ CREATE TABLE IF NOT EXISTS led_automation_settings (
     started_at TEXT NOT NULL,
     ended_at TEXT,
     automation_name TEXT NOT NULL,
-    settings TEXT NOT NULL
+    settings TEXT NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -144,7 +171,10 @@ CREATE TABLE IF NOT EXISTS temperature_automation_settings (
     started_at TEXT NOT NULL,
     ended_at TEXT,
     automation_name TEXT NOT NULL,
-    settings TEXT NOT NULL
+    settings TEXT NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -161,7 +191,10 @@ CREATE TABLE IF NOT EXISTS kalman_filter_outputs (
     cov_02 REAL NOT NULL,
     cov_11 REAL NOT NULL,
     cov_12 REAL NOT NULL,
-    cov_22 REAL NOT NULL
+    cov_22 REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -170,7 +203,10 @@ CREATE TABLE IF NOT EXISTS temperature_readings (
     experiment TEXT NOT NULL,
     pioreactor_unit TEXT NOT NULL,
     timestamp TEXT NOT NULL,
-    temperature_c REAL NOT NULL
+    temperature_c REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -183,7 +219,10 @@ CREATE TABLE IF NOT EXISTS stirring_rates (
     experiment TEXT NOT NULL,
     pioreactor_unit TEXT NOT NULL,
     timestamp TEXT NOT NULL,
-    measured_rpm REAL NOT NULL
+    measured_rpm REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -203,7 +242,10 @@ CREATE TABLE IF NOT EXISTS od_blanks (
     timestamp TEXT NOT NULL,
     channel TEXT CHECK (channel IN ('1', '2')) NOT NULL,
     angle INTEGER NOT NULL,
-    od_reading REAL NOT NULL
+    od_reading REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -211,7 +253,10 @@ CREATE TABLE IF NOT EXISTS ir_led_intensities (
     experiment TEXT NOT NULL,
     pioreactor_unit TEXT NOT NULL,
     timestamp TEXT NOT NULL,
-    relative_intensity REAL NOT NULL
+    relative_intensity REAL NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -221,7 +266,10 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
     label TEXT NOT NULL,
     created_at TEXT NOT NULL,
     UNIQUE (pioreactor_unit, experiment),
-    UNIQUE (label, experiment)
+    UNIQUE (label, experiment),
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS temperature_automation_events (
@@ -230,7 +278,10 @@ CREATE TABLE IF NOT EXISTS temperature_automation_events (
     timestamp TEXT NOT NULL,
     event_name TEXT NOT NULL,
     message TEXT,
-    data TEXT
+    data TEXT,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS dosing_automation_events (
@@ -239,7 +290,10 @@ CREATE TABLE IF NOT EXISTS dosing_automation_events (
     timestamp TEXT NOT NULL,
     event_name TEXT NOT NULL,
     message TEXT,
-    data TEXT
+    data TEXT,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS led_automation_events (
@@ -248,7 +302,10 @@ CREATE TABLE IF NOT EXISTS led_automation_events (
     timestamp TEXT NOT NULL,
     event_name TEXT NOT NULL,
     message TEXT,
-    data TEXT
+    data TEXT,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -268,7 +325,10 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
     led_d_intensity_update REAL,
     add_media_ml REAL,
     remove_waste_ml REAL,
-    add_alt_media_ml REAL
+    add_alt_media_ml REAL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
@@ -316,14 +376,20 @@ CREATE TABLE IF NOT EXISTS pwm_dcs (
     channel_2 REAL,
     channel_3 REAL,
     channel_4 REAL,
-    channel_5 REAL
+    channel_5 REAL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 
 CREATE TABLE IF NOT EXISTS experiment_profile_runs (
     started_at TEXT NOT NULL,
     experiment_profile_name TEXT NOT NULL,
-    experiment TEXT
+    experiment TEXT,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
 );
 
 

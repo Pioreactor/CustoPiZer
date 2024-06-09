@@ -22,6 +22,7 @@ usermod -a -G video pioreactor
 usermod -a -G dialout pioreactor
 usermod -a -G systemd-journal pioreactor
 usermod -a -G avahi pioreactor
+usermod -a -G netdev pioreactor
 
 chmod 755 /home/pioreactor
 

@@ -85,6 +85,8 @@ if [ "$LEADER" == "1" ]; then
     # see avahi_aliases.service for how this works
     sudo apt-get install avahi-utils -y
 
+    # install ufw since this is pretty common in larger networks
+    sudo apt install ufw
 
     # test that tools works:
     flask --help

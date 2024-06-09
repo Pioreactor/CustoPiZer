@@ -19,7 +19,7 @@ sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorLocalLink.nmconn
 sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorDefaultEth.nmconnection
 
 
-# turn off avahi ipv6. This seems to solve the "hostname-N" problem some users see.
+# turn off avahi ipv6? This seems to solve the "hostname-N" problem some users see.
+# Edit1: no, keep use-ipv6=yes, as it significantly improves how fast browsers connect to mqtt.
 # nospace is important!
-sudo crudini --ini-options=nospace --set /etc/avahi/avahi-daemon.conf server use-ipv6 no \
-                                   --set /etc/avahi/avahi-daemon.conf publish publish-aaaa-on-ipv4 no
+sudo crudini --ini-options=nospace --set /etc/avahi/avahi-daemon.conf publish publish-aaaa-on-ipv4 no

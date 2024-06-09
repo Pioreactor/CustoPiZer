@@ -10,7 +10,7 @@ set -e
 export LC_ALL=C
 
 SSHPASS=${2:-raspberry}
-PIO_VERSION=${3:-"1.0"}
+PIO_VERSION=${3:-"1.1"}
 PIO_MODEL=${4:-pioreactor_20ml}
 
 HOSTNAME=$1
@@ -50,11 +50,6 @@ do
     sleep 1
 done
 
-# check if it is a worker
-if ! pio workers discover -t | grep -q "$HOSTNAME"; then
-  echo "Unable to confirm if $HOSTNAME is a Pioreactor worker. Not found in 'pio workers discover -t'. Did you install the worker image?"
-  exit 1
-fi
 
 # copy public key over
 sshpass -p "$SSHPASS" ssh-copy-id "$USERNAME"@"$HOSTNAME_local"
@@ -94,6 +89,7 @@ do
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
+ssh "$USERNAME"@"$HOSTNAME_local" "sudo date --set \"$(date)\" && sudo fake-hwclock save"
 ssh "$USERNAME"@"$HOSTNAME_local" "echo \"server $LEADER_HOSTNAME.local iburst prefer\" | sudo tee -a /etc/chrony/chrony.conf || :"
 
 
