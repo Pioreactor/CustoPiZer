@@ -86,7 +86,7 @@ if [ "$LEADER" == "1" ]; then
     sudo apt-get install avahi-utils -y
 
     # install ufw since this is pretty common in larger networks
-    sudo apt install ufw
+    sudo apt install ufw -y
 
     # test that tools works:
     flask --help
