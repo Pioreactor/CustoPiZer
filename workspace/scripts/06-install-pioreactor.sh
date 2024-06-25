@@ -25,7 +25,7 @@ sudo -u $USERNAME mkdir -p $PIO_DIR/experiment_profiles
 echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $PIO_DIR/experiment_profiles/README.txt > /dev/null
 
 cat <<EOT >> $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
-experiment_profile_name: demo_stirring_example
+experiment_profile_name: Demo stirring example
 
 metadata:
   author: Cam Davidson-Pilon

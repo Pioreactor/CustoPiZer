@@ -17,3 +17,6 @@ if [ "$LEADER" == "1" ]; then
     echo "allow all" | sudo tee -a  /etc/chrony/chrony.conf
     echo "local stratum 10" | sudo tee -a  /etc/chrony/chrony.conf
 fi
+
+# confirm chrony works
+chronyc sources

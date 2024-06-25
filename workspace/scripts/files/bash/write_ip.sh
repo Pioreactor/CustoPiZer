@@ -5,24 +5,19 @@ set -e
 
 export LC_ALL=C
 
-# Get the first IPv4 address
-IP=$(hostname -I | awk '{print $1}')
+# Get all IPv4 addresses
+IP=$(hostname -I)
 
-# Check if the network interfaces exist and get their MAC addresses
-if [ -d /sys/class/net/wlan0 ]; then
-    WLAN_MAC=$(cat /sys/class/net/wlan0/address)
-else
-    WLAN_MAC="Not available"
-fi
+# Initialize an empty variable for network information
+NETWORK_INFO="HOSTNAME=$(hostname)\nIP=$IP\n"
 
-if [ -d /sys/class/net/eth0 ]; then
-    ETH_MAC=$(cat /sys/class/net/eth0/address)
-else
-    ETH_MAC="Not available"
-fi
+# Iterate over all network interfaces
+for iface in /sys/class/net/*; do
+    IFACE_NAME=$(basename "$iface")
+    MAC_ADDR=$(cat "$iface"/address)
+    NETWORK_INFO+="${IFACE_NAME}_MAC=$MAC_ADDR\n"
+done
 
 # Write the information to a file in key-value format
-echo "HOSTNAME=$(hostname)" >> /boot/firmware/network_info.txt
-echo "IP=$IP" > /boot/firmware/network_info.txt
-echo "WLAN_MAC=$WLAN_MAC" >> /boot/firmware/network_info.txt
-echo "ETH_MAC=$ETH_MAC" >> /boot/firmware/network_info.txt
+# Use > since we want to rewrite on every boot (not append)
+echo -e "$NETWORK_INFO" > /boot/firmware/network_info.txt
