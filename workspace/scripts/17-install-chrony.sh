@@ -18,5 +18,3 @@ if [ "$LEADER" == "1" ]; then
     echo "local stratum 10" | sudo tee -a  /etc/chrony/chrony.conf
 fi
 
-# confirm chrony works
-chronyc sources
