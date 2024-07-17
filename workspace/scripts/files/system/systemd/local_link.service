@@ -1,0 +1,19 @@
+[Unit]
+Description=Start local link over ethernet
+Before=network.target
+Wants=network.target
+After=everyboot.service NetworkManager.service
+ConditionPathExists=/boot/firmware/local_link
+
+[Service]
+ExecStart=/bin/bash /usr/local/bin/local_access_point.sh
+Type=oneshot
+RemainAfterExit=yes
+# if this start too early, it fails. Keep trying until it succeeds. Note that if ConditionPathExists fails, this won't restart.
+Restart=on-failure
+RestartSec=15
+
+
+[Install]
+WantedBy=multi-user.target
+

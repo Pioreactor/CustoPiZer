@@ -49,6 +49,46 @@ EOT
 sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
 
 
+cat <<EOT >> $PIO_DIR/experiment_profiles/demo_logging_example.yaml
+experiment_profile_name: demo_of_logging
+
+metadata:
+  author: Cam Davidson-Pilon
+  description: A  profile to demonstrate logging, start stirring in your Pioreactor(s), update RPM, and log the value.
+
+common:
+  jobs:
+    stirring:
+      actions:
+        - type: start
+          hours_elapsed: 0.0
+          options:
+
+            target_rpm: 400.0
+        - type: log
+          hours_elapsed: 0.001
+          options:
+            message: "\${{job_name()}} starting at target \${{::stirring:target_rpm}} RPM"
+        - type: log
+          hours_elapsed: 0.005
+          options:
+            message: "Increasing to 800 RPM in \${{unit()}}. Try changing the target RPM in the UI."
+        - type: update
+          hours_elapsed: 0.005
+          options:
+            target_rpm: 800.0
+        - type: log
+          hours_elapsed: 0.019
+          options:
+            message: "Value of target_rpm in \${{unit()}} is \${{::stirring:target_rpm}} RPM. Stopping."
+        - type: stop
+          hours_elapsed: 0.02
+
+
+EOT
+sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_logging_example.yaml
+
+
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
     sudo -u $USERNAME cp /files/config.example.ini $PIO_DIR/config.ini

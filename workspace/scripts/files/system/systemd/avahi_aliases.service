@@ -1,7 +1,7 @@
 [Unit]
 Description=Publish an alias for %H.local via mdns
 Wants=network-online.target
-After=network-online.target firstboot.service local_access_point.service avahi-daemon.service am_i_leader.service
+After=network-online.target firstboot.service local_access_point.service local_link.service avahi-daemon.service am_i_leader.service
 Requires=am_i_leader.service
 
 [Service]
