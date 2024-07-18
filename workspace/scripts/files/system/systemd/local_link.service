@@ -6,7 +6,7 @@ After=everyboot.service NetworkManager.service
 ConditionPathExists=/boot/firmware/local_link
 
 [Service]
-ExecStart=/bin/bash /usr/local/bin/local_access_point.sh
+ExecStart=/bin/bash /usr/local/bin/local_link.sh
 Type=oneshot
 RemainAfterExit=yes
 # if this start too early, it fails. Keep trying until it succeeds. Note that if ConditionPathExists fails, this won't restart.

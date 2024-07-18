@@ -10,13 +10,11 @@ source /common.sh
 install_cleanup_trap
 
 
-USERNAME=pioreactor
-
-
 apt-get install -y python3-pip
 apt-get install -y python3-dev # needed to build CLoader in pyyaml
 sudo rm -rf /usr/lib/python3.11/EXTERNALLY-MANAGED || true # see jeff gerlings blog post
-sudo pip3 install pip -U # update to latest
+sudo pip3 install pip==0.24
+sudo pip3 install wheel==0.41.2
 
 # these live in /root/.config/pip/pip.conf
 sudo pip3 config set global.disable-pip-version-check true # don't check for latest pip
