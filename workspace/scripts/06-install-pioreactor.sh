@@ -50,11 +50,11 @@ sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_stirring_exam
 
 
 cat <<EOT >> $PIO_DIR/experiment_profiles/demo_logging_example.yaml
-experiment_profile_name: demo_of_logging
+experiment_profile_name: Demo of logging real-time data
 
 metadata:
   author: Cam Davidson-Pilon
-  description: A  profile to demonstrate logging, start stirring in your Pioreactor(s), update RPM, and log the value.
+  description: A  profile to demonstrate logging real-time data, start stirring in your Pioreactor(s), update RPM, and log the value.
 
 common:
   jobs:
