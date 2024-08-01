@@ -31,7 +31,13 @@ fi
 # copy data over
 # use rsync because we want to merge custom yamls the user has, we any updates to our own yamls.
 rsync -ap --ignore-existing $UI_FOLDER/contrib/ $WORK_DIR/contrib/ 2>/dev/null || :
-cp -p $UI_FOLDER/.env $WORK_DIR 2>/dev/null || :
+
+if [ -f "$UI_FOLDER/.env" ]; then
+    echo "Copying .env file"
+    cp -p $UI_FOLDER/.env $WORK_DIR
+else
+    echo ".env file does not exist in $UI_FOLDER"
+fi
 
 # swap folders
 rm -rf $UI_FOLDER

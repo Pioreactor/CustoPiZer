@@ -28,9 +28,10 @@ sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, desc
 
 
 # create leader's config file (still can use one even if not a worker.)
-sudo -u $USERNAME touch $PIO_DIR/config_"$HOSTNAME".ini # set with the correct read/write permissions
-printf '# Any settings here are specific to %s, and override the settings in config.ini\n\n' "$HOSTNAME" >> $PIO_DIR/config_"$HOSTNAME".ini
+sudo -u $USERNAME touch "$PIO_DIR/config_$HOSTNAME.ini" # set with the correct read/write permissions
+printf '# Any settings here are specific to %s, the leader, and override the settings in config.ini\n\n' "$HOSTNAME" >> "$PIO_DIR/config_$HOSTNAME.ini"
 
-crudini --ini-options=nospace --set $PIO_DIR/config_"$HOSTNAME".ini cluster.topology leader_address 127.0.0.1 \
-                              --set $PIO_DIR/config_"$HOSTNAME".ini mqtt broker_address 127.0.0.1
+crudini --ini-options=nospace --set "$PIO_DIR/config_$HOSTNAME.ini" cluster.topology leader_address 127.0.0.1 \
+                              --set "$PIO_DIR/config_$HOSTNAME.ini" mqtt broker_address 127.0.0.1
 
+cp "$PIO_DIR/config_$HOSTNAME.ini" "$PIO_DIR/unit_config.ini"
