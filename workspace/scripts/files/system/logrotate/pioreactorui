@@ -1,8 +1,0 @@
-/var/log/pioreactorui.log {
-    weekly
-    missingok
-    rotate 10
-    compress
-    notifempty
-    create 0660 www-data www-data
-}

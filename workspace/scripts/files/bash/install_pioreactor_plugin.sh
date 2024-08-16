@@ -95,8 +95,8 @@ if [ "$am_i_leader" = true ]; then
         rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
     fi
 
-    # broadcast to cluster
-    pios sync-configs --shared
+    # broadcast to cluster, don't crap out if we can't sync to a worker.
+    pios sync-configs --shared || :
 fi
 
 # run a post install scripts.
