@@ -86,7 +86,9 @@ common:
 
 
 EOT
+
 sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_logging_example.yaml
+sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
 
 
 if [ "$LEADER" == "1" ]; then
@@ -102,7 +104,6 @@ fi
 
 
 if [ "$WORKER" == "1" ]; then
-    sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
     sudo apt-get install -y python3-numpy
 
     if [ "$PIO_VERSION" == "develop" ]; then
