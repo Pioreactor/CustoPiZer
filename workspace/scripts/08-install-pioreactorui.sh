@@ -28,8 +28,9 @@ latest_release=$(curl -sS https://api.github.com/repos/pioreactor/pioreactorui/r
 
 tag=$(echo "$latest_release" | sed -Ene '/^ *"tag_name": *"(.+)",$/s//\1/p')
 
-if [ "$PIO_VERSION" == "develop" ]; then
-    tag="develop"
+
+if [ "$PIO_VERSION" == "worker-ui" ]; then
+    tag="worker-ui"
 fi
 
 echo "Installing UI version $tag"
