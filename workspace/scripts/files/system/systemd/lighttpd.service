@@ -1,7 +1,6 @@
 [Unit]
 Description=Lighttpd Daemon
-After=network-online.target am_i_leader.service
-Requires=am_i_leader.service
+After=network-online.target
 
 [Service]
 Type=simple

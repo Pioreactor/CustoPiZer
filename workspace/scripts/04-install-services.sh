@@ -37,24 +37,24 @@ sudo systemctl enable local_link.service
 
 sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
+sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
+sudo systemctl enable create_diskcache.service
+cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
+
+# systemd: UI web-workers
+sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
+sudo systemctl enable huey.service
+
 if [ "$LEADER" == "1" ]; then
-
-    # systemd: web UI stuff
-    sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
-    sudo systemctl enable huey.service
-
-    sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
-    sudo systemctl enable create_diskcache.service
-    cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
+    # an am I leader service. Sometimes leaders become workers, and we don't want to start services.
+    sudo cp /files/system/systemd/am_i_leader.service $SYSTEMD_DIR
+    sudo systemctl enable am_i_leader.service
 
     # systemd: alias hostname to pioreactor.local
     sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
     sudo systemctl enable avahi_aliases.service
     cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
 
-    # an am I leader service. Sometimes leaders become workers, and we don't want to start services.
-    sudo cp /files/system/systemd/am_i_leader.service $SYSTEMD_DIR
-    sudo systemctl enable am_i_leader.service
 
 fi
 

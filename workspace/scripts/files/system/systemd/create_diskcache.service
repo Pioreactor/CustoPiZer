@@ -1,7 +1,6 @@
 [Unit]
 Description=Prepare cache for UI
-After=network.target firstboot.service am_i_leader.service
-Requires=am_i_leader.service
+After=network.target firstboot.service
 Before=lighttpd.service huey.service
 
 [Service]
