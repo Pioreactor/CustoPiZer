@@ -39,11 +39,30 @@ if [ "$WORKER" == "1" ]; then
         echo "gpu_mem=16"            | sudo tee /boot/config.txt -a
         echo "display_auto_detect=0" | sudo tee -a /boot/config.txt
         # disable HDMI:
+
         #  https://www.cnx-software.com/2021/12/09/raspberry-pi-zero-2-w-power-consumption/
         sed -i '/dtoverlay=vc4-kms-v3d/d' /boot/config.txt
-        echo "hdmi_blanking=2" | sudo tee -a /boot/config.txt
-        # https://forums.raspberrypi.com/viewtopic.php?p=2063523
         echo "dtoverlay=vc4-kms-v3d,nohdmi" | sudo tee -a /boot/config.txt
+        echo "max_framebuffers=1" | sudo tee -a /boot/config.txt
+        echo "disable_fw_kms_setup=1" | sudo tee -a /boot/config.txt
+        echo "disable_overscan=1" | sudo tee -a /boot/config.txt
+        echo "enable_tvout=0" | sudo tee -a /boot/config.txt
+        echo "hdmi_blanking=2" | sudo tee -a /boot/config.txt
+        echo "hdmi_ignore_edid=0xa5000080" | sudo tee -a /boot/config.txt
+        echo "hdmi_ignore_cec_init=1" | sudo tee -a /boot/config.txt
+        echo "hdmi_ignore_cec=1" | sudo tee -a /boot/config.txt
+
+        # disable POE, LDC probing
+        echo "disable_poe_fan=1" | sudo tee -a /boot/config.txt
+        echo "ignore_lcd=1" | sudo tee -a /boot/config.txt
+        echo "disable_touchscreen=1" | sudo tee -a /boot/config.txt
+        echo "disable_fw_kms_setup=1" | sudo tee -a /boot/config.txt
+
+        # skip display and camera sensing
+        echo "camera_auto_detect=0" | sudo tee -a /boot/config.txt
+        echo "display_auto_detect=0" | sudo tee -a /boot/config.txt
+
+
 
         # disable bluetooth
         sudo systemctl disable hciuart
