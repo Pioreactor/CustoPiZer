@@ -58,6 +58,11 @@ fi
 # the below will remove swap, which should help extend the life of SD cards:
 # https://raspberrypi.stackexchange.com/questions/169/how-can-i-extend-the-life-of-my-sd-card
 sudo apt-get remove dphys-swapfile -y
+
+# remove some redundant programs
+sudo apt-get remove system-config-printer -y
+
+# remove depend. of uninstalled programs.
 sudo apt-get autoremove -y
 
 # put /tmp into memory, as we write to it a lot.
