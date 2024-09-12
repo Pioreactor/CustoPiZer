@@ -9,6 +9,6 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-apt-get update
+sudo apt full-upgrade
 
 sudo fake-hwclock save # save the stored time to the current time
