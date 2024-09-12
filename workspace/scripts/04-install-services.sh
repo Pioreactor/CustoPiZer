@@ -46,10 +46,6 @@ sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
 sudo systemctl enable huey.service
 
 if [ "$LEADER" == "1" ]; then
-    # an am I leader service. Sometimes leaders become workers, and we don't want to start services.
-    sudo cp /files/system/systemd/am_i_leader.service $SYSTEMD_DIR
-    sudo systemctl enable am_i_leader.service
-
     # systemd: alias hostname to pioreactor.local
     sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
     sudo systemctl enable avahi_aliases.service
