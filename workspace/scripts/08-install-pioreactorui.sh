@@ -12,7 +12,7 @@ source /common.sh
 install_cleanup_trap
 
 UI_FOLDER=/var/www/pioreactorui
-SYSTEMD_DIR=/lib/systemd/system/
+SYSTEMD_DIR=/etc/systemd/system/
 
 
 mkdir /var/www

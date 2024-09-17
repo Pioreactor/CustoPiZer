@@ -11,7 +11,7 @@ install_cleanup_trap
 
 # systemd: add long running pioreactor jobs
 
-SYSTEMD_DIR=/lib/systemd/system/
+SYSTEMD_DIR=/etc/systemd/system/
 
 sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 sudo systemctl enable pioreactor_startup_run@monitor.service
