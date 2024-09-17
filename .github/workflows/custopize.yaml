@@ -82,7 +82,7 @@ jobs:
         IMAGE_LEADER_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-lw.outputs.zip_name }}
         echo "IMAGE_LEADER_WORKER_ZIP=${{ steps.package-image-lw.outputs.zip_name }}" >> $GITHUB_ENV
         echo "IMAGE_LEADER_WORKER_URL=$IMAGE_LEADER_WORKER_URL" >> $GITHUB_ENV
-        echo "Link to leader image: $IMAGE_LEADER_WORKER_URL" >> $GITHUB_STEP_SUMMARY
+        echo "Link to leader-worker image: $IMAGE_LEADER_WORKER_URL" >> $GITHUB_STEP_SUMMARY
 
 
     - name: "🏗 Run CustoPiZer L"
@@ -141,7 +141,7 @@ jobs:
       run: |
         echo "IMAGE_WORKER_ZIP=${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
         echo "IMAGE_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
-
+        echo "Link to worker image: $IMAGE_WORKER_URL" >> $GITHUB_STEP_SUMMARY
 
 
 
