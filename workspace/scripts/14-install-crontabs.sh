@@ -15,3 +15,5 @@ USERNAME=pioreactor
 if [ "$LEADER" == "1" ]; then
     crontab -u "$USERNAME" /files/pioreactor.cron
 fi
+
+crontab -u root /files/root.cron
