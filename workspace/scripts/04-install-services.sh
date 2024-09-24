@@ -19,7 +19,7 @@ sudo systemctl enable pioreactor_startup_run@monitor.service
 # systemd: add long running pioreactor jobs
 sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 sudo systemctl enable pioreactor_startup_run@monitor.service
-sudo systemctl enable pioreactor_startup_run@watchdog.service # this is leader-only, and will just no-op for workers
+# sudo systemctl enable pioreactor_startup_run@watchdog.service # this is leader-only, and will just no-op for workers
 sudo systemctl enable pioreactor_startup_run@mqtt_to_db_streaming.service # this is leader-only, and will just no-op for workers
 
 # systemd: remove wifi powersave - helps with mdns discovery

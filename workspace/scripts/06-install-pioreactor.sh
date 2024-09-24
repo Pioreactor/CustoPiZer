@@ -24,30 +24,6 @@ echo "Directory for adding to the UI using yaml files, see docs: https://docs.pi
 sudo -u $USERNAME mkdir -p $PIO_DIR/experiment_profiles
 echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $PIO_DIR/experiment_profiles/README.txt > /dev/null
 
-cat <<EOT >> $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
-experiment_profile_name: Demo stirring example
-
-metadata:
-  author: Cam Davidson-Pilon
-  description: A simple profile to start stirring in your Pioreactor(s), update RPM at 90 seconds, and turn off after 180 seconds.
-
-common:
-  jobs:
-    stirring:
-      actions:
-        - type: start
-          hours_elapsed: 0.0
-          options:
-            target_rpm: 400.0
-        - type: update
-          hours_elapsed: 0.025
-          options:
-            target_rpm: 800.0
-        - type: stop
-          hours_elapsed: 0.05
-EOT
-sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
-
 
 cat <<EOT >> $PIO_DIR/experiment_profiles/demo_logging_example.yaml
 experiment_profile_name: Demo of logging real-time data
@@ -83,11 +59,34 @@ common:
             message: "Value of target_rpm in \${{unit()}} is \${{::stirring:target_rpm}} RPM. Stopping."
         - type: stop
           hours_elapsed: 0.02
-
-
 EOT
-
 sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_logging_example.yaml
+
+
+cat <<EOT >> $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
+experiment_profile_name: Demo stirring example
+
+metadata:
+  author: Cam Davidson-Pilon
+  description: A simple profile to start stirring in your Pioreactor(s), update RPM at 90 seconds, and turn off after 180 seconds.
+
+common:
+  jobs:
+    stirring:
+      actions:
+        - type: start
+          hours_elapsed: 0.0
+          options:
+            target_rpm: 400.0
+        - type: update
+          hours_elapsed: 0.025
+          options:
+            target_rpm: 800.0
+        - type: stop
+          hours_elapsed: 0.05
+EOT
+sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
+
 sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
 
 
