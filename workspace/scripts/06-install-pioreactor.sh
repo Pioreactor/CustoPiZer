@@ -117,3 +117,4 @@ fi
 # useful libs
 sudo apt-get install -y jq
 sudo apt-get install -y rsyslog
+sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 -y # used for Pillow
