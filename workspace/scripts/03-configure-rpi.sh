@@ -105,12 +105,12 @@ echo "force_turbo=1" | sudo tee -a /boot/config.txt
 sudo systemctl disable raspi-config.service
 sudo systemctl disable triggerhappy.service
 sudo systemctl disable apt-daily.service
-sudo systemctl disable apt-daily.timer
-sudo systemctl disable apt-daily-upgrade.timer
 sudo systemctl disable apt-daily-upgrade.service
 sudo systemctl disable alsa-restore.service
 sudo systemctl disable alsa-state.service
 sudo systemctl disable userconfig.service
+sudo systemctl disable rpi-display-backlight.service
+sudo systemctl disable rpi-eeprom-update.service
 
 sudo systemctl mask apt-daily-upgrade
 sudo systemctl mask apt-daily

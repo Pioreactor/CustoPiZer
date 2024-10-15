@@ -13,6 +13,6 @@ sudo chown pioreactor:pioreactor /var/log/pioreactor.log
 # give free conditions so anyone can write to it if needed, ie. www-data
 sudo chmod 666 /var/log/pioreactor.log
 
-# add a logrotate entry
+# add a logrotate entries
 sudo cp /files/system/logrotate/pioreactor /etc/logrotate.d/pioreactor
 

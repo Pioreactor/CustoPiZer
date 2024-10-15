@@ -21,3 +21,5 @@ done
 # Write the information to a file in key-value format
 # Use > since we want to rewrite on every boot (not append)
 echo -e "$NETWORK_INFO" > /boot/firmware/network_info.txt
+
+sudo nmcli device status | sudo tee -a /boot/firmware/network_info.txt

@@ -18,9 +18,6 @@ sudo systemctl enable pioreactor_startup_run@monitor.service
 
 # systemd: add long running pioreactor jobs
 sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
-sudo systemctl enable pioreactor_startup_run@monitor.service
-# sudo systemctl enable pioreactor_startup_run@watchdog.service # this is leader-only, and will just no-op for workers
-sudo systemctl enable pioreactor_startup_run@mqtt_to_db_streaming.service # this is leader-only, and will just no-op for workers
 
 # systemd: remove wifi powersave - helps with mdns discovery
 sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
@@ -51,6 +48,7 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl enable avahi_aliases.service
     cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
 
+    sudo systemctl enable pioreactor_startup_run@mqtt_to_db_streaming.service # this is leader-only
 
 fi
 
