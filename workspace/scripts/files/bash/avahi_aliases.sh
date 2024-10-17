@@ -12,7 +12,7 @@ publish_mdns() {
 
 # Get all IP addresses, ignoring localhost
 while :; do
-    IP_ADDRESSES=$(hostname -I | tr ' ' '\n' | grep -v '^127\.')
+    IP_ADDRESSES=$(hostname -I | grep -Eo '([0-9]*\.){3}[0-9]*' | tr '\n' '\n')
 
     if [ -n "$IP_ADDRESSES" ]; then
         break
