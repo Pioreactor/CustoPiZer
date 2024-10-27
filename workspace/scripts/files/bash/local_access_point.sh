@@ -6,9 +6,12 @@ set -e
 export LC_ALL=C
 
 rfkill unblock wifi
+
 for filename in /var/lib/systemd/rfkill/*:wlan ; do
    echo 0 > "$filename"
 done
+
+sudo nmcli radio wifi on
 
 iw reg set "$(head -c 2 /boot/firmware/local_access_point)"
 
