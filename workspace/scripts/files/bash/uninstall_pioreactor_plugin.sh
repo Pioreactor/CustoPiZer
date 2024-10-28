@@ -23,12 +23,12 @@ fi
 
 if [ "$leader_hostname" == "$(hostname)" ]; then
     # delete yamls from pioreactorui
-    (cd "$install_folder"/ui/contrib/ && find ./ -type f) | awk '{print "/var/www/pioreactorui/contrib/"$1}' | xargs rm
+    (cd "$install_folder"/ui/contrib/ && find ./ -type f) | awk '{print "/home/pioreactor/.pioreactor/plugins/ui/contrib/"$1}' | xargs rm
 
     # TODO: remove sections from config.ini
     # this is complicated because sometimes we edit sections, instead of adding full sections. Ex: we edit [PWM] in relay plugin.
     # broadcast to cluster
-    pios sync-configs --shared
+    # pios sync-configs --shared
 fi
 
 sudo pip3 uninstall  -y "$clean_plugin_name_with_dashes"

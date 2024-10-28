@@ -92,7 +92,7 @@ if [ "$am_i_leader" = true ]; then
 
     # merge UI contribs
     if [ -d "$install_folder/ui/contrib/" ]; then
-        rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
+        rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/contrib/
     fi
 
     # broadcast to cluster, don't crap out if we can't sync to a worker.

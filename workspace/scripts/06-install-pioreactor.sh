@@ -39,7 +39,6 @@ common:
         - type: start
           hours_elapsed: 0.0
           options:
-
             target_rpm: 400.0
         - type: log
           hours_elapsed: 0.001
