@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS dosing_automation_settings (
     started_at TEXT NOT NULL,
     ended_at TEXT,
     automation_name TEXT NOT NULL,
-    settings TEXT NOT NULL,
+    settings BLOB NOT NULL,
     FOREIGN KEY (experiment) REFERENCES experiments (
         experiment
     ) ON DELETE CASCADE
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS led_automation_settings (
     started_at TEXT NOT NULL,
     ended_at TEXT,
     automation_name TEXT NOT NULL,
-    settings TEXT NOT NULL,
+    settings BLOB NOT NULL,
     FOREIGN KEY (experiment) REFERENCES experiments (
         experiment
     ) ON DELETE CASCADE
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS temperature_automation_settings (
     started_at TEXT NOT NULL,
     ended_at TEXT,
     automation_name TEXT NOT NULL,
-    settings TEXT NOT NULL,
+    settings BLOB NOT NULL,
     FOREIGN KEY (experiment) REFERENCES experiments (
         experiment
     ) ON DELETE CASCADE

@@ -51,6 +51,13 @@ do
 done
 
 
+# Verify exact hostname match
+ACTUAL_HOSTNAME=$(sshpass -p "$SSHPASS" ssh "$USERNAME"@"$HOSTNAME_local" "hostname")
+if [ "$ACTUAL_HOSTNAME" != "$HOSTNAME" ]; then
+    echo "Hostname mismatch: expected '$HOSTNAME', but got '$ACTUAL_HOSTNAME'. Exiting."
+    exit 1
+fi
+
 # copy public key over
 sshpass -p "$SSHPASS" ssh-copy-id "$USERNAME"@"$HOSTNAME_local"
 

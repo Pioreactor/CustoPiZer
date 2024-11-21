@@ -3,18 +3,16 @@ id=PioreactorLocalLink
 type=ethernet
 interface-name=eth0
 uuid=89122fc2-2280-43ea-9bc6-005340cf2972
-autoconnect=true
-autoconnect-priority=0
+autoconnect-priority=50
 
 
 [ethernet]
 
 [ipv4]
-address1=169.254.16.16/16
-method=manual
+method=link-local
 
 [ipv6]
 addr-gen-mode=default
-method=ignore
+method=auto
 
 [proxy]

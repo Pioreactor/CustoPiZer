@@ -91,7 +91,13 @@ sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
 
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
-    sudo -u $USERNAME cp /files/config.example.ini $PIO_DIR/config.ini
+    sudo -u $USERNAME cp /files/pioreactor/config.example.ini $PIO_DIR/config.ini
+
+    sudo -U $USERNAME mkdir -p $PIO_DIR/exportable_datasets
+    sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
+
+
+
 
     if [ "$PIO_VERSION" == "develop" ]; then
         sudo pip3 install "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
