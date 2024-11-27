@@ -93,7 +93,7 @@ if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
     sudo -u $USERNAME cp /files/pioreactor/config.example.ini $PIO_DIR/config.ini
 
-    sudo -U $USERNAME mkdir -p $PIO_DIR/exportable_datasets
+    sudo -u $USERNAME mkdir -p $PIO_DIR/exportable_datasets
     sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
 
 

@@ -63,7 +63,7 @@ function download_and_check_if_leader_only {
 
 
 if [ -n "$source" ]; then
-    sudo pip3 install --force-reinstall --no-index "$source"
+    sudo pip3 install --force-reinstall "$source"
 else
     if download_and_check_if_leader_only $clean_plugin_name_with_dashes; then
         if [ "$am_i_leader" = true ]; then
@@ -93,6 +93,11 @@ if [ "$am_i_leader" = true ]; then
     # merge UI contribs
     if [ -d "$install_folder/ui/contrib/" ]; then
         rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/contrib/
+    fi
+
+    # merge datasets contribs
+    if [ -d "$install_folder/exportable_datasets/" ]; then
+        rsync -a "$install_folder/exportable_datasets/" /home/pioreactor/.pioreactor/plugins/exportable_datasets/
     fi
 
     # broadcast to cluster, don't crap out if we can't sync to a worker.
