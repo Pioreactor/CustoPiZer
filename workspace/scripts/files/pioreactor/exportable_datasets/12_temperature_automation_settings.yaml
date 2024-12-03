@@ -3,7 +3,7 @@ default_order_by: started_at
 has_experiment: true
 has_unit: true
 source: app
-query: SELECT *, BASE64(settings) as settings FROM temperature_automation_settings
+query: SELECT *, BASE64(settings) as json_settings FROM temperature_automation_settings
 timestamp_columns:
 - started_at
 - ended_at
