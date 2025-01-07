@@ -114,9 +114,11 @@ CREATE TABLE IF NOT EXISTS logs (
     ) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS logs_ix
-ON logs (experiment, level, task);
+CREATE INDEX idx_logs_experiment_timestamp
+ON logs (experiment, timestamp);
 
+CREATE INDEX idx_logs_experiment_unit
+ON logs (experiment, pioreactor_unit);
 
 
 CREATE TABLE IF NOT EXISTS experiments (
@@ -431,3 +433,21 @@ CREATE TABLE IF NOT EXISTS workers (
     is_active INTEGER DEFAULT 1 NOT NULL,
     UNIQUE (pioreactor_unit)
 );
+
+
+--- see triggers for how this is populated!
+CREATE TABLE IF NOT EXISTS experiment_worker_assignments_history (
+    pioreactor_unit TEXT NOT NULL,
+    experiment TEXT NOT NULL,
+    assigned_at TEXT NOT NULL,
+    unassigned_at TEXT,
+    UNIQUE (pioreactor_unit, experiment, assigned_at)
+);
+
+CREATE INDEX IF NOT EXISTS idx_experiment_worker_assignments_history
+    ON experiment_worker_assignments_history (
+        experiment,
+        pioreactor_unit,
+        assigned_at,
+        unassigned_at
+    );

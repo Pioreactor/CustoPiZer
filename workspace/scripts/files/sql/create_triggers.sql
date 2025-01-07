@@ -65,3 +65,34 @@ BEGIN
         add_alt_media_ml=COALESCE(excluded.add_alt_media_ml, pioreactor_unit_activity_data.add_alt_media_ml)
     ;
 END;
+
+
+CREATE TRIGGER IF NOT EXISTS insert_experiment_worker_assignments_history
+AFTER INSERT
+ON experiment_worker_assignments
+FOR EACH ROW
+BEGIN
+    INSERT INTO experiment_worker_assignments_history (
+        pioreactor_unit,
+        experiment,
+        assigned_at
+    )
+    VALUES (
+        NEW.pioreactor_unit,
+        NEW.experiment,
+        NEW.assigned_at
+    );
+END;
+
+CREATE TRIGGER IF NOT EXISTS delete_experiment_worker_assignments_history
+AFTER DELETE
+ON experiment_worker_assignments
+FOR EACH ROW
+BEGIN
+    UPDATE experiment_worker_assignments_history
+       SET unassigned_at = STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW')
+     WHERE pioreactor_unit = OLD.pioreactor_unit
+       AND experiment = OLD.experiment
+       AND assigned_at = OLD.assigned_at
+       AND unassigned_at IS NULL;
+END;

@@ -12,9 +12,11 @@ install_cleanup_trap
 USERNAME=pioreactor
 STORAGE_DIR=/home/$USERNAME/.pioreactor/storage
 
-# install sqlite3 on all machines, as I expect I'll use it on workers one day.
 sudo apt-get install -y sqlite3
 
+chmod -R 770 $STORAGE_DIR
+chown -R $USERNAME:www-data $STORAGE_DIR
+chmod g+s $STORAGE_DIR
 
 
 if [ "$LEADER" == "1" ]; then
@@ -25,14 +27,22 @@ if [ "$LEADER" == "1" ]; then
     touch $DB-shm
     touch $DB-wal
 
-    chmod -R 770 $STORAGE_DIR
-    chown -R $USERNAME:www-data $STORAGE_DIR
-    chmod g+s $STORAGE_DIR
-
     sqlite3 $DB < /files/sql/sqlite_configuration.sql
     sqlite3 $DB < /files/sql/create_tables.sql
     sqlite3 $DB < /files/sql/create_triggers.sql
 
 fi
 
+
+DB=$STORAGE_DIR/local_persistent_pioreactor_metadata.sqlite
+
+touch $DB
+touch $DB-shm
+touch $DB-wal
+
+
+
+chmod -R 770 $STORAGE_DIR
+chown -R $USERNAME:www-data $STORAGE_DIR
+chmod g+s $STORAGE_DIR
 
