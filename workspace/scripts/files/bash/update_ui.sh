@@ -24,14 +24,11 @@ WORK_DIR=$(find "$TEMP_DIR" -mindepth 1 -maxdepth 1 -type d) # get the directory
 echo $WORK_DIR
 # Verify that WORK_DIR is valid
 if [[ -z "$WORK_DIR" ]]; then
-    echo "Failed to find the working directory inside TEMP_DIR"
+    echo "Failed to find the working directory inside $TEMP_DIR"
     exit 1
 fi
 
-# copy data over
-# use rsync because we want to merge custom yamls the user has, we any updates to our own yamls.
-rsync -ap --ignore-existing $UI_FOLDER/contrib/ $WORK_DIR/contrib/ 2>/dev/null || :
-
+# copy .env file if it exists
 if [ -f "$UI_FOLDER/.env" ]; then
     echo "Copying .env file"
     cp -p $UI_FOLDER/.env $WORK_DIR
@@ -45,6 +42,7 @@ mkdir $UI_FOLDER
 cp -rp $WORK_DIR/. $UI_FOLDER
 chgrp -R www-data $UI_FOLDER
 
+# check that .env exists, recreate it if not
 ENV=$UI_FOLDER/.env
 if [ -f "$ENV" ]; then
     echo "$ENV exists."
