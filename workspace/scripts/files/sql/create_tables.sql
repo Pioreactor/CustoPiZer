@@ -114,10 +114,10 @@ CREATE TABLE IF NOT EXISTS logs (
     ) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_logs_experiment_timestamp
+CREATE INDEX IF NOT EXISTS idx_logs_experiment_timestamp
 ON logs (experiment, timestamp);
 
-CREATE INDEX idx_logs_experiment_unit
+CREATE INDEX IF NOT EXISTS idx_logs_experiment_unit
 ON logs (experiment, pioreactor_unit);
 
 

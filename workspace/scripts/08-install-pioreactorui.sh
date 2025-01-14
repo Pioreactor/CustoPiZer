@@ -100,3 +100,7 @@ flask --help
 lighttpd -h
 huey_consumer -h
 
+
+# install yaml
+echo "application/yaml               yaml yml" | sudo tee -a /etc/mime.types
+
