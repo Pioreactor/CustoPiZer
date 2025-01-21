@@ -14,6 +14,7 @@ PIO_DIR=/home/$USERNAME/.pioreactor
 
 sudo -u $USERNAME mkdir -p $PIO_DIR
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage
+sudo -u $USERNAME mkdir -p $PIO_DIR/storage/calibrations
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}
@@ -59,7 +60,7 @@ common:
         - type: stop
           hours_elapsed: 0.02
 EOT
-sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_logging_example.yaml
+sudo chown pioreactor:www-data $PIO_DIR/experiment_profiles/demo_logging_example.yaml
 
 
 cat <<EOT >> $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
@@ -84,7 +85,7 @@ common:
         - type: stop
           hours_elapsed: 0.05
 EOT
-sudo chown pioreactor:pioreactor $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
+sudo chown pioreactor:www-data $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
 
 sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
 
