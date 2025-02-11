@@ -14,10 +14,6 @@ STORAGE_DIR=/home/$USERNAME/.pioreactor/storage
 
 sudo apt-get install -y sqlite3
 
-chmod -R 770 $STORAGE_DIR
-chown -R $USERNAME:www-data $STORAGE_DIR
-chmod g+s $STORAGE_DIR
-
 
 if [ "$LEADER" == "1" ]; then
 
@@ -39,7 +35,6 @@ DB=$STORAGE_DIR/local_persistent_pioreactor_metadata.sqlite
 touch $DB
 touch $DB-shm
 touch $DB-wal
-
 
 
 chmod -R 770 $STORAGE_DIR

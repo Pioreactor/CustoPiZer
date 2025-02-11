@@ -1,6 +1,6 @@
 [Unit]
-Description=Writes the ip to /boot/firmware/ip
-Wants=network-online.target
+Description=Writes networking information to /boot/firmware/network_info.txt
+Wants=network-online.target NetworkManager.service
 After=network-online.target NetworkManager.service
 
 [Service]

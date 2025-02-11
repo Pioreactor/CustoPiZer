@@ -85,6 +85,14 @@ CREATE TABLE IF NOT EXISTS led_change_events (
 );
 
 
+CREATE INDEX IF NOT EXISTS dosing_events_ix
+ON dosing_events (experiment, pioreactor_unit);
+
+CREATE INDEX IF NOT EXISTS led_change_events_ix
+ON led_change_events (experiment, pioreactor_unit);
+
+
+
 
 CREATE TABLE IF NOT EXISTS growth_rates (
     experiment TEXT NOT NULL,
@@ -194,6 +202,15 @@ CREATE TABLE IF NOT EXISTS temperature_automation_settings (
 );
 
 
+CREATE INDEX IF NOT EXISTS temperature_automation_settings_ix
+ON temperature_automation_settings (experiment, pioreactor_unit);
+
+CREATE INDEX IF NOT EXISTS dosing_automation_settings_ix
+ON dosing_automation_settings (experiment, pioreactor_unit);
+
+CREATE INDEX IF NOT EXISTS led_automation_settings_ix
+ON led_automation_settings (experiment, pioreactor_unit);
+
 
 CREATE TABLE IF NOT EXISTS kalman_filter_outputs (
     experiment TEXT NOT NULL,
@@ -242,6 +259,10 @@ CREATE TABLE IF NOT EXISTS stirring_rates (
 );
 
 
+CREATE INDEX IF NOT EXISTS stirring_rates_ix
+ON stirring_rates (experiment, pioreactor_unit);
+
+
 CREATE TABLE IF NOT EXISTS config_files_histories (
     timestamp TEXT NOT NULL,
     filename TEXT NOT NULL,
@@ -276,6 +297,11 @@ CREATE TABLE IF NOT EXISTS ir_led_intensities (
 );
 
 
+
+CREATE INDEX IF NOT EXISTS ir_led_intensities_ix
+ON ir_led_intensities (experiment, pioreactor_unit);
+
+
 CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
     experiment TEXT NOT NULL,
     pioreactor_unit TEXT NOT NULL,
@@ -287,6 +313,10 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
         experiment
     ) ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS pioreactor_unit_labels_ix
+ON pioreactor_unit_labels (experiment, pioreactor_unit);
+
 
 CREATE TABLE IF NOT EXISTS temperature_automation_events (
     experiment TEXT NOT NULL,
@@ -323,6 +353,16 @@ CREATE TABLE IF NOT EXISTS led_automation_events (
         experiment
     ) ON DELETE CASCADE
 );
+
+
+CREATE INDEX IF NOT EXISTS temperature_automation_events_ix
+ON temperature_automation_events (experiment, pioreactor_unit);
+
+CREATE INDEX IF NOT EXISTS dosing_automation_events_ix
+ON dosing_automation_events (experiment, pioreactor_unit);
+
+CREATE INDEX IF NOT EXISTS led_automation_events_ix
+ON led_automation_events (experiment, pioreactor_unit);
 
 
 
@@ -397,6 +437,10 @@ CREATE TABLE IF NOT EXISTS pwm_dcs (
         experiment
     ) ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS pwm_dcs_ix
+ON pwm_dcs (experiment, pioreactor_unit);
+
 
 
 CREATE TABLE IF NOT EXISTS experiment_profile_runs (

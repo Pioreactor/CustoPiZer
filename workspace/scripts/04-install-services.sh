@@ -27,6 +27,7 @@ sudo systemctl enable wifi_powersave.service
 sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
 cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 sudo systemctl enable local_access_point.service
+
 # install optional local link service, both workers and leaders can do this.
 sudo cp /files/system/systemd/local_link.service $SYSTEMD_DIR
 cp /files/bash/local_link.sh /usr/local/bin/local_link.sh
@@ -34,6 +35,7 @@ sudo systemctl enable local_link.service
 
 sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
+# systemd: needed for setting up dirs in /tmp and sqlite dbs
 sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
 sudo systemctl enable create_diskcache.service
 cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
@@ -41,6 +43,10 @@ cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
 # systemd: UI web-workers
 sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
 sudo systemctl enable huey.service
+
+# systemd: log failures and a python blink code that is nearly independent from Pioreactor code.
+sudo cp /files/system/systemd/log-failure@.service $SYSTEMD_DIR
+sudo cp /files/system/scripts/led_control.py /usr/local/bin/led_control.py
 
 if [ "$LEADER" == "1" ]; then
     # systemd: alias hostname to pioreactor.local

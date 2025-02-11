@@ -6,7 +6,13 @@ set -e
 export LC_ALL=C
 
 # Get all IPv4 addresses
-IP=$(hostname -I)
+for i in {1..30}; do
+    IP=$(hostname -I)
+    if [ -n "$IP" ]; then
+        break
+    fi
+    sleep 1
+done
 
 # Initialize an empty variable for network information
 NETWORK_INFO="HOSTNAME=$(hostname)\nIP=$IP\n"
