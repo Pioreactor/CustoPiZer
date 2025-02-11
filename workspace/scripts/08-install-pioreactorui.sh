@@ -47,10 +47,6 @@ rm pioreactorui.tar.gz
 # init .env
 mv $UI_FOLDER/.env.example $UI_FOLDER/.env
 
-# init sqlite db
-touch $UI_FOLDER/huey.db
-touch $UI_FOLDER/huey.db-shm
-touch $UI_FOLDER/huey.db-wal
 
 # make correct permissions in new www folders and files
 # https://superuser.com/questions/19318/how-can-i-give-write-access-of-a-folder-to-all-users-in-linux
