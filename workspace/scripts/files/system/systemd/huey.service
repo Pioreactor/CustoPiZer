@@ -2,7 +2,7 @@
 Description=Huey service for PioreactorUI
 After=network.target firstboot.service
 Before=lighttpd.service
-OnFailure=log-failure@%n.service
+
 
 [Service]
 EnvironmentFile=/etc/environment

@@ -2,7 +2,7 @@
 Description=Prepare cache for UI
 After=network.target firstboot.service
 Before=lighttpd.service huey.service
-OnFailure=log-failure@%n.service
+
 
 [Service]
 User=pioreactor

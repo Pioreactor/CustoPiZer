@@ -1,7 +1,7 @@
 [Unit]
 Description=Lighttpd Daemon
 After=network-online.target
-OnFailure=log-failure@%n.service
+
 
 [Service]
 Type=simple
