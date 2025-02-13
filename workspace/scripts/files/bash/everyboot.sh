@@ -10,7 +10,7 @@ export LC_ALL=C
 # Check if config file exists (if not: likely a worker)
 if [ ! -f "/home/pioreactor/.pioreactor/config.ini" ]; then
     # start the blue LED to signal to the user that it's working.
-    python /usr/local/bin/led_control.py --static
+    python /usr/local/bin/led_control.py --static &
 
 fi
 
