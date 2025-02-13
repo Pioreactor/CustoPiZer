@@ -31,7 +31,7 @@ runs:
         fi
 
         envs=$(echo '${{ inputs.environment }}' | jq -r 'to_entries | map("-e " + .key + "=" + (.value | tostring)) | join(" ")')
-        command="--rm --privileged $envs -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts $config_mount ghcr.io/octoprint/custopizer:latest"
+        command="--rm --privileged $envs -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts $config_mount ghcr.io/octoprint/custopizer:10365ab"
 
         echo "About to execute 'docker run $command'..."
 
