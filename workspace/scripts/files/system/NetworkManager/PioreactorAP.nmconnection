@@ -15,6 +15,7 @@ ssid=pioreactor
 key-mgmt=wpa-psk
 proto=rsn;
 psk=raspberry
+pmf=1
 
 [ipv4]
 method=shared

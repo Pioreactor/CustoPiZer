@@ -24,3 +24,7 @@ if [ -f "/boot/firmware/config.ini" ]; then
     chown pioreactor:www-data /home/pioreactor/.pioreactor/config.ini
     rm /boot/firmware/config.ini
 fi
+
+# force wifi on, even if CC isn't set
+nmcli radio wifi on
+

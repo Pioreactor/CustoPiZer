@@ -12,7 +12,6 @@ ExecStart=huey_consumer pioreactorui.tasks.huey -n -b 1.001 -w 10 -f -C -d 0.05
 ExecStartPost=pio log -m "%n successful" -n systemd --local-only
 StandardOutput=null
 StandardError=null
-KillMode=process
 Restart=always
 
 [Install]
