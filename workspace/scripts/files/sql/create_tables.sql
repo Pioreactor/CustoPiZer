@@ -13,6 +13,21 @@ CREATE TABLE IF NOT EXISTS od_readings (
 CREATE INDEX IF NOT EXISTS od_readings_ix
 ON od_readings (experiment, pioreactor_unit, timestamp);
 
+CREATE TABLE IF NOT EXISTS raw_od_readings (
+    experiment TEXT NOT NULL,
+    pioreactor_unit TEXT NOT NULL,
+    timestamp TEXT NOT NULL,
+    od_reading REAL NOT NULL,
+    channel INTEGER CHECK (channel IN (1, 2)) NOT NULL,
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS raw_od_readings_ix
+ON od_readings (experiment, pioreactor_unit, timestamp);
+
+
 
 CREATE TABLE IF NOT EXISTS alt_media_fractions (
     experiment TEXT NOT NULL,
@@ -474,6 +489,8 @@ CREATE TABLE IF NOT EXISTS experiment_worker_assignments (
 CREATE TABLE IF NOT EXISTS workers (
     pioreactor_unit TEXT NOT NULL, -- id
     added_at TEXT NOT NULL,
+    model_name TEXT NOT NULL,
+    model_version TEXT NOT NULL,
     is_active INTEGER DEFAULT 1 NOT NULL,
     UNIQUE (pioreactor_unit)
 );

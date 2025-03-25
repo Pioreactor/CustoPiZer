@@ -10,6 +10,7 @@ band=bg
 mode=ap
 powersave=2
 ssid=pioreactor
+width=20MHz
 
 [wifi-security]
 key-mgmt=wpa-psk

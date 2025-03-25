@@ -12,9 +12,7 @@ export LC_ALL=C
 
 HOSTNAME=$1
 SSHPASS=${2:-raspberry}
-PIO_VERSION=${3:-"1.1"}
-PIO_MODEL=${4:-pioreactor_20ml}
-ADDRESS=${5:-"$HOSTNAME".local}
+ADDRESS=${3:-"$HOSTNAME".local}
 
 USERNAME=pioreactor
 
@@ -68,8 +66,6 @@ UNIT_CONFIG=/home/$USERNAME/.pioreactor/config_"$HOSTNAME".ini
 rm -f "$UNIT_CONFIG"
 touch "$UNIT_CONFIG"
 echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> "$UNIT_CONFIG"
-crudini --set "$UNIT_CONFIG" pioreactor version "$PIO_VERSION" \
-        --set "$UNIT_CONFIG" pioreactor model "$PIO_MODEL"
 
 # add worker's address to config
 CONFIG=/home/$USERNAME/.pioreactor/config.ini
