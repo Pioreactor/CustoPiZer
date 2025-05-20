@@ -33,8 +33,6 @@ sudo cp /files/system/systemd/local_link.service $SYSTEMD_DIR
 cp /files/bash/local_link.sh /usr/local/bin/local_link.sh
 sudo systemctl enable local_link.service
 
-sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
-
 # systemd: needed for setting up dirs in /tmp and sqlite dbs
 sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
 sudo systemctl enable create_diskcache.service

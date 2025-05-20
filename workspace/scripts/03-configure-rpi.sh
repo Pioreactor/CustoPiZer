@@ -58,8 +58,7 @@ if [ "$WORKER" == "1" ]; then
         echo "disable_touchscreen=1" | sudo tee -a /boot/config.txt
         echo "disable_fw_kms_setup=1" | sudo tee -a /boot/config.txt
 
-        # skip display and camera sensing
-        echo "camera_auto_detect=0" | sudo tee -a /boot/config.txt
+        # skip display
         echo "display_auto_detect=0" | sudo tee -a /boot/config.txt
 
 
