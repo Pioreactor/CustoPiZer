@@ -137,12 +137,11 @@ CREATE TABLE IF NOT EXISTS logs (
     ) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_logs_experiment_timestamp
-ON logs (experiment, timestamp);
+CREATE INDEX IF NOT EXISTS logs_exp_timestamp_ix
+            ON logs (experiment, timestamp DESC);
 
-CREATE INDEX IF NOT EXISTS idx_logs_experiment_unit
-ON logs (experiment, pioreactor_unit);
-
+CREATE INDEX IF NOT EXISTS logs_unit_timestamp_ix
+            ON logs (pioreactor_unit, timestamp DESC);
 
 CREATE TABLE IF NOT EXISTS experiments (
     experiment TEXT NOT NULL UNIQUE,
@@ -156,6 +155,7 @@ CREATE TABLE IF NOT EXISTS experiments (
 -- a index on all columns is much faster, BigO(n). This table is critical for the entire webpage performance.
 -- not the order of the values in the index is important to get this performance.
 -- https://medium.com/@JasonWyatt/squeezing-performance-from-sqlite-indexes-indexes-c4e175f3c346
+-- Later: but why description??
 CREATE UNIQUE INDEX IF NOT EXISTS experiments_ix ON experiments (
     created_at, experiment, description
 );
@@ -468,9 +468,9 @@ CREATE TABLE IF NOT EXISTS experiment_profile_runs (
 );
 
 
----
---- the tables below are more "oltp" than "olap", hence the FK
----
+--
+-- the tables below are more "oltp" than "olap", hence the FK
+--
 
 CREATE TABLE IF NOT EXISTS experiment_worker_assignments (
     pioreactor_unit TEXT NOT NULL,
@@ -496,7 +496,7 @@ CREATE TABLE IF NOT EXISTS workers (
 );
 
 
---- see triggers for how this is populated!
+-- see triggers for how this is populated!
 CREATE TABLE IF NOT EXISTS experiment_worker_assignments_history (
     pioreactor_unit TEXT NOT NULL,
     experiment TEXT NOT NULL,
@@ -505,7 +505,7 @@ CREATE TABLE IF NOT EXISTS experiment_worker_assignments_history (
     UNIQUE (pioreactor_unit, experiment, assigned_at)
 );
 
-CREATE INDEX IF NOT EXISTS idx_experiment_worker_assignments_history
+CREATE INDEX IF NOT EXISTS experiment_worker_assignments_history_ix
     ON experiment_worker_assignments_history (
         experiment,
         pioreactor_unit,
