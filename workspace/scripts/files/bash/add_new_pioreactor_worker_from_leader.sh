@@ -14,9 +14,8 @@ HOSTNAME=$1
 SSHPASS=${2:-raspberry}
 ADDRESS=${3:-"$HOSTNAME".local}
 
-USERNAME=pioreactor
 
-LEADER_ADDRESS=$(crudini --get /home/$USERNAME/.pioreactor/config.ini cluster.topology leader_address)
+LEADER_ADDRESS=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_address)
 
 
 # remove from known_hosts if already present
@@ -30,11 +29,11 @@ ssh-keygen -R "$(getent hosts "$ADDRESS" | cut -d' ' -f1)"                 >/dev
 N=120
 counter=0
 
-while ! sshpass -p "$SSHPASS" ssh "$USERNAME"@"$ADDRESS" "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
+while ! sshpass -p "$SSHPASS" ssh pioreactor@"$ADDRESS" "test -d /home/pioreactor/.pioreactor && echo 'exists'"
 do
     echo "Connection to $ADDRESS missed - $(date)"
 
-    if sshpass -v -p "$SSHPASS" ssh "$USERNAME"@"$ADDRESS"  |& grep "Wrong password"; then
+    if sshpass -v -p "$SSHPASS" ssh pioreactor@"$ADDRESS"  |& grep "Wrong password"; then
         echo "Wrong password provided."
     fi
 
@@ -50,29 +49,29 @@ done
 
 
 # Verify exact hostname match
-ACTUAL_HOSTNAME=$(sshpass -p "$SSHPASS" ssh "$USERNAME"@"$ADDRESS" "hostname")
+ACTUAL_HOSTNAME=$(sshpass -p "$SSHPASS" ssh pioreactor@"$ADDRESS" "hostname")
 if [ "$ACTUAL_HOSTNAME" != "$HOSTNAME" ]; then
     echo "Hostname mismatch: expected '$HOSTNAME', but got '$ACTUAL_HOSTNAME'. Exiting."
     exit 1
 fi
 
 # copy public key over
-sshpass -p "$SSHPASS" ssh-copy-id "$USERNAME"@"$ADDRESS"
+sshpass -p "$SSHPASS" ssh-copy-id pioreactor@"$ADDRESS"
 
 # remove any existing config (for idempotent)
 # we do this first so the user can see it on the Pioreactors/ page
-UNIT_CONFIG=/home/$USERNAME/.pioreactor/config_"$HOSTNAME".ini
+UNIT_CONFIG=/home/pioreactor/.pioreactor/config_"$HOSTNAME".ini
 
 rm -f "$UNIT_CONFIG"
 touch "$UNIT_CONFIG"
 echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> "$UNIT_CONFIG"
 
 # add worker's address to config
-CONFIG=/home/$USERNAME/.pioreactor/config.ini
+CONFIG=/home/pioreactor/.pioreactor/config.ini
 crudini --set "$CONFIG" cluster.addresses "$HOSTNAME" "$ADDRESS"
 
 # add worker to known hosts on leader
-ssh-keyscan "$ADDRESS" >> "/home/$USERNAME/.ssh/known_hosts"
+ssh-keyscan "$ADDRESS" >> "/home/pioreactor/.ssh/known_hosts"
 
 
 # sync-configs
@@ -83,7 +82,7 @@ sleep 1
 N=120
 counter=0
 
-while ! sshpass -p "$SSHPASS" ssh "$USERNAME"@"$ADDRESS" "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
+while ! sshpass -p "$SSHPASS" ssh pioreactor@"$ADDRESS" "test -f /home/pioreactor/.pioreactor/config.ini && echo 'exists'"
 do
     echo "Looking for config.ini - $(date)"
 
@@ -98,12 +97,12 @@ do
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
-ssh "$USERNAME"@"$ADDRESS" "sudo date --set \"$(date)\" && sudo fake-hwclock save"
-ssh "$USERNAME"@"$ADDRESS" "echo \"server $LEADER_ADDRESS iburst prefer\" | sudo tee -a /etc/chrony/chrony.conf || :"
+ssh pioreactor@"$ADDRESS" "sudo date --set \"$(date)\" && sudo fake-hwclock save"
+ssh pioreactor@"$ADDRESS" "echo \"server $LEADER_ADDRESS iburst prefer\" | sudo tee -a /etc/chrony/chrony.conf || :"
 
 
 # reboot to set configuration
 # the || true is because the connection fails, which returns as -1.
-ssh "$USERNAME"@"$ADDRESS" 'sudo reboot;' || true
+ssh pioreactor@"$ADDRESS" 'sudo reboot;' || true
 
 exit 0
