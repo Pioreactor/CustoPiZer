@@ -63,7 +63,7 @@ function download_and_check_if_leader_only {
 
 
 if [ -n "$source" ]; then
-    sudo pip3 install --force-reinstall "$source"
+    sudo pip3 install --force-reinstall --no-deps "$source"
 else
     if download_and_check_if_leader_only $clean_plugin_name_with_dashes; then
         if [ "$am_i_leader" = true ]; then

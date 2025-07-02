@@ -26,5 +26,5 @@ if [ -f "/boot/firmware/config.ini" ]; then
 fi
 
 # force wifi on, even if CC isn't set
-nmcli radio wifi on
+nmcli radio wifi on || :
 
