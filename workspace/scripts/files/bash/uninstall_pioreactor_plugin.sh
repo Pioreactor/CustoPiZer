@@ -15,9 +15,9 @@ install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${c
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 
-# run a post install scripts.
+# run a post install script.
 if test -f "$install_folder/pre_uninstall.sh"; then
-    bash "$install_folder/pre_uninstall.sh"
+    sudo bash "$install_folder/pre_uninstall.sh"
 fi
 
 
