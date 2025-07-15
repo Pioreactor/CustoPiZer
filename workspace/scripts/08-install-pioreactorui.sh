@@ -24,21 +24,23 @@ sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
 
 # get latest pioreactorUI code from Github.
 
-latest_release=$(curl -sS https://api.github.com/repos/pioreactor/pioreactorui/releases/latest)
-
-tag=$(echo "$latest_release" | sed -Ene '/^ *"tag_name": *"(.+)",$/s//\1/p')
-
+mkdir $UI_FOLDER
 
 if [ "$PIO_VERSION" == "develop" ]; then
-    tag="develop"
+    curl -sS -o pioreactor_repo.tar.gz -JLO https://github.com/pioreactor/pioreactor/archive/develop.tar.gz
+    tar -xzf pioreactor_repo.tar.gz
+    mv pioreactor-develop/web/* $UI_FOLDER
+
+    rm pioreactor_repo.tar.gz
+    rm -rf pioreactor-develop/
+else
+    # TODO: get this from the release.
+    curl -sS -o pioreactorui.tar.gz -JLO https://github.com/Pioreactor/pioreactor/releases/download/"$PIO_VERSION"/pioreactorui_"$PIO_VERSION".tar.gz
+    tar -xzf pioreactorui.tar.gz
+    mv pioreactorui-"$PIO_VERSION"/* $UI_FOLDER
+    rm pioreactorui.tar.gz
 fi
 
-echo "Installing UI version $tag"
-curl -sS -o pioreactorui.tar.gz -JLO https://github.com/pioreactor/pioreactorui/archive/"$tag".tar.gz
-tar -xzf pioreactorui.tar.gz
-mv pioreactorui-"$tag" /var/www
-mv /var/www/pioreactorui-"$tag" $UI_FOLDER
-rm pioreactorui.tar.gz
 
 # install the dependencies
 # new: dependencies are installed with Pioreactor app

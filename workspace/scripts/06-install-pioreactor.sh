@@ -104,7 +104,7 @@ if [ "$LEADER" == "1" ]; then
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
         sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
@@ -115,7 +115,7 @@ if [ "$WORKER" == "1" ]; then
     sudo apt-get install -y python3-numpy
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install "pioreactor[leader_worker] @ https://github.com/pioreactor/pioreactor/archive/develop.zip" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
         sudo pip3 install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
