@@ -29,7 +29,7 @@ mkdir $UI_FOLDER
 if [ "$PIO_VERSION" == "develop" ]; then
     curl -sS -o pioreactor_repo.tar.gz -JLO https://github.com/pioreactor/pioreactor/archive/develop.tar.gz
     tar -xzf pioreactor_repo.tar.gz
-    mv pioreactor-develop/web/* $UI_FOLDER
+    mv pioreactor-develop/web/{.*,*} $UI_FOLDER
 
     rm pioreactor_repo.tar.gz
     rm -rf pioreactor-develop/
