@@ -34,10 +34,8 @@ if [ "$PIO_VERSION" == "develop" ]; then
     rm pioreactor_repo.tar.gz
     rm -rf pioreactor-develop/
 else
-    # TODO: get this from the release.
     curl -sS -o pioreactorui.tar.gz -JLO https://github.com/Pioreactor/pioreactor/releases/download/"$PIO_VERSION"/pioreactorui_"$PIO_VERSION".tar.gz
-    tar -xzf pioreactorui.tar.gz
-    mv pioreactorui-"$PIO_VERSION"/* $UI_FOLDER
+    tar -xzf pioreactorui.tar.gz -C $UI_FOLDER --strip-components=1
     rm pioreactorui.tar.gz
 fi
 
