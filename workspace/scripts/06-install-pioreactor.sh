@@ -12,6 +12,9 @@ install_cleanup_trap
 USERNAME=pioreactor
 PIO_DIR=/home/$USERNAME/.pioreactor
 
+sudo apt-get install -y git
+
+
 sudo -u $USERNAME mkdir -p $PIO_DIR
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
