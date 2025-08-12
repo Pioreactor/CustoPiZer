@@ -17,6 +17,7 @@ sudo apt-get install -y git
 
 sudo -u $USERNAME mkdir -p $PIO_DIR
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage
+sudo -u $USERNAME mkdir -p $PIO_DIR/models
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}

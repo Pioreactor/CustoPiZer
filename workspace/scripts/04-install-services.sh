@@ -28,10 +28,6 @@ sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
 cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 sudo systemctl enable local_access_point.service
 
-# install optional local link service, both workers and leaders can do this.
-sudo cp /files/system/systemd/local_link.service $SYSTEMD_DIR
-cp /files/bash/local_link.sh /usr/local/bin/local_link.sh
-sudo systemctl enable local_link.service
 
 # systemd: needed for setting up dirs in /tmp and sqlite dbs
 sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
