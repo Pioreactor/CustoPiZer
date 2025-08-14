@@ -73,9 +73,10 @@ crudini --set "$CONFIG" cluster.addresses "$HOSTNAME" "$ADDRESS"
 # add worker to known hosts on leader
 ssh-keyscan "$ADDRESS" >> "/home/pioreactor/.ssh/known_hosts"
 
-
 # sync-configs
-pios sync-configs --units "$HOSTNAME" --skip-save
+scp "$CONFIG" pioreactor@"$ADDRESS":/home/pioreactor/.pioreactor/config.ini
+scp "$UNIT_CONFIG" pioreactor@"$ADDRESS":/home/pioreactor/.pioreactor/unit_config.ini
+
 sleep 1
 
 # check we have config.ini file to confirm the device has the necessary configuration
