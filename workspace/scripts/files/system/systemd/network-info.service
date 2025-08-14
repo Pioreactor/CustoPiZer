@@ -1,0 +1,13 @@
+[Unit]
+Description=Update network info file
+Wants=network-online.target NetworkManager.service
+After=network-online.target NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/bin/write_ip.sh
+User=pioreactor
+
+[Install]
+WantedBy=multi-user.target
+

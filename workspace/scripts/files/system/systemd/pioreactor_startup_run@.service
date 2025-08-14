@@ -9,7 +9,7 @@ User=pioreactor
 ExecStart=pio run %I
 Restart=on-failure
 Environment="PATH=/home/pioreactor/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
-EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/pioreactor.env
 
 [Install]
 WantedBy=multi-user.target

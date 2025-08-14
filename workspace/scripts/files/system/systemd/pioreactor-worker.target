@@ -1,0 +1,8 @@
+[Unit]
+Description=Pioreactor Worker Services
+After=pioreactor.target
+Wants=load_rp2040.service
+
+[Install]
+WantedBy=multi-user.target
+

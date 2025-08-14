@@ -1,0 +1,11 @@
+[Unit]
+Description=Cleanup UI exports directory
+
+[Service]
+Type=oneshot
+User=pioreactor
+ExecStart=/bin/bash -lc 'pio log -m "Emptying UI\'"\'"s static dir" -l info && rm -f /var/www/pioreactorui/static/exports/*.zip /var/www/pioreactorui/static/exports/*.csv'
+
+[Install]
+WantedBy=multi-user.target
+

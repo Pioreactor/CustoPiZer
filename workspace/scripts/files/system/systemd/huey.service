@@ -5,7 +5,7 @@ Before=lighttpd.service
 
 
 [Service]
-EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/pioreactor.env
 User=pioreactor
 WorkingDirectory=/var/www/pioreactorui
 ExecStart=huey_consumer pioreactorui.tasks.huey -n -b 1.001 -w 10 -f -C -d 0.05
