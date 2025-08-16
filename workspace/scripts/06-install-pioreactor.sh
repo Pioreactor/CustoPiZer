@@ -97,6 +97,7 @@ EOT
 sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
 
 # Create web exports directory for HTTP downloads via lighttpd alias
+# Rationale: user data belongs under DOT_PIOREACTOR; lighttpd exposes /exports/ → ~/.pioreactor/web/exports
 sudo -u $USERNAME mkdir -p $PIO_DIR/web/exports
 chown -R $USERNAME:www-data $PIO_DIR/web
 find $PIO_DIR/web -type d -exec chmod 2775 {} \;
@@ -139,6 +140,7 @@ sudo apt-get install -y rsyslog
 sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 -y # used for Pillow
 
 # Create/refresh symlink for static assets to package location (leaders and workers)
+# Lighttpd serves /static/ from /usr/share/pioreactorui/static which points into the installed wheel.
 # Safe to attempt even if the web package/static is not present yet.
 STATIC_DIR=$(python3 - <<'PY'
 import sys

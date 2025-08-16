@@ -118,15 +118,30 @@ Phase 1 — Next PR Outline (CustoPiZer)
   - Declare dependencies; ensure static assets are included in the wheel.
 
 - Changes in CustoPiZer
-  - Update `08-install-pioreactorui.sh` to pip-install the UI instead of tarball extraction (applies to both leaders and workers).
-  - Keep lighttpd configs; adjust FastCGI backend to call the packaged entrypoint path. Continue enabling `api-only` on workers.
-  - Update `huey.service` ExecStart to module invocation.
-  - Ensure persistent exports/uploads under `DOT_PIOREACTOR` and not in `/var/www`; adjust cleanup timer path accordingly.
+  - Lighttpd integration updated (done):
+    - Use lighttpd-managed FastCGI: `bin-path=/usr/bin/pioreactor-fcgi`, socket `/run/pioreactorui.sock`.
+    - Rewrite `/api`, `/unit_api`, `/mcp` → `/api.fcgi$1`.
+    - Leaders serve static via alias `/static/` → `/usr/share/pioreactorui/static` with SPA fallback to `/static/index.html`.
+    - Leaders expose `/exports/` → `${DOT_PIOREACTOR}/web/exports`.
+    - Workers enable `api-only` filter to expose ONLY `/unit_api`.
+  - Services and scripts (done):
+    - `huey.service` updated to `pioreactor.web.tasks.huey`.
+    - `08-install-pioreactorui.sh` no longer fetches tarballs or `.env`; installs lighttpd + config.
+    - `06-install-pioreactor.sh` creates `${DOT_PIOREACTOR}/web/exports` and symlinks `/usr/share/pioreactorui/static` to packaged assets.
+    - Cleanup timer points to `${DOT_PIOREACTOR}/web/exports`.
+    - Legacy `update_ui.sh` no longer installed.
 
 - Testing & Acceptance
   - Verify UI responds via lighttpd; huey consumes tasks; upgrades via pip do not disturb user data.
   - Lab test: Upgrade the UI wheel on a leader, confirm no loss of user exports (now under `DOT_PIOREACTOR`) and huey restarts cleanly.
   - Performance: Ensure lighttpd startup is not gated by long oneshots; huey starts independently; UI import path is lean.
+
+Phase 4 — Status in this repo
+- Packaging landed upstream (assumed). Downstream now:
+  - Serves static from packaged assets via symlink; no files under `/var/www/pioreactorui`.
+  - Restricts worker HTTP surface to `/unit_api` only; leaders expose `/api`, `/unit_api`, `/mcp`.
+  - Exports live under `${DOT_PIOREACTOR}/web/exports` and are cleaned by timer.
+  - Caching tuned for SPA shell vs hashed assets.
 
 **Phase 5: Unified software; produce leader/worker/leader_worker images**
 - Objectives
