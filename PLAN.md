@@ -109,7 +109,8 @@ Phase 1 — Next PR Outline (CustoPiZer)
 
 **Phase 4: Package UI via pip; update services**
 - Objectives
-  - Move UI to a proper Python package in upstream; keep lighttpd; point services at module entrypoints.
+  - Move the web API (UI) to a proper Python package in upstream; keep lighttpd; point services at module entrypoints.
+  - Both leader and worker images install and run the web API. Workers enable lighttpd's `api-only` config (no static), leaders serve static assets.
 
 - Upstream tasks (pioreactor)
   - Package `pioreactorui` inside the repo: include Flask app, FastCGI/WSGI entrypoint, huey tasks (`pioreactorui.tasks.huey`).
@@ -117,8 +118,8 @@ Phase 1 — Next PR Outline (CustoPiZer)
   - Declare dependencies; ensure static assets are included in the wheel.
 
 - Changes in CustoPiZer
-  - Update `08-install-pioreactorui.sh` to pip-install UI instead of tarball extraction.
-  - Keep lighttpd configs; adjust FastCGI backend to call the packaged entrypoint path.
+  - Update `08-install-pioreactorui.sh` to pip-install the UI instead of tarball extraction (applies to both leaders and workers).
+  - Keep lighttpd configs; adjust FastCGI backend to call the packaged entrypoint path. Continue enabling `api-only` on workers.
   - Update `huey.service` ExecStart to module invocation.
   - Ensure persistent exports/uploads under `DOT_PIOREACTOR` and not in `/var/www`; adjust cleanup timer path accordingly.
 

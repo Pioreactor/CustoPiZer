@@ -59,9 +59,8 @@ chmod +x $UI_FOLDER/main.fcgi
 # install lighttp and set up mods
 apt-get install lighttpd -y
 
-# install our own lighttpd service
+# install our own lighttpd service (enablement handled by pioreactor.target)
 sudo cp /files/system/systemd/lighttpd.service $SYSTEMD_DIR
-sudo systemctl enable lighttpd.service
 
 
 cp /files/system/lighttpd/lighttpd.conf        /etc/lighttpd/lighttpd.conf
@@ -79,7 +78,7 @@ lighttpd-enable-mod cors
 # lighttpd-enable-mod compress # this wasn't working, and was causing binary data to leak into json responses...
 
 if [ "$LEADER" != "1" ]; then
-    # workers only have an api, not served static files.
+    # workers serve API-only (no static assets)
     lighttpd-enable-mod api-only
 fi
 
@@ -99,4 +98,3 @@ huey_consumer -h
 
 # install yaml
 echo "application/yaml               yaml yml" | sudo tee -a /etc/mime.types
-

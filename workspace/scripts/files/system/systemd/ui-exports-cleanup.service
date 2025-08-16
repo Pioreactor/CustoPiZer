@@ -4,8 +4,8 @@ Description=Cleanup UI exports directory
 [Service]
 Type=oneshot
 User=pioreactor
-ExecStart=/bin/bash -lc 'pio log -m "Emptying UI\'"\'"s static dir" -l info && rm -f /var/www/pioreactorui/static/exports/*.zip /var/www/pioreactorui/static/exports/*.csv'
+EnvironmentFile=/etc/pioreactor.env
+ExecStart=/bin/bash -lc 'pio log -m "Cleaning web exports dir" -l info && rm -f "$DOT_PIOREACTOR"/web/exports/*.zip "$DOT_PIOREACTOR"/web/exports/*.csv'
 
 [Install]
 WantedBy=multi-user.target
-
