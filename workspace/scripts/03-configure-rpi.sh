@@ -86,12 +86,6 @@ sudo apt-get autoremove -y
 # put /tmp into memory, as we write to it a lot.
 echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
 
-# add environment variable for TMPDIR
-echo "TMPDIR=/tmp/" | sudo tee -a /etc/environment
-# add env variable for lgpio working dir
-echo "LG_WD=/tmp" | sudo tee -a /etc/environment # no trailing slash!
-
-
 ### faster boot
 
 # from http://himeshp.blogspot.com/2018/08/fast-boot-with-raspberry-pi.html

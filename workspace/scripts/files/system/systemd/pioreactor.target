@@ -1,7 +1,7 @@
 [Unit]
 Description=Pioreactor Common Services
 After=network-online.target
-Wants=lighttpd.service huey.service create_diskcache.service avahi_aliases.service everyboot.service firstboot.service wifi_powersave.service write_ip.service local_access_point.service pioreactor_startup_run@monitor.service network-info.timer
+Wants=lighttpd.service huey.service avahi_aliases.service everyboot.service firstboot.service wifi_powersave.service write_ip.service local_access_point.service pioreactor_startup_run@monitor.service network-info.timer
 
 [Install]
 WantedBy=multi-user.target

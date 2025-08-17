@@ -16,17 +16,29 @@ Decisions Confirmed
 - `avahi_aliases` may run on both leader and worker.
 - Replace cron with systemd timers.
 - Keep `sshpass` for now unless a clearly easier user flow is demonstrated.
+ - Ephemeral runtime lives under `/run/pioreactor` exposed via `RUN_PIOREACTOR`; `LG_WD` points to `/run/pioreactor`.
+ - UI exports are served from `/run/pioreactor/exports` (cleared on reboot). Nothing under `~/.pioreactor/web/exports`.
+- lighttpd FastCGI socket is `/run/pioreactor/pioreactor_web.sock`.
+
+Progress Update (current)
+- Removed `create_diskcache.service` and its script; rely on tmpfiles for `/run/pioreactor/{exports,cache}`.
+- tmpfiles now also pre-creates cache DBs with correct perms: `local_intermittent_pioreactor_metadata.sqlite` and `huey.db` (0660, `pioreactor:www-data`).
+- Added `UMask=0007` to `huey.service` and `lighttpd.service` for group-writable artifacts.
+- `everyboot.sh` applies default ACLs to `/run/pioreactor/cache` so new files (WAL/SHM) are always group `rw` regardless of umask.
+- `huey.service` now `After=everyboot.service` to ensure ACLs are in place before it starts.
+- Explicitly install `acl` package during image build to provide `setfacl`.
 
 Repository Ground Truth (CustoPiZer)
-- Systemd units present under `workspace/scripts/files/system/systemd/`:
-  - `avahi_aliases.service`, `create_diskcache.service`, `everyboot.service`, `firstboot.service`, `huey.service`, `lighttpd.service`, `load_rp2040.service`, `local_access_point.service`, `log-failure@.service`, `pioreactor_startup_run@.service`, `wifi_powersave.service`, `write_ip.service`.
-- Services are enabled directly in scripts:
-  - `workspace/scripts/04-install-services.sh` enables `wifi_powersave`, `local_access_point`, `create_diskcache`, `huey`, and leader-only `pioreactor_startup_run@mqtt_to_db_streaming`; also copies `pioreactor_startup_run@.service` twice (duplication).
-  - `workspace/scripts/11-add-firstboot.sh` installs `firstboot.service` and creates a manual symlink in `multi-user.target.wants`.
-  - `workspace/scripts/13-add-everyboot.sh` enables `everyboot.service` and `write_ip.service`.
-  - `workspace/scripts/14-install-crontabs.sh` installs leader/user and root crontabs from `workspace/scripts/files/cron/`.
-- No systemd targets or timers exist yet; cron remains the scheduler.
+- Units and targets under `workspace/scripts/files/system/systemd/` include services, timers, and targets:
+  - Services: `avahi_aliases.service`, `everyboot.service`, `firstboot.service`, `huey.service`, `lighttpd.service`, `load_rp2040.service`, `local_access_point.service`, `log-failure@.service`, `pioreactor_startup_run@.service`, `wifi_powersave.service`, `write_ip.service`.
+  - Timers: `network-info.timer`, `backup-database.timer`, `ui-exports-cleanup.timer` with matching `.service` units.
+  - Targets: `pioreactor.target`, `pioreactor-leader.target`, `pioreactor-worker.target` wire services via Wants.
+- Enablement is target-based:
+  - `workspace/scripts/04-install-services.sh` installs targets and tmpfiles, and enables `pioreactor.target` plus role-specific targets based on `LEADER`/`WORKER`.
+  - `workspace/scripts/11-add-firstboot.sh`/`13-add-everyboot.sh` install their units but do not directly enable them.
+  - `workspace/scripts/14-install-crontabs.sh` intentionally skips crontab installation (timers replace cron).
 - Worker-only avahi service file exists at `workspace/scripts/files/system/avahi/pioreactor_worker.service`.
+- tmpfiles.d: `workspace/scripts/files/system/tmpfiles.d/pioreactor.conf` provisions `/run/pioreactor/{exports,cache}` at boot.
 
 1) Bash Reliance and Brittleness
 - Problem: Fixed bash scripts ship in the image and don’t update with core software. Hard to test/change; logic scattered across many files.
@@ -50,17 +62,17 @@ Repository Ground Truth (CustoPiZer)
   - Package the UI as a Python distribution (name TBD; may fold into one wheel with core later). Include Flask app, tasks, static assets, and CLIs.
   - Keep lighttpd. Treat it as reverse proxy/FastCGI frontend to the packaged app entrypoint (no more mutable app code in `/var/www`).
   - Use a systemd `EnvironmentFile` to surface `DOT_PIOREACTOR` and other env, not `.env` files inside app dirs.
-  - Store user-persistent artifacts (e.g., exports/uploads) under `~/.pioreactor` (i.e., anchored by `DOT_PIOREACTOR`), not in the app install dir.
+  - Store user-persistent artifacts under `~/.pioreactor` (anchored by `DOT_PIOREACTOR`); ephemeral HTTP exports live under `/run/pioreactor/exports`.
  - Point huey and WSGI/FastCGI units at module paths (e.g., `ExecStart=... -m pioreactorui.tasks`) instead of hardcoded folders.
 
 3) Systemd Service Sprawl and Role Entanglement
 - Problem: Many units with mixed concerns and role-specific enabling during image build (`LEADER`/`WORKER` conditionals); some duplication and ad‑hoc dep chains.
-- Evidence: `files/system/systemd/*.service` (huey, lighttpd, avahi_aliases, create_diskcache, firstboot, everyboot, load_rp2040, local_access_point, wifi_powersave, write_ip). Role-specific enabling is scattered (e.g., `04-install-services.sh`).
+- Evidence: `files/system/systemd/*.service` (huey, lighttpd, avahi_aliases, firstboot, everyboot, load_rp2040, local_access_point, wifi_powersave, write_ip). Role-specific enabling is scattered (e.g., `04-install-services.sh`).
 - Impact: Harder to reason about boot order and failure handling; inconsistencies across devices.
 - Direction:
   - Introduce targets: `pioreactor.target` (common), `pioreactor-leader.target`, `pioreactor-worker.target`, and support combined activation for leader+worker.
   - Prefer wiring via target Wants (targets declare `Wants=serviceA serviceB ...`), and enable only the appropriate target(s) per image flavor at build time. Avoid direct service enablement in scripts.
-  - Convert cron to timers; define correct `After/Wants` (DB/cache readiness, network-online) to reflect real dependencies.
+  - Convert cron to timers; define correct `After/Wants` (DB/cache readiness, network-online) to reflect real dependencies. (Implemented.)
   - Centralize environment via a single `EnvironmentFile` (exposing `DOT_PIOREACTOR`, etc.) referenced by all units that need it.
   - Replace bash ExecStart lines with Python module entrypoints where logic is non-trivial.
 
@@ -78,7 +90,7 @@ Repository Ground Truth (CustoPiZer)
 Additional Observations
 - Workers currently enable lighttpd with `api-only` module; with the unified image, govern this via role targets rather than build-time conditionals.
 - `04-install-services.sh` copies `pioreactor_startup_run@.service` twice; should be deduped in the migration.
-- `14-install-crontabs.sh` and `files/cron/*` are good candidates for timers (DB backup, export cleanup).
+- `14-install-crontabs.sh` is now disabled; timers cover DB backup, export cleanup, and network info refresh.
 - Firstboot scripts handle SSH keys, DB seeds, and config; implement as idempotent Python oneshots in `pio system ...`.
 
 Proposed Next Steps
@@ -86,11 +98,11 @@ Proposed Next Steps
 - Draft `pio` subcommands and module entrypoints for: `system first-boot`, `system every-boot`, `workers add` (native), and a generalized `net advertise`.
 - Specify a shared `EnvironmentFile` with `DOT_PIOREACTOR` and other needed env; reference from units.
 - Design the UI packaging layout to work with lighttpd + FastCGI and move persistent UI artifacts under `DOT_PIOREACTOR`.
-- Replace cron with systemd timers; document new timer names and retention policies.
+- Replace cron with systemd timers; document new timer names and retention policies. (Implemented.)
 
 Open Decisions (to resolve before Phase 1 PR)
 - Targets wiring pattern: keep service unit `[Install]` blocks unchanged and declare `Wants=` on targets (recommended), or switch services to `WantedBy=pioreactor*.target`. Chosen approach here: targets declare `Wants=...`; scripts enable only targets.
-- Environment file path: default `/etc/pioreactor.env` with `DOT_PIOREACTOR=/home/pioreactor/.pioreactor` (agree?).
+- Environment file path: default `/etc/pioreactor.env` with `DOT_PIOREACTOR=/home/pioreactor/.pioreactor` and `RUN_PIOREACTOR=/run/pioreactor`; `LG_WD=/run/pioreactor`.
 - Firstboot linking: replace manual symlink in `11-add-firstboot.sh` with target-based enablement.
 - Where to select image flavor: top-level `make_*_image.sh` enables the corresponding target(s) (preferred) rather than conditionals inside install scripts.
 
@@ -100,11 +112,11 @@ Current State Snapshot (for future you)
 - CLI `pio workers add` exists and shells out to `/usr/local/bin/add_new_pioreactor_worker_from_leader.sh`.
 - Bash scripts installed by `12-add-pioreactor-bash-scripts.sh` (update UI, plugin install/uninstall, worker add) and by service setup scripts.
 - First boot and every boot are handled by `firstboot.service` and `everyboot.service` executing bash (`firstboot_*.sh`, `everyboot.sh`).
-- Systemd units under `files/system/systemd/`: huey, lighttpd, avahi_aliases, create_diskcache, load_rp2040, local_access_point, wifi_powersave, write_ip, pioreactor_startup_run@, firstboot, everyboot.
+- Systemd units under `files/system/systemd/`: huey, lighttpd, avahi_aliases, load_rp2040, local_access_point, wifi_powersave, write_ip, pioreactor_startup_run@, firstboot, everyboot.
 - Networking: NetworkManager profiles copied in `16-modify-network-details.sh`; avahi config tweaked; `write_ip.service` writes interface info to `/boot/firmware/network_info.txt`.
 - Time sync: chrony installed (`17-install-chrony.sh`); leader config allows local stratum.
-- Databases: SQLite DBs under `~/.pioreactor/storage`; UI/huey/cache under `/tmp/pioreactor_cache` (WAL enabled) from `create_diskcache.sh`.
-- Cron: user and root crontabs installed in `14-install-crontabs.sh` (DB backup via `pio run backup_database`; UI export cleanup; network info refresh) — to be converted to timers.
+- Databases: SQLite DBs under `~/.pioreactor/storage`; UI/huey/cache under `/run/pioreactor/cache` (WAL enabled via tmpfiles + service ExecStartPre).
+- Cron: `14-install-crontabs.sh` is a no-op; DB backup, export cleanup, and network-info are handled by systemd timers.
 - Env: pip configured to use piwheels; `DOT_PIOREACTOR` is used by the app to locate `config.ini` and should be exposed to services via EnvironmentFile.
 
 What “messy updates” mean today
@@ -116,7 +128,7 @@ Naming and CLI surface
 - Keep `pio workers add` as the user-facing join command; implement natively in Python (no shell callout). Retain `sshpass` flow for now.
 
 Persistence and storage notes
-- It is acceptable for some user uploads/exports to live under `/tmp` (tmpfs) per guidance, but anything required for durability across reboots should live under `DOT_PIOREACTOR` in the user’s home.
+- Ephemeral items should live under `/run/pioreactor` (tmpfs). Anything required for durability across reboots should live under `DOT_PIOREACTOR`.
 - Plan to relocate any persistent UI artifacts out of `/var/www/...` and into `~/.pioreactor/...` paths, with lighttpd serving from there when needed.
 
 Quick Wins (low-risk groundwork)
@@ -133,7 +145,7 @@ Systemd Target Mapping Draft
 - Common (`pioreactor.target`):
   - lighttpd.service: Web server (workers use api-only module via config). After network-online.target.
   - huey.service: UI task consumer; requires `DOT_PIOREACTOR` in EnvironmentFile; After network, Before lighttpd.
-  - create_diskcache.service: Prepares `/tmp/pioreactor_cache`; Before lighttpd.service and huey.service.
+  
   - avahi_aliases.service: mDNS alias publication; allowed on leader and worker; After network-online.target.
   - everyboot.service: Runs per-boot idempotent tasks.
   - firstboot.service: Runs once on first boot then disables itself.
@@ -160,7 +172,7 @@ Timers to Replace Cron (planned)
   - `network-info.timer`: periodic refresh of network details (replaces root crontab line); runs `write_ip` helper.
 - Leader timers:
   - `backup-database.timer`: replaces `pio run backup_database` cron (leader owns central DB).
-  - `ui-exports-cleanup.timer`: periodically cleans `/var/www/.../static/exports` or new export path under `DOT_PIOREACTOR`.
+  - `ui-exports-cleanup.timer`: periodically cleans `/run/pioreactor/exports`.
 
 EnvironmentFile Plan
 - Define a shared environment file (e.g., `/etc/pioreactor.env`) with at minimum `DOT_PIOREACTOR=/home/pioreactor/.pioreactor` and any other required env.
@@ -208,7 +220,7 @@ Migration Checklist (Ordered)
 - Test and rollout
   - Validate timers fire as expected (`systemd-analyze calendar ...`).
   - Boot-test leader, worker, and leader+worker modes; verify role switching via `pio role set`.
-  - Verify `DOT_PIOREACTOR` respected by services; check file ownership/permissions on `~/.pioreactor` and `/tmp/pioreactor_cache`.
+- Verify `DOT_PIOREACTOR` respected by services; check file ownership/permissions on `~/.pioreactor` and `/run/pioreactor/cache`.
   - Document migration notes and updated service topology.
 
 - Decommission legacy

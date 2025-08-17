@@ -23,9 +23,7 @@ sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
 cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 
 
-# systemd: needed for setting up dirs in /tmp and sqlite dbs
-sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
-cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
+# Directories under /run are provisioned by tmpfiles.d; no separate cache-prep service needed
 
 # systemd: UI web-workers
 sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
@@ -61,6 +59,9 @@ sudo cp /files/system/systemd/pioreactor.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor-leader.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor-worker.target $SYSTEMD_DIR
 
+# Install tmpfiles.d rules to provision /run/pioreactor paths at boot
+sudo install -D -m 0644 /files/system/tmpfiles.d/pioreactor.conf /etc/tmpfiles.d/pioreactor.conf
+
 # Enable only the appropriate targets
 sudo systemctl enable pioreactor.target
 if [ "$LEADER" == "1" ]; then
@@ -69,4 +70,3 @@ fi
 if [ "$WORKER" == "1" ]; then
     sudo systemctl enable pioreactor-worker.target
 fi
-

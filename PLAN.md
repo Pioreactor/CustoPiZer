@@ -4,6 +4,13 @@ Pioreactor Image Modernization Plan
 - Context: Read alongside ISSUES.md for rationale, mappings, and constraints.
 - Strategy: Land small, testable changes in phases; minimize user friction; consolidate behavior around `pio` and systemd targets.
 
+Progress Log (current)
+- Removed cache-prep oneshot: deleted `create_diskcache.service` and script.
+- tmpfiles provisions `/run/pioreactor/{exports,cache}` and pre-creates `local_intermittent_pioreactor_metadata.sqlite` and `huey.db` with `0660`, owner `pioreactor:www-data`.
+- Group-writability hardened: added `UMask=0007` to `huey.service` and `lighttpd.service` and default ACLs applied to `/run/pioreactor/cache` in `everyboot.sh`.
+- Deterministic ordering: `huey.service` now starts After `everyboot.service`.
+- Build ensures `setfacl` present: `acl` package installed explicitly.
+
 Secondary Goals Addressed (performance and portability)
 - Decrease boot time and perceived readiness.
 - Decrease `pio <cmd>` startup latency.
@@ -23,7 +30,7 @@ Secondary Goals Addressed (performance and portability)
 
 - Objectives
   - Establish `pioreactor.target` (common), `pioreactor-leader.target`, `pioreactor-worker.target` and map existing services as per ISSUES.md.
-  - Introduce `/etc/pioreactor.env` used by all relevant units; include `DOT_PIOREACTOR=/home/pioreactor/.pioreactor`.
+  - Introduce `/etc/pioreactor.env` used by all relevant units; include `DOT_PIOREACTOR=/home/pioreactor/.pioreactor`, `RUN_PIOREACTOR=/run/pioreactor`, and set `LG_WD=/run/pioreactor`.
   - Replace cron with systemd timers (network-info, backup-database, ui-exports-cleanup).
 
 - Changes in CustoPiZer
@@ -32,7 +39,7 @@ Secondary Goals Addressed (performance and portability)
     - `pioreactor-leader.target`: [Install] WantedBy=multi-user.target
     - `pioreactor-worker.target`: [Install] WantedBy=multi-user.target
   - Wire services via target Wants (targets declare `Wants=...`), and stop enabling services directly in scripts:
-    - Common (`pioreactor.target` Wants): `lighttpd.service`, `huey.service`, `create_diskcache.service`, `avahi_aliases.service`, `everyboot.service`, `firstboot.service`, `wifi_powersave.service`, `write_ip.service`, `local_access_point.service`, `pioreactor_startup_run@monitor.service`.
+    - Common (`pioreactor.target` Wants): `lighttpd.service`, `huey.service`, `avahi_aliases.service`, `everyboot.service`, `firstboot.service`, `wifi_powersave.service`, `write_ip.service`, `local_access_point.service`, `pioreactor_startup_run@monitor.service`.
     - Leader (`pioreactor-leader.target` Wants): `mosquitto.service`, `pioreactor_startup_run@mqtt_to_db_streaming.service`.
     - Worker (`pioreactor-worker.target` Wants): `load_rp2040.service`.
   - Add timers/services:
@@ -40,7 +47,10 @@ Secondary Goals Addressed (performance and portability)
     - `backup-database.service` + timer (leader): replaces `pio run backup_database`; `OnCalendar=Sun *-*-* 00:00` (weekly) or keep prior cadence.
     - `ui-exports-cleanup.service` + timer (leader): cleans export dir; `OnCalendar=monthly`.
   - Introduce `/etc/pioreactor.env` creation in the image build (new step writes `DOT_PIOREACTOR=/home/pioreactor/.pioreactor`), and update units to reference `EnvironmentFile=/etc/pioreactor.env` (replace `/etc/environment`).
+  - Add tmpfiles rules to provision `/run/pioreactor/{exports,cache}` on boot and move ephemeral data there.
+    - Status: done; includes pre-creating cache DB files with correct perms.
   - Stop enabling units directly in `workspace/scripts/04-install-services.sh`, `11-add-firstboot.sh`, and `13-add-everyboot.sh`. Instead, only enable the appropriate target(s).
+    - Status: partial; cache-prep unit removed and dependencies cleaned from targets and startup units.
   - Keep cron jobs for one release behind a build flag, then remove `14-install-crontabs.sh` when timers are verified.
   - No role files required; role is determined by image flavor (leader.img, worker.img, leader_worker.img).
 
@@ -50,7 +60,8 @@ Secondary Goals Addressed (performance and portability)
 - Testing
   - Build image; confirm `systemctl is-enabled` on targets; verify constituent units appear in `systemctl list-dependencies pioreactor*.target`.
   - Verify timers via `systemd-analyze calendar` and observe `journalctl -u *.timer -u *.service` after trigger.
-  - Confirm `DOT_PIOREACTOR` is present in service env (`systemctl show -p Environment ...`).
+  - Confirm `DOT_PIOREACTOR`, `RUN_PIOREACTOR`, and `LG_WD` are present in service env (`systemctl show -p Environment ...`).
+  - Confirm `/run/pioreactor` subdirs exist at boot (tmpfiles) and lighttpd uses `/run/pioreactor/pioreactor_web.sock`.
   - Lab test: Boot a device, verify monitor is running (`systemctl status pioreactor_startup_run@monitor`), timers fire, and `write_ip` updates `/boot/firmware/network_info.txt`.
 
 - Acceptance Criteria
@@ -119,16 +130,16 @@ Phase 1 — Next PR Outline (CustoPiZer)
 
 - Changes in CustoPiZer
   - Lighttpd integration updated (done):
-    - Use lighttpd-managed FastCGI: `bin-path=/usr/bin/pioreactor-fcgi`, socket `/run/pioreactorui.sock`.
+    - Use lighttpd-managed FastCGI: `bin-path=/usr/bin/pioreactor-fcgi`, socket `/run/pioreactor/pioreactor_web.sock`.
     - Rewrite `/api`, `/unit_api`, `/mcp` → `/api.fcgi$1`.
     - Leaders serve static via alias `/static/` → `/usr/share/pioreactorui/static` with SPA fallback to `/static/index.html`.
-    - Leaders expose `/exports/` → `${DOT_PIOREACTOR}/web/exports`.
+    - Leaders expose `/exports/` → `/run/pioreactor/exports` (ephemeral).
     - Workers enable `api-only` filter to expose ONLY `/unit_api`.
   - Services and scripts (done):
     - `huey.service` updated to `pioreactor.web.tasks.huey`.
     - `08-install-pioreactorui.sh` no longer fetches tarballs or `.env`; installs lighttpd + config.
-    - `06-install-pioreactor.sh` creates `${DOT_PIOREACTOR}/web/exports` and symlinks `/usr/share/pioreactorui/static` to packaged assets.
-    - Cleanup timer points to `${DOT_PIOREACTOR}/web/exports`.
+    - `06-install-pioreactor.sh` manages `/usr/share/pioreactorui/static` symlink to packaged assets; no exports under `${DOT_PIOREACTOR}`.
+    - Cleanup timer points to `/run/pioreactor/exports`.
     - Legacy `update_ui.sh` no longer installed.
 
 - Testing & Acceptance
@@ -140,7 +151,7 @@ Phase 4 — Status in this repo
 - Packaging landed upstream (assumed). Downstream now:
   - Serves static from packaged assets via symlink; no files under `/var/www/pioreactorui`.
   - Restricts worker HTTP surface to `/unit_api` only; leaders expose `/api`, `/unit_api`, `/mcp`.
-  - Exports live under `${DOT_PIOREACTOR}/web/exports` and are cleaned by timer.
+  - Exports live under `/run/pioreactor/exports` (tmpfs, cleared on reboot) and are cleaned by timer.
   - Caching tuned for SPA shell vs hashed assets.
 
 **Phase 5: Unified software; produce leader/worker/leader_worker images**
@@ -188,7 +199,7 @@ Performance and Portability Work (Cross-Cutting)
 - Boot-time reduction (CustoPiZer)
   - Audit unit dependencies: keep `After=network-online.target` only where strictly required; avoid chaining units unnecessarily (e.g., huey shouldn’t block lighttpd unless needed).
   - Prefer `Type=oneshot` for setup tasks and remove `RemainAfterExit` unless necessary.
-  - Parallelize independent oneshots (e.g., create_diskcache can run concurrently with other networkless init tasks).
+  - Avoid unnecessary oneshots; rely on tmpfiles for ephemeral dirs.
   - Remove redundant service copies and duplicate enablement to reduce unit churn at boot.
   - Measure with `systemd-analyze blame` and `systemd-analyze critical-chain`; set a target delta improvement (e.g., -20%).
 

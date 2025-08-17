@@ -13,6 +13,8 @@ USERNAME=pioreactor
 PIO_DIR=/home/$USERNAME/.pioreactor
 
 sudo apt-get install -y git
+# Ensure setfacl is available for cache directory ACLs applied at boot
+sudo apt-get install -y acl
 
 
 sudo -u $USERNAME mkdir -p $PIO_DIR
@@ -24,6 +26,9 @@ sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,t
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/charts
 echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" |                       sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
 echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" | sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt > /dev/null
+
+sudo -u $USERNAME mkdir -p $PIO_DIR/ui/
+
 
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
 chown -R $USERNAME:www-data $PIO_DIR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
@@ -96,9 +101,9 @@ EOT
 
 sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
 
-# Create web exports directory for HTTP downloads via lighttpd alias
-# Rationale: user data belongs under DOT_PIOREACTOR; lighttpd exposes /exports/ → ~/.pioreactor/web/exports
-sudo -u $USERNAME mkdir -p $PIO_DIR/web/exports
+# Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
+# /run/pioreactor/exports is created at boot via systemd-tmpfiles.
+sudo -u $USERNAME mkdir -p $PIO_DIR/web
 chown -R $USERNAME:www-data $PIO_DIR/web
 find $PIO_DIR/web -type d -exec chmod 2775 {} \;
 find $PIO_DIR/web -type f -exec chmod 0644 {} \;
@@ -110,6 +115,7 @@ if [ "$LEADER" == "1" ]; then
 
     sudo -u $USERNAME mkdir -p $PIO_DIR/exportable_datasets
     sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
+    sudo -u $USERNAME cp -r /files/pioreactor/ui/contrib $PIO_DIR/ui
 
 
 
@@ -139,9 +145,9 @@ sudo apt-get install -y jq
 sudo apt-get install -y rsyslog
 sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 -y # used for Pillow
 
+
 # Create/refresh symlink for static assets to package location (leaders and workers)
 # Lighttpd serves /static/ from /usr/share/pioreactorui/static which points into the installed wheel.
-# Safe to attempt even if the web package/static is not present yet.
 STATIC_DIR=$(python3 - <<'PY'
 import sys
 try:
@@ -153,7 +159,7 @@ except Exception:
     sys.exit(1)
 PY
 )
-if [ $? -eq 0 ] && [ -n "$STATIC_DIR" ] && [ -d "$STATIC_DIR" ]; then
-    install -d -m 0755 /usr/share/pioreactorui
-    ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
-fi
+
+install -d -m 0755 /usr/share/pioreactorui
+ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
+

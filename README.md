@@ -15,10 +15,47 @@ https://github.com/pioreactor/custopizer/releases/latest/download/<asset_name>
 
 Available at [nightly.pioreactor.com/](https://nightly.pioreactor.com/)
 
-### Local build:
+### Local build
 
-With docker running:
+With Docker running:
 
 ```
-bash make_leader_image <version>
+bash make_leader_image.sh <version> ./config.local
 ```
+
+**Systemd Targets**
+- Common: `pioreactor.target` — pulls up shared services (`lighttpd`, `huey`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`).
+- Leader: `pioreactor-leader.target` — adds `mosquitto`, `pioreactor_startup_run@mqtt_to_db_streaming`, `backup-database.timer`, `ui-exports-cleanup.timer`.
+- Worker: `pioreactor-worker.target` — adds `load_rp2040`.
+
+Enable only the appropriate targets during image build; individual units are not enabled directly in scripts anymore.
+
+**Timers (replaces cron)**
+- `network-info.timer`: updates `/boot/firmware/network_info.txt` every 5 minutes.
+- `backup-database.timer`: weekly database backup via `pio run backup_database`.
+- `ui-exports-cleanup.timer`: monthly cleanup of exported files in `/run/pioreactor/exports`.
+
+Check with `systemctl list-dependencies pioreactor*.target` and `systemctl list-timers` on a device.
+
+**Environment File**
+- Shared env for units at `/etc/pioreactor.env`:
+  - `DOT_PIOREACTOR=/home/pioreactor/.pioreactor` (used to locate configs and data)
+  - `RUN_PIOREACTOR=/run/pioreactor` (tmpfs for ephemeral runtime files)
+  - `LG_WD=/run/pioreactor` and `TMPDIR=/tmp/` for temp paths
+- Units reference it via `EnvironmentFile=/etc/pioreactor.env`.
+
+**Image Flavors → Targets**
+- Leader: enable `pioreactor.target` + `pioreactor-leader.target`.
+- Worker: enable `pioreactor.target` + `pioreactor-worker.target`.
+- Leader+Worker: enable all three targets.
+
+These are applied by the top-level `make_*_image.sh` scripts and in CI.
+
+**Exports Location**
+- `/exports/` is served from `/run/pioreactor/exports` (tmpfs, cleared on reboot). No exports are stored under `~/.pioreactor`.
+
+**FastCGI Socket**
+- lighttpd connects to the Flask backend via Unix socket `RUN_PIOREACTOR/pioreactor_web.sock`.
+
+**Cache**
+- Transient UI/Huey/cache files live under `/run/pioreactor/cache` (created on boot via tmpfiles), replacing the previous `/tmp/pioreactor_cache`.

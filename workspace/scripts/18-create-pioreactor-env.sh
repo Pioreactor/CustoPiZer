@@ -13,7 +13,9 @@ echo "Creating $ENV_FILE with DOT_PIOREACTOR default"
 cat <<'EOT' | sudo tee "$ENV_FILE" >/dev/null
 # Pioreactor shared environment for systemd units
 DOT_PIOREACTOR=/home/pioreactor/.pioreactor
-LG_WD=/tmp
+# Ephemeral runtime root (tmpfs)
+RUN_PIOREACTOR=/run/pioreactor
+LG_WD=/run/pioreactor
 TMPDIR=/tmp/
 EOT
 
