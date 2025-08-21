@@ -287,3 +287,7 @@ Implementation Hints
 Headless Role Selection (Three Images)
 - Users download `leader.img`, `worker.img`, or `leader_worker.img`.
 - Each image enables the appropriate targets at build time; no interactive role selection is needed.
+
+
+Organize .pioreactor folder
+ - currently have /ui/contrib and /plugins/ui/contrib, but this doesn't extend to exportable_datasets, models, etc.
