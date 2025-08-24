@@ -290,4 +290,4 @@ Headless Role Selection (Three Images)
 
 
 Organize .pioreactor folder
- - currently have /ui/contrib and /plugins/ui/contrib, but this doesn't extend to exportable_datasets, models, etc.
+ - currently have /ui/contrib and /plugins/ui/contrib, but this doesn't extend to export

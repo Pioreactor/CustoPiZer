@@ -6,6 +6,7 @@ After=network-online.target
 [Service]
 Type=simple
 PIDFile=/run/lighttpd.pid
+EnvironmentFile=/etc/pioreactor.env
 ExecStartPre=/usr/sbin/lighttpd -tt -f /etc/lighttpd/lighttpd.conf
 ExecStart=/usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf
 ExecReload=/bin/kill -USR1 $MAINPID

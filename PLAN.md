@@ -10,6 +10,7 @@ Progress Log (current)
 - Group-writability hardened: added `UMask=0007` to `huey.service` and `lighttpd.service` and default ACLs applied to `/run/pioreactor/cache` in `everyboot.sh`.
 - Deterministic ordering: `huey.service` now starts After `everyboot.service`.
 - Build ensures `setfacl` present: `acl` package installed explicitly.
+- moved .pioreactor/plugins/ui/contrib to .pioreactor/ui
 
 Secondary Goals Addressed (performance and portability)
 - Decrease boot time and perceived readiness.

@@ -21,13 +21,10 @@ sudo -u $USERNAME mkdir -p $PIO_DIR
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage
 sudo -u $USERNAME mkdir -p $PIO_DIR/models
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/charts
 echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" |                       sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
-echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" | sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt > /dev/null
 
 sudo -u $USERNAME mkdir -p $PIO_DIR/ui/
+echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" | sudo -u $USERNAME tee $PIO_DIR/ui/README.txt > /dev/null
 
 
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
@@ -115,9 +112,7 @@ if [ "$LEADER" == "1" ]; then
 
     sudo -u $USERNAME mkdir -p $PIO_DIR/exportable_datasets
     sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
-    sudo -u $USERNAME cp -r /files/pioreactor/ui/contrib $PIO_DIR/ui
-
-
+    sudo -u $USERNAME cp -r /files/pioreactor/ui/* $PIO_DIR/ui
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
