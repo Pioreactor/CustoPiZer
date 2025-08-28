@@ -65,7 +65,7 @@ function download_and_check_if_leader_only {
 if [ -n "$source" ]; then
     sudo pip3 install --force-reinstall --no-deps "$source"
 else
-    if download_and_check_if_leader_only $clean_plugin_name_with_dashes; then
+    if download_and_check_if_leader_only "$clean_plugin_name_with_dashes"; then
         if [ "$am_i_leader" = true ]; then
             echo "Not installing LEADER_ONLY plugin on worker"
             exit 0
@@ -92,7 +92,10 @@ if [ "$am_i_leader" = true ]; then
 
     # merge UI contribs
     if [ -d "$install_folder/ui/contrib/" ]; then
-        rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/contrib/
+        # backwards compabitle
+        rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/
+    elif [ -d "$install_folder/ui/" ]; then
+        rsync -a "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
     fi
 
     # merge datasets contribs

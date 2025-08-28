@@ -20,13 +20,6 @@ sudo apt-get install -y acl
 sudo -u $USERNAME mkdir -p $PIO_DIR
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage
 sudo -u $USERNAME mkdir -p $PIO_DIR/models
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
-echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" | sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/charts
-echo "Deprecated, use .pioreactor/ui instead" | sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt > /dev/null
-
 sudo -u $USERNAME mkdir -p $PIO_DIR/ui/
 
 
@@ -100,6 +93,14 @@ common:
 EOT
 
 sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
+
+# .pioreactor/plugins/ mimics .pioreactor dir
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
+echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" | sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/jobs
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/automations/{dosing,led,temperature}
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/charts
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/exportable_datasets
 
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
