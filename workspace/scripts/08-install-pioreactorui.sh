@@ -6,8 +6,6 @@
 # - Lighttpd manages FastCGI (bin-path=/usr/bin/pioreactor-fcgi).
 # - Leaders serve static assets via alias; workers enable api-only.
 
-# See also: update_ui.sh is a bash script for updating pioreactorui from tar.gz files.
-
 set -x
 set -e
 
@@ -36,6 +34,8 @@ cp /files/system/lighttpd/51-cors.conf         /etc/lighttpd/conf-available/51-c
 cp /files/system/lighttpd/20-compress.conf     /etc/lighttpd/conf-available/20-compress.conf
 cp /files/system/lighttpd/52-api-only.conf     /etc/lighttpd/conf-available/52-api-only.conf
 
+sudo mv /etc/lighttpd/conf-enabled/10-rewrite.conf /etc/lighttpd/conf-enabled/01-rewrite.conf
+
 lighttpd-enable-mod expire
 lighttpd-enable-mod fastcgi
 lighttpd-enable-mod rewrite
@@ -52,10 +52,11 @@ fi
 # we add entries to mDNS: pioreactor.local, see avahi_aliases.service
 sudo apt-get install -y avahi-utils
 
-# install ufw since this is pretty common in larger networks
+# install ufw since this is pretty commonly needed in larger networks
 sudo apt-get install -y ufw
 
 # quick tool sanity
+flask --help
 lighttpd -h
 huey_consumer -h
 

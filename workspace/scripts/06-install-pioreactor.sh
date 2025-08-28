@@ -21,10 +21,13 @@ sudo -u $USERNAME mkdir -p $PIO_DIR
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage
 sudo -u $USERNAME mkdir -p $PIO_DIR/models
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
-echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" |                       sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
+echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" | sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}
+sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/charts
+echo "Deprecated, use .pioreactor/ui instead" | sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt > /dev/null
 
 sudo -u $USERNAME mkdir -p $PIO_DIR/ui/
-echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" | sudo -u $USERNAME tee $PIO_DIR/ui/README.txt > /dev/null
 
 
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
@@ -105,6 +108,11 @@ chown -R $USERNAME:www-data $PIO_DIR/web
 find $PIO_DIR/web -type d -exec chmod 2775 {} \;
 find $PIO_DIR/web -type f -exec chmod 0644 {} \;
 
+
+# needed for fast yaml
+apt-get install libyaml-dev -y
+# https://github.com/yaml/pyyaml/issues/445
+sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
 
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
