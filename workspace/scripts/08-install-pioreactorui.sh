@@ -34,7 +34,7 @@ cp /files/system/lighttpd/51-cors.conf         /etc/lighttpd/conf-available/51-c
 cp /files/system/lighttpd/20-compress.conf     /etc/lighttpd/conf-available/20-compress.conf
 cp /files/system/lighttpd/52-api-only.conf     /etc/lighttpd/conf-available/52-api-only.conf
 
-sudo mv /etc/lighttpd/conf-enabled/10-rewrite.conf /etc/lighttpd/conf-enabled/01-rewrite.conf
+sudo mv /etc/lighttpd/conf-available/10-rewrite.conf /etc/lighttpd/conf-available/01-rewrite.conf
 
 lighttpd-enable-mod expire
 lighttpd-enable-mod fastcgi
