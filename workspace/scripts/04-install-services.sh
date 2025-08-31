@@ -27,6 +27,7 @@ cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 
 # systemd: UI web-workers
 sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/pioreactor-web.target $SYSTEMD_DIR
 
 # systemd: log failures and a python blink code that is nearly independent from Pioreactor code.
 sudo cp /files/system/systemd/log-failure@.service $SYSTEMD_DIR

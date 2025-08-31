@@ -24,9 +24,10 @@ bash make_leader_image.sh <version> ./config.local
 ```
 
 **Systemd Targets**
-- Common: `pioreactor.target` — pulls up shared services (`lighttpd`, `huey`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`).
+- Common: `pioreactor.target` — pulls up shared services (`pioreactor-web.target`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`).
 - Leader: `pioreactor-leader.target` — adds `mosquitto`, `pioreactor_startup_run@mqtt_to_db_streaming`, `backup-database.timer`, `ui-exports-cleanup.timer`.
 - Worker: `pioreactor-worker.target` — adds `load_rp2040`.
+- Web: `pioreactor-web.target` — groups `lighttpd.service` and `huey.service` for joint start/stop/restart.
 
 Enable only the appropriate targets during image build; individual units are not enabled directly in scripts anymore.
 
@@ -36,6 +37,10 @@ Enable only the appropriate targets during image build; individual units are not
 - `ui-exports-cleanup.timer`: monthly cleanup of exported files in `/run/pioreactor/exports`.
 
 Check with `systemctl list-dependencies pioreactor*.target` and `systemctl list-timers` on a device.
+
+**Web Stack Ops**
+- Restart both web services: `sudo systemctl restart pioreactor-web.target`
+- Start/stop both: `sudo systemctl start|stop pioreactor-web.target`
 
 **Environment File**
 - Shared env for units at `/etc/pioreactor.env`:

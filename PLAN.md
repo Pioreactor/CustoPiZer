@@ -4,13 +4,16 @@ Pioreactor Image Modernization Plan
 - Context: Read alongside ISSUES.md for rationale, mappings, and constraints.
 - Strategy: Land small, testable changes in phases; minimize user friction; consolidate behavior around `pio` and systemd targets.
 
-Progress Log (current)
+ Progress Log (current)
 - Removed cache-prep oneshot: deleted `create_diskcache.service` and script.
 - tmpfiles provisions `/run/pioreactor/{exports,cache}` and pre-creates `local_intermittent_pioreactor_metadata.sqlite` and `huey.db` with `0660`, owner `pioreactor:www-data`.
 - Group-writability hardened: added `UMask=0007` to `huey.service` and `lighttpd.service` and default ACLs applied to `/run/pioreactor/cache` in `everyboot.sh`.
 - Deterministic ordering: `huey.service` now starts After `everyboot.service`.
+- Added `pioreactor-web.target` to group `lighttpd` and `huey`; both declare `PartOf=pioreactor-web.target` for joint restarts.
 - Build ensures `setfacl` present: `acl` package installed explicitly.
-- moved .pioreactor/plugins/ui/contrib to .pioreactor/ui
+- Leader+worker boots; API endpoints respond; UI accessible.
+- Backend API installs via pip; FastCGI points to packaged entrypoint.
+- Jobs run; plugins work; `.pioreactor` layout confirmed.
 
 Secondary Goals Addressed (performance and portability)
 - Decrease boot time and perceived readiness.
@@ -19,7 +22,7 @@ Secondary Goals Addressed (performance and portability)
 
 **Phases Summary**
 - Phase 1: Targets, EnvironmentFile, and Timers (start here)
-- Phase 2: Port first-boot and every-boot to `pio` CLIs
+  - Add `pioreactor-web.target` for web stack management (restart lighttpd + huey together).
 - Phase 3: Replace `pio workers add` shell-out with native Python
 - Phase 4: Package UI via pip; update services to module entrypoints
 - Phase 5: Unified software; produce leader/worker/leader_worker images
@@ -35,12 +38,13 @@ Secondary Goals Addressed (performance and portability)
   - Replace cron with systemd timers (network-info, backup-database, ui-exports-cleanup).
 
 - Changes in CustoPiZer
-  - Add three target unit files under `workspace/scripts/files/system/systemd/`:
+  - Add target unit files under `workspace/scripts/files/system/systemd/`:
     - `pioreactor.target`: [Install] WantedBy=multi-user.target
     - `pioreactor-leader.target`: [Install] WantedBy=multi-user.target
     - `pioreactor-worker.target`: [Install] WantedBy=multi-user.target
   - Wire services via target Wants (targets declare `Wants=...`), and stop enabling services directly in scripts:
-    - Common (`pioreactor.target` Wants): `lighttpd.service`, `huey.service`, `avahi_aliases.service`, `everyboot.service`, `firstboot.service`, `wifi_powersave.service`, `write_ip.service`, `local_access_point.service`, `pioreactor_startup_run@monitor.service`.
+    - Common (`pioreactor.target` Wants): `pioreactor-web.target`, `avahi_aliases.service`, `everyboot.service`, `firstboot.service`, `wifi_powersave.service`, `write_ip.service`, `local_access_point.service`, `pioreactor_startup_run@monitor.service`.
+    - Web (`pioreactor-web.target` Wants): `lighttpd.service`, `huey.service`.
     - Leader (`pioreactor-leader.target` Wants): `mosquitto.service`, `pioreactor_startup_run@mqtt_to_db_streaming.service`.
     - Worker (`pioreactor-worker.target` Wants): `load_rp2040.service`.
   - Add timers/services:
@@ -79,23 +83,16 @@ Phase 1 — Next PR Outline (CustoPiZer)
 - Deduplicate: remove the duplicate copy of `pioreactor_startup_run@.service` in `04-install-services.sh` while touching the file.
 - Image flavors: adjust `make_leader_image.sh`, `make_worker_image.sh`, `make_leader_worker_image.sh` to `systemctl enable` the correct target(s) during build.
 
-**Phase 2: Port First-Boot and Every-Boot to `pio` CLIs**
+**Phase 2: Harden First-Boot and Every-Boot (bash)**
 - Objectives
-  - Implement idempotent `pio system first-boot` and `pio system every-boot` in upstream core.
-  - Replace `firstboot_*.sh` and `everyboot.sh` ExecStart lines with Python entrypoints.
-
-- Upstream tasks (pioreactor)
-  - Add `pio system first-boot` (reference: `workspace/scripts/files/bash/firstboot_leader.sh`, `firstboot_worker.sh`, `firstboot_leader_and_worker.sh`):
-    - Re-implement: SSH key generation, self-known_hosts, leader settings (when leader/leader_worker), DB seeds, create `config_<hostname>.ini` and copy to `unit_config.ini` (leader path), read/write under `DOT_PIOREACTOR`.
-    - Idempotency: skip actions if already applied; log actions clearly.
-  - Add `pio system every-boot` (reference: `workspace/scripts/files/bash/everyboot.sh`):
-    - Merge `/boot/firmware/config.ini` into `config.ini`, chown, then remove the source; force Wi-Fi on (best-effort).
-  - Provide console_scripts for both.
+  - Keep `firstboot_*.sh` and `everyboot.sh` as bash for speed and early-boot simplicity.
+  - Apply hardening: `set -euo pipefail`; explicit timeouts/retries for external calls; idempotent guards with simple file/flag checks; ensure they are fast oneshots and avoid blocking `network-online.target`; read env via `/etc/pioreactor.env`; rely on tmpfiles for directories.
 
 - Changes in CustoPiZer
-  - Update `firstboot.service` and `everyboot.service` to ExecStart the new `pio` commands.
+  - Review and update `workspace/scripts/files/bash/firstboot_*.sh` and `everyboot.sh` per the above.
+  - Ensure `firstboot.service` and `everyboot.service` reference `/etc/pioreactor.env` and remain minimal oneshots.
   - Keep service dependencies (After/Before) identical.
-  - Document in README/release notes that users can select a role by placing one of the `role.*` files on `/boot/firmware/` before first boot (if retaining role files for advanced use; images remain flavor-specific by default).
+  - Document expectations in this repo’s README/ISSUES.
 
 - Testing & Acceptance
   - Boot both leader and worker images; verify idempotent runs, presence of keys/config/db seeds, and logs.
@@ -125,7 +122,7 @@ Phase 1 — Next PR Outline (CustoPiZer)
   - Both leader and worker images install and run the web API. Workers enable lighttpd's `api-only` config (no static), leaders serve static assets.
 
 - Upstream tasks (pioreactor)
-  - Package `pioreactorui` inside the repo: include Flask app, FastCGI/WSGI entrypoint, huey tasks (`pioreactorui.tasks.huey`).
+  - Package UI inside `pioreactor`: include Flask app, FastCGI/WSGI entrypoint, huey tasks (`pioreactor.web.tasks.huey`).
   - Remove reliance on `.env`; load env from process (i.e., `DOT_PIOREACTOR`) or config.
   - Declare dependencies; ensure static assets are included in the wheel.
 
@@ -149,7 +146,7 @@ Phase 1 — Next PR Outline (CustoPiZer)
   - Performance: Ensure lighttpd startup is not gated by long oneshots; huey starts independently; UI import path is lean.
 
 Phase 4 — Status in this repo
-- Packaging landed upstream (assumed). Downstream now:
+- Packaging landed upstream. Downstream now:
   - Serves static from packaged assets via symlink; no files under `/var/www/pioreactorui`.
   - Restricts worker HTTP surface to `/unit_api` only; leaders expose `/api`, `/unit_api`, `/mcp`.
   - Exports live under `/run/pioreactor/exports` (tmpfs, cleared on reboot) and are cleaned by timer.
@@ -220,19 +217,18 @@ Performance and Portability Work (Cross-Cutting)
 
 **Cross-Repo Work Items (Checklist)**
 - CustoPiZer
-  - [ ] Add targets and wire services to them
-  - [ ] Add `/etc/pioreactor.env` and switch units to `EnvironmentFile`
-  - [ ] Add timers and disable cron
-  - [ ] Update firstboot/everyboot ExecStart to `pio` (after Phase 2 upstream)
-  - [ ] Switch UI install to pip and adjust services (after Phase 4 upstream)
+  - [x] Add targets and wire services to them
+  - [x] Add `/etc/pioreactor.env` and switch units to `EnvironmentFile`
+  - [x] Add timers and disable cron
+  - [ ] Harden `firstboot`/`everyboot` bash scripts (set -euo, idempotent, timeouts/retries, avoid blocking network-online, read env via `/etc/pioreactor.env`, use tmpfiles)
+  - [x] Switch UI install to pip and adjust services
   - [ ] Remove legacy bash installs and duplicate service wiring
   - [ ] Remove role conditionals
 
 - Upstream (pioreactor)
-  - [ ] Implement `pio system first-boot` and `pio system every-boot`
   - [ ] Implement native `pio workers add`
   - [ ] Implement `pio role set`
-  - [ ] Package `pioreactorui` (entrypoints for FCGI/WSGI + huey)
+  - [x] Package UI within `pioreactor` (FastCGI + huey entrypoints)
   - [ ] Update `pio plugins` parity logic (optional follow-up)
   - [ ] Tests and docs for new CLIs and paths
 

@@ -2,11 +2,13 @@
 Description=Huey service for Pioreactor web tasks
 After=network.target firstboot.service everyboot.service
 Before=lighttpd.service
+PartOf=pioreactor-web.target
 
 
 [Service]
 # Web environment via /etc/pioreactor.env provides DOT_PIOREACTOR
 EnvironmentFile=/etc/pioreactor.env
+WorkingDirectory=/run/pioreactor
 User=pioreactor
 # Ensure files created are group-writable/readable for www-data
 UMask=0007

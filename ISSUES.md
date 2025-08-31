@@ -9,7 +9,7 @@ Pioreactor Image Issues and Modernization Plan
   - reduce being tied to Raspberry Pi OS.
 
 Decisions Confirmed
-- UI packaging via pip is desired; lighttpd remains.
+- UI lives inside the `pioreactor` package and installs via pip; lighttpd remains.
 - Keep environment variables (e.g., `DOT_PIOREACTOR` to locate `config.ini`).
 - CLI namespace is `pio` (e.g., `pio run ...`, `pio plugins install ...`).
 - Single image should support roles leader, worker, and leader+worker.
@@ -27,12 +27,15 @@ Progress Update (current)
 - `everyboot.sh` applies default ACLs to `/run/pioreactor/cache` so new files (WAL/SHM) are always group `rw` regardless of umask.
 - `huey.service` now `After=everyboot.service` to ensure ACLs are in place before it starts.
 - Explicitly install `acl` package during image build to provide `setfacl`.
+ - Leader+worker image boots; API endpoints respond; UI accessible.
+ - Backend API is pip-installable; FastCGI points to packaged entrypoint.
+ - Jobs run; plugins work; `.pioreactor` layout validated.
 
 Repository Ground Truth (CustoPiZer)
 - Units and targets under `workspace/scripts/files/system/systemd/` include services, timers, and targets:
   - Services: `avahi_aliases.service`, `everyboot.service`, `firstboot.service`, `huey.service`, `lighttpd.service`, `load_rp2040.service`, `local_access_point.service`, `log-failure@.service`, `pioreactor_startup_run@.service`, `wifi_powersave.service`, `write_ip.service`.
   - Timers: `network-info.timer`, `backup-database.timer`, `ui-exports-cleanup.timer` with matching `.service` units.
-  - Targets: `pioreactor.target`, `pioreactor-leader.target`, `pioreactor-worker.target` wire services via Wants.
+  - Targets: `pioreactor.target`, `pioreactor-leader.target`, `pioreactor-worker.target`, `pioreactor-web.target` (web stack) wire services via Wants.
 - Enablement is target-based:
   - `workspace/scripts/04-install-services.sh` installs targets and tmpfiles, and enables `pioreactor.target` plus role-specific targets based on `LEADER`/`WORKER`.
   - `workspace/scripts/11-add-firstboot.sh`/`13-add-everyboot.sh` install their units but do not directly enable them.
@@ -46,24 +49,23 @@ Repository Ground Truth (CustoPiZer)
 - Impact: Bug fixes require re-imaging; limited testability; role logic duplicated; fragile error handling and env assumptions.
 - Direction:
   - Move logic into Python CLIs under the existing `pio` namespace (shipped in `pioreactor` and, later, UI package).
-  - Keep minimal systemd oneshots that invoke Python entrypoints (not shell), using `EnvironmentFile` to expose `DOT_PIOREACTOR` and other env.
+  - Keep minimal systemd oneshots; prefer Python for non-trivial flows. Keep `firstboot`/`everyboot` as bash and expose env via `EnvironmentFile`.
   - No backward-compat shims required: we will replace shipping bash scripts and require users to re-image.
   - Replace cron tasks with systemd timers for better observability and dependency control.
 - First candidates to port:
   - Cluster join: there is already a `pio workers add` that currently shells out to `add_new_pioreactor_worker_from_leader.sh`. Re-implement that command natively in Python (SSH, config sync, chrony, reboot). Keep `sshpass` initially.
-  - First boot / every boot: `pio system first-boot` and `pio system every-boot` oneshots (idempotent, read `DOT_PIOREACTOR`).
   - Avahi aliasing helper: expose a more general networking CLI (e.g., `pio net advertise` or `pio mdns advertise`) that supervises `avahi-publish` with retries.
   - UI update flow: superseded by pip-installed UI (see 2).
+  - Keep `firstboot`/`everyboot` as bash; harden them:
+    - use `set -euo pipefail` and explicit timeouts/retries.
+    - make idempotent with simple flag/file checks.
+    - keep as fast oneshots; avoid blocking `network-online.target`.
+    - read env via `/etc/pioreactor.env`.
+    - rely on tmpfiles for directories.
 
-2) UI Deployment Outside Python Packaging
-- Problem: UI currently lives in `/var/www/pioreactorui` and updates via tarball swap (`08-install-pioreactorui.sh`, `files/bash/update_ui.sh`). Huey/lighttpd services point into that folder.
-- Impact: Updates bypass pip versioning, risk drift and permissions churn; `.env` juggling; harder rollbacks.
-- Direction:
-  - Package the UI as a Python distribution (name TBD; may fold into one wheel with core later). Include Flask app, tasks, static assets, and CLIs.
-  - Keep lighttpd. Treat it as reverse proxy/FastCGI frontend to the packaged app entrypoint (no more mutable app code in `/var/www`).
-  - Use a systemd `EnvironmentFile` to surface `DOT_PIOREACTOR` and other env, not `.env` files inside app dirs.
-  - Store user-persistent artifacts under `~/.pioreactor` (anchored by `DOT_PIOREACTOR`); ephemeral HTTP exports live under `/run/pioreactor/exports`.
- - Point huey and WSGI/FastCGI units at module paths (e.g., `ExecStart=... -m pioreactorui.tasks`) instead of hardcoded folders.
+2) UI Packaging Status
+- Status: UI lives inside the main `pioreactor` project and installs via pip. No app code resides in `/var/www`; lighttpd serves FastCGI via `/usr/local/bin/pioreactor-fcgi`. Tarball flows and `update_ui.sh` are removed.
+- Benefits: Package-managed upgrades and rollbacks, stable module paths, simpler permissions, consistent deployment across images.
 
 3) Systemd Service Sprawl and Role Entanglement
 - Problem: Many units with mixed concerns and role-specific enabling during image build (`LEADER`/`WORKER` conditionals); some duplication and ad‑hoc dep chains.
@@ -91,11 +93,11 @@ Additional Observations
 - Workers currently enable lighttpd with `api-only` module; with the unified image, govern this via role targets rather than build-time conditionals.
 - `04-install-services.sh` copies `pioreactor_startup_run@.service` twice; should be deduped in the migration.
 - `14-install-crontabs.sh` is now disabled; timers cover DB backup, export cleanup, and network info refresh.
-- Firstboot scripts handle SSH keys, DB seeds, and config; implement as idempotent Python oneshots in `pio system ...`.
+- Firstboot/everyboot handle SSH keys, DB seeds, and config; keep these as bash oneshots, idempotent and fast, reading env from `/etc/pioreactor.env`.
 
 Proposed Next Steps
 - Define the three targets (`pioreactor`, `pioreactor-leader`, `pioreactor-worker`) and map existing units to them (including leader+worker combined activation). Update image build scripts to enable the correct targets per flavor.
-- Draft `pio` subcommands and module entrypoints for: `system first-boot`, `system every-boot`, `workers add` (native), and a generalized `net advertise`.
+- Draft `pio` subcommands and module entrypoints for: `workers add` (native) and a generalized `net advertise`.
 - Specify a shared `EnvironmentFile` with `DOT_PIOREACTOR` and other needed env; reference from units.
 - Design the UI packaging layout to work with lighttpd + FastCGI and move persistent UI artifacts under `DOT_PIOREACTOR`.
 - Replace cron with systemd timers; document new timer names and retention policies. (Implemented.)
@@ -108,7 +110,7 @@ Open Decisions (to resolve before Phase 1 PR)
 
 Current State Snapshot (for future you)
 - Images build from `workspace/scripts/` with role conditionals (`LEADER`, `WORKER`), copying assets from `workspace/scripts/files/` into the image.
-- Core Python app installed via pip in `06-install-pioreactor.sh` with extras per role; UI unpacked via tarball in `08-install-pioreactorui.sh` into `/var/www/pioreactorui`.
+- Core and UI install via pip; `08-install-pioreactorui.sh` configures lighttpd and FastCGI only (no tarball, no `/var/www/pioreactorui`).
 - CLI `pio workers add` exists and shells out to `/usr/local/bin/add_new_pioreactor_worker_from_leader.sh`.
 - Bash scripts installed by `12-add-pioreactor-bash-scripts.sh` (update UI, plugin install/uninstall, worker add) and by service setup scripts.
 - First boot and every boot are handled by `firstboot.service` and `everyboot.service` executing bash (`firstboot_*.sh`, `everyboot.sh`).
@@ -121,7 +123,7 @@ Current State Snapshot (for future you)
 
 What “messy updates” mean today
 - Bash scripts can be updated post-image but require ad-hoc distribution (manual copy, or shipping via Python packages writing to `/usr/local/bin`, or asking users to re-image). This is fragile and inconsistent across devices.
-- UI updates are done by swapping the entire `/var/www/pioreactorui` folder via `update_ui.sh`, which risks permissions drift and loses package-level tracking/rollbacks.
+- UI upgrades occur via pip; tarball swap and `update_ui.sh` are removed.
 
 Naming and CLI surface
 - Prefer general-purpose names. Instead of `pio net publish-alias`, use `pio net advertise` or `pio mdns advertise` and group related network helpers under `pio net`.
@@ -134,7 +136,7 @@ Persistence and storage notes
 Quick Wins (low-risk groundwork)
 - Define the shared systemd `EnvironmentFile` and list required variables (`DOT_PIOREACTOR`, others) without changing services yet.
 - Inventory and map each existing unit to leader/worker/common ahead of target introduction.
-- Draft the `pio system first-boot` logic based on `firstboot_*.sh` with idempotent checks (SSH keys, DB seeds, config writes).
+- Harden `firstboot_*.sh` and `everyboot.sh`: ensure `set -euo pipefail`, idempotent guards, timeouts/retries, and env from `/etc/pioreactor.env`.
 
 Gotchas to remember
 - `/tmp` is tmpfs (good for churn, not durable); journal size is capped (20M) and IPv6 is disabled by default — verify impacts on discovery/perf when altering network services.
@@ -145,6 +147,7 @@ Systemd Target Mapping Draft
 - Common (`pioreactor.target`):
   - lighttpd.service: Web server (workers use api-only module via config). After network-online.target.
   - huey.service: UI task consumer; requires `DOT_PIOREACTOR` in EnvironmentFile; After network, Before lighttpd.
+  - Web grouping: `pioreactor-web.target` groups `lighttpd.service` and `huey.service`; both declare `PartOf=pioreactor-web.target` for joint restarts (`systemctl restart pioreactor-web.target`).
   
   - avahi_aliases.service: mDNS alias publication; allowed on leader and worker; After network-online.target.
   - everyboot.service: Runs per-boot idempotent tasks.
@@ -196,16 +199,14 @@ Migration Checklist (Ordered)
   - Remove crontab installation from image build after timers are in place.
 
 - Port bash flows to Python (`pio`)
-  - `pio system first-boot`: generate SSH keys, config seeds, DB seeds; idempotent; logs to `pio`.
-  - `pio system every-boot`: merge `/boot/firmware/config.ini`, force Wi-Fi on, any recurring tasks; idempotent.
   - `pio workers add`: replace shell-out; implement SSH auth (keep `sshpass`), config sync, chrony hints, reboot.
   - `pio net advertise` (or `pio mdns advertise`): manage alias publication via avahi; retry logic; respect `DOT_PIOREACTOR`.
+  - Keep `firstboot`/`everyboot` as bash; ensure `set -euo pipefail`, idempotency, timeouts/retries, early and fast execution, and env via `/etc/pioreactor.env`.
 
 - UI packaging and services
-  - Package UI as a Python distribution (can merge with core later). Include WSGI/FCGI entrypoint and huey tasks.
-  - Update `lighttpd` config to point to packaged app entrypoint (no mutable code in `/var/www`).
-  - Update `huey.service` ExecStart to module invocation (e.g., `-m pioreactorui.tasks`).
-  - Relocate persistent exports/uploads under `DOT_PIOREACTOR`; keep ephemeral items acceptable under `/tmp`.
+  - Done: UI packaged inside `pioreactor`; lighttpd points to packaged FastCGI entrypoint.
+  - `huey.service` uses `pioreactor.web.tasks.huey`.
+  - Ephemeral exports under `/run/pioreactor/exports`; persistent data under `DOT_PIOREACTOR`.
 
 - Service cleanup and deduplication
   - Remove duplicate copy of `pioreactor_startup_run@.service` in `04-install-services.sh`.
@@ -213,8 +214,8 @@ Migration Checklist (Ordered)
   - Keep `load_rp2040.service` and other minimal shell-only when truly trivial; otherwise replace with Python.
 
 - Image build updates
-  - Replace tarball-based UI install with pip install of packaged UI.
-  - Remove role conditionals; enable targets instead. Keep necessary packages on all images.
+  - UI installation via pip is in place; tarball flow removed.
+  - Remove role conditionals later; keep required packages on all images.
   - Keep `sshpass` dependency for `pio workers add` initially.
 
 - Test and rollout
@@ -224,21 +225,13 @@ Migration Checklist (Ordered)
   - Document migration notes and updated service topology.
 
 - Decommission legacy
-  - Remove `update_ui.sh`, `firstboot_*.sh`, `everyboot.sh`, and `add_new_pioreactor_worker_from_leader.sh` from the image once replaced.
+  - Remove `update_ui.sh`. Keep `firstboot_*.sh` and `everyboot.sh` as hardened bash oneshots. Remove add-worker bash once the CLI replacement lands.
   - Replace plugin install/uninstall bash with `pio plugins` subcommands (optional follow-up).
 
 Upstream Changes Required (pioreactor/pioreactor)
-- Repository: https://github.com/pioreactor/pioreactor (contains core `pio` CLI and `pioreactorui` Flask code)
+- Repository: https://github.com/pioreactor/pioreactor (contains core `pio` CLI and the web UI)
 
 - CLI: new and updated `pio` subcommands
-  - `pio system first-boot`: Idempotent initializer. Implements logic from current `firstboot_*.sh`:
-    - Generate SSH keys for user, seed authorized_keys and known_hosts with self hostname.local.
-    - Set leader hostname/address and MQTT broker in config when appropriate.
-    - Seed SQLite DB with demo experiment and optional initial worker assignment (when leader+worker).
-    - Create `config_<hostname>.ini` and copy to `unit_config.ini` (leader path), using `DOT_PIOREACTOR`.
-  - `pio system every-boot`: Idempotent recurring tasks:
-    - Merge `/boot/firmware/config.ini` into `config.ini` and chown; remove source file.
-    - Force Wi‑Fi on via `nmcli radio wifi on` (best-effort, ignore errors).
   - `pio workers add <hostname> [--password <pw>] [--address <addr>]`:
     - Native Python implementation replacing shell-out.
     - Use `sshpass` (present on image) to probe connectivity and copy SSH keys.
@@ -252,11 +245,8 @@ Upstream Changes Required (pioreactor/pioreactor)
     - Publish mDNS alias using `avahi-publish -a -R` for all current IPs; simple retry/sleep loop until IPs exist.
     - Default alias sourced from config (`ui.domain_alias`) and/or argument.
 
-- Packaging: `pioreactorui` as a Python distribution
-  - Move UI code (currently placed in `/var/www/pioreactorui` by tarball) into a proper package inside this repo.
-  - Provide WSGI/FCGI entrypoint (console_script) for lighttpd to launch, plus a huey tasks module path.
-  - Ensure dependencies are declared; avoid runtime `pip install -r`.
-  - Replace reliance on `.env` file with reading env via `os.environ` (e.g., `DOT_PIOREACTOR`) and/or `config.ini`.
+- Packaging: done
+  - UI lives under `pioreactor.web` with an installed FastCGI console_script; huey consumer path is `pioreactor.web.tasks.huey`.
 
 - Storage and paths
   - Centralize path resolution around `DOT_PIOREACTOR` (default `/home/pioreactor/.pioreactor`).
@@ -264,7 +254,7 @@ Upstream Changes Required (pioreactor/pioreactor)
   - Provide helpers to get persistent vs ephemeral paths; avoid writing into package install directories.
 
 - Systemd integration entrypoints
-  - Ensure huey consumer path remains `pioreactorui.tasks.huey` (as used by unit).
+  - Ensure huey consumer path is `pioreactor.web.tasks.huey` (as used by unit).
   - Provide console_scripts for `pio` subcommands above and any service entrypoints (e.g., FCGI/WSGI runner).
 
 - Plugins handling parity (optional, but recommended)
@@ -275,7 +265,7 @@ Upstream Changes Required (pioreactor/pioreactor)
     - Sync UI contrib YAMLs and datasets into `~/.pioreactor/plugins/...` locations.
 
 - Testing and docs
-  - Add CLI tests (unit/integration where feasible) for `pio workers add`, `system first-boot`, and `system every-boot`.
+  - Add CLI tests (unit/integration where feasible) for `pio workers add`.
   - Document `DOT_PIOREACTOR` and new storage locations for UI exports/uploads.
   - Provide upgrade notes: UI now packaged via pip; tarball-based `update_ui.sh` is removed.
 
@@ -287,7 +277,3 @@ Implementation Hints
 Headless Role Selection (Three Images)
 - Users download `leader.img`, `worker.img`, or `leader_worker.img`.
 - Each image enables the appropriate targets at build time; no interactive role selection is needed.
-
-
-Organize .pioreactor folder
- - currently have /ui/contrib and /plugins/ui/contrib, but this doesn't extend to export
