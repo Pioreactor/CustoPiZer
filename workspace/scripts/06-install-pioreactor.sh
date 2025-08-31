@@ -114,6 +114,9 @@ apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
 sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
 
+# install numpy first, else our image builds spend a lot of time trying to build numpy
+sudo apt-get install -y python3-numpy
+
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
     sudo -u $USERNAME cp /files/pioreactor/config.example.ini $DOT_PIOREACTOR/config.ini
@@ -126,7 +129,7 @@ if [ "$LEADER" == "1" ]; then
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo apt-get install -y python3-numpy
+
         sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
         sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
@@ -135,7 +138,6 @@ fi
 
 
 if [ "$WORKER" == "1" ]; then
-    sudo apt-get install -y python3-numpy
 
     if [ "$PIO_VERSION" == "develop" ]; then
         sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
