@@ -121,7 +121,7 @@ find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 # needed for fast yaml
 apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
-sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install --no-cache-dir --no-binary pyyaml pyyaml --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+sudo -u $USERNAME "$UV_BIN" pip --python "$PY" install --no-cache-dir --no-binary pyyaml pyyaml --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
 
 # install numpy first, else our image builds spend a lot of time trying to build numpy
 sudo apt-get install -y python3-numpy
@@ -138,11 +138,11 @@ if [ "$LEADER" == "1" ]; then
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+        sudo -u $USERNAME "$UV_BIN" pip --python "$PY" install \
           "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#subdirectory=core" \
           --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+        sudo -u $USERNAME "$UV_BIN" pip --python "$PY" install \
           "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
           --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
@@ -151,11 +151,11 @@ fi
 
 if [ "$WORKER" == "1" ]; then
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+        sudo -u $USERNAME "$UV_BIN" pip --python "$PY" install \
           "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#subdirectory=core" \
           --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+        sudo -u $USERNAME "$UV_BIN" pip --python "$PY" install \
           "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
           --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi

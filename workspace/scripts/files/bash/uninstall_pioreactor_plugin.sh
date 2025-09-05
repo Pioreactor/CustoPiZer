@@ -36,6 +36,6 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
     # pios sync-configs --shared
 fi
 
-"$UV_BIN" pip -p "$PY" uninstall  -y "$clean_plugin_name_with_dashes"
+"$UV_BIN" pip --python "$PY" uninstall  -y "$clean_plugin_name_with_dashes"
 
 exit 0
