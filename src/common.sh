@@ -12,7 +12,7 @@ function is_installed(){
 function is_in_apt(){
   # Checks if a package is in the apt repo, returns 1 if exists and 0 if not
   # Usage is_in_apt <package_name>
-
+  echo "is in apt!"
   local output
   output=$(apt-cache search --names-only "^${1}$")
 
