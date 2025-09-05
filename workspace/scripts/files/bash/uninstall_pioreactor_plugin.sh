@@ -11,7 +11,10 @@ clean_plugin_name=${plugin_name,,} # lower cased
 
 clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
-install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
+VENV_DIR=/opt/pioreactor/.venv
+PY="$VENV_DIR/bin/python"
+UV_BIN=/usr/local/bin/uv
+install_folder=$("$PY" -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 
@@ -33,6 +36,6 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
     # pios sync-configs --shared
 fi
 
-sudo pip3 uninstall  -y "$clean_plugin_name_with_dashes"
+"$UV_BIN" pip -p "$PY" uninstall  -y "$clean_plugin_name_with_dashes"
 
 exit 0

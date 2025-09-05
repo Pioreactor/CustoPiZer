@@ -11,6 +11,15 @@ install_cleanup_trap
 
 USERNAME=pioreactor
 DOT_PIOREACTOR=/home/$USERNAME/.pioreactor
+VENV_DIR=/opt/pioreactor/.venv
+
+install -d -m 0755 /opt/pioreactor
+chown $USERNAME:$USERNAME /opt/pioreactor
+
+# Create venv that can see apt-installed site-packages (for numpy)
+sudo -u $USERNAME uv venv --system-site-packages "$VENV_DIR"
+PY="$VENV_DIR/bin/python"
+UV_BIN=/usr/local/bin/uv
 
 sudo apt-get install -y git
 # Ensure setfacl is available for cache directory ACLs applied at boot
@@ -112,7 +121,7 @@ find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 # needed for fast yaml
 apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
-sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
+sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install --no-cache-dir --no-binary pyyaml pyyaml --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
 
 # install numpy first, else our image builds spend a lot of time trying to build numpy
 sudo apt-get install -y python3-numpy
@@ -129,22 +138,27 @@ if [ "$LEADER" == "1" ]; then
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
-
-        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+          "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#subdirectory=core" \
+          --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+          "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
+          --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
 fi
 
 
 if [ "$WORKER" == "1" ]; then
-
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+          "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#subdirectory=core" \
+          --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo pip3 install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u $USERNAME "$UV_BIN" pip -p "$PY" install \
+          "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
+          --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
-
 fi
 
 
@@ -156,7 +170,7 @@ sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 -y # used
 
 # Create/refresh symlink for static assets to package location (leaders and workers)
 # Lighttpd serves /static/ from /usr/share/pioreactorui/static which points into the installed wheel.
-STATIC_DIR=$(python3 - <<'PY'
+STATIC_DIR=$("$PY" - <<'PY'
 import sys
 try:
     import importlib.resources as r
@@ -171,3 +185,8 @@ PY
 install -d -m 0755 /usr/share/pioreactorui
 ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
 
+# Symlink venv entrypoints so www-data/lighttpd can execute FastCGI and CLIs
+install -d -m 0755 /usr/local/bin
+ln -sfn "$VENV_DIR/bin/pioreactor-fcgi" /usr/local/bin/pioreactor-fcgi
+ln -sfn "$VENV_DIR/bin/pio"             /usr/local/bin/pio
+ln -sfn "$VENV_DIR/bin/pios"            /usr/local/bin/pios

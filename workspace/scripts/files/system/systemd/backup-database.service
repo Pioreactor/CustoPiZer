@@ -5,8 +5,8 @@ After=network-online.target
 [Service]
 Type=oneshot
 User=pioreactor
-ExecStart=/usr/bin/pio run backup_database
+EnvironmentFile=/etc/pioreactor.env
+ExecStart=pio run backup_database
 
 [Install]
 WantedBy=multi-user.target
-

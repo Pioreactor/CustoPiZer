@@ -17,6 +17,8 @@ DOT_PIOREACTOR=/home/pioreactor/.pioreactor
 RUN_PIOREACTOR=/run/pioreactor
 LG_WD=/run/pioreactor
 TMPDIR=/tmp/
+# Prefer the app venv for all services
+PATH=/opt/pioreactor/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 EOT
 
 sudo chmod 0644 "$ENV_FILE"

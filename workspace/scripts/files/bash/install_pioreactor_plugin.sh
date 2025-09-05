@@ -13,7 +13,10 @@ clean_plugin_name=${plugin_name,,} # lower cased
 
 clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
-install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
+VENV_DIR=/opt/pioreactor/.venv
+PY="$VENV_DIR/bin/python"
+UV_BIN=/usr/local/bin/uv
+install_folder=$("$PY" -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 if [ "$leader_hostname" = "$(hostname)" ]; then
@@ -30,7 +33,7 @@ function download_and_check_if_leader_only {
     local CLEAN_PACKAGE_NAME=${PACKAGE_NAME//-/_}
 
     # Download the wheel file without dependencies
-    pip download -qq --no-deps --dest /tmp $PACKAGE_NAME
+    "$UV_BIN" pip -p "$PY" download -qq --no-deps --dest /tmp $PACKAGE_NAME
 
     # Get the file name of the downloaded package
     local WHL_FILE
@@ -63,7 +66,7 @@ function download_and_check_if_leader_only {
 
 
 if [ -n "$source" ]; then
-    sudo pip3 install --force-reinstall --no-deps "$source"
+    "$UV_BIN" pip -p "$PY" install --reinstall --no-deps "$source"
 else
     if download_and_check_if_leader_only "$clean_plugin_name_with_dashes"; then
         if [ "$am_i_leader" = true ]; then
@@ -72,7 +75,7 @@ else
         fi
         echo "Installing LEADER_ONLY plugin on worker"
     fi
-    sudo pip3 install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
+    "$UV_BIN" pip -p "$PY" install --upgrade --reinstall --ignore-installed "$clean_plugin_name_with_dashes"
 fi
 
 

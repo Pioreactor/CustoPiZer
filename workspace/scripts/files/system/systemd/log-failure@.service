@@ -4,4 +4,5 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/pio log -m "Service %i failed to start" -l ERROR && python /usr/local/bin/led_control.py --blink
+EnvironmentFile=/etc/pioreactor.env
+ExecStart=pio log -m "Service %i failed to start" -l ERROR && python /usr/local/bin/led_control.py --blink

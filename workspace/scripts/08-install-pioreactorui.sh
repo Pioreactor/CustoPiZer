@@ -56,9 +56,8 @@ sudo apt-get install -y avahi-utils
 sudo apt-get install -y ufw
 
 # quick tool sanity
-flask --help
 lighttpd -h
-huey_consumer -h
+/opt/pioreactor/.venv/bin/huey_consumer -h
 
 # add yaml mime type (optional)
 echo "application/yaml               yaml yml" | sudo tee -a /etc/mime.types
