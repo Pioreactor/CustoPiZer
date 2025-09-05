@@ -3,6 +3,7 @@ Description=Huey service for Pioreactor web tasks
 After=network.target firstboot.service everyboot.service
 Before=lighttpd.service
 PartOf=pioreactor-web.target
+OnFailure=log-failure@%n.service
 
 
 [Service]

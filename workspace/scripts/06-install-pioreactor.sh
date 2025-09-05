@@ -187,6 +187,8 @@ ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
 
 # Symlink venv entrypoints so www-data/lighttpd can execute FastCGI and CLIs
 install -d -m 0755 /usr/local/bin
+# Ensure venv is world-readable/executable
+chmod -R a+rX "$VENV_DIR"
 ln -sfn "$VENV_DIR/bin/pioreactor-fcgi" /usr/local/bin/pioreactor-fcgi
 ln -sfn "$VENV_DIR/bin/pio"             /usr/local/bin/pio
 ln -sfn "$VENV_DIR/bin/pios"            /usr/local/bin/pios

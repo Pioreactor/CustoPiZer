@@ -2,6 +2,7 @@
 Description=Lighttpd Daemon
 After=network-online.target
 PartOf=pioreactor-web.target
+OnFailure=log-failure@%n.service
 
 
 [Service]
