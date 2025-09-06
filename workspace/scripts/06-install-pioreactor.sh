@@ -11,6 +11,7 @@ install_cleanup_trap
 
 USERNAME=pioreactor
 DOT_PIOREACTOR=/home/$USERNAME/.pioreactor
+PIO_VENV=/opt/pioreactor/venv
 
 sudo apt-get install -y git
 # Ensure setfacl is available for cache directory ACLs applied at boot
@@ -112,10 +113,14 @@ find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 # needed for fast yaml
 apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
-sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
+sudo "$PIO_VENV/bin/pip" install --no-cache-dir --no-binary pyyaml pyyaml \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
 
-# install numpy first, else our image builds spend a lot of time trying to build numpy
-sudo apt-get install -y python3-numpy
+# install numpy from piwheels into the venv to avoid long builds
+sudo "$PIO_VENV/bin/pip" install numpy \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
 
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
@@ -130,9 +135,9 @@ if [ "$LEADER" == "1" ]; then
 
     if [ "$PIO_VERSION" == "develop" ]; then
 
-        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo "$PIO_VENV/bin/pip" install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo "$PIO_VENV/bin/pip" install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
 fi
 
@@ -140,9 +145,9 @@ fi
 if [ "$WORKER" == "1" ]; then
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo "$PIO_VENV/bin/pip" install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo pip3 install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo "$PIO_VENV/bin/pip" install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
 
 fi
@@ -156,7 +161,7 @@ sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 -y # used
 
 # Create/refresh symlink for static assets to package location (leaders and workers)
 # Lighttpd serves /static/ from /usr/share/pioreactorui/static which points into the installed wheel.
-STATIC_DIR=$(python3 - <<'PY'
+STATIC_DIR=$("$PIO_VENV/bin/python" - <<'PY'
 import sys
 try:
     import importlib.resources as r
@@ -170,4 +175,3 @@ PY
 
 install -d -m 0755 /usr/share/pioreactorui
 ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
-

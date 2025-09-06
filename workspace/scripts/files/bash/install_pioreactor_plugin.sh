@@ -6,6 +6,11 @@ set -e
 set -x
 export LC_ALL=C
 
+# Prefer Pioreactor venv if present
+source /etc/pioreactor.env 2>/dev/null || true
+PIP=${PIO_VENV:-/opt/pioreactor/venv}/bin/pip
+PY=${PIO_VENV:-/opt/pioreactor/venv}/bin/python
+
 plugin_name=$1
 source=$2
 
@@ -13,7 +18,7 @@ clean_plugin_name=${plugin_name,,} # lower cased
 
 clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
-install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
+install_folder=$("$PY" -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
 leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 if [ "$leader_hostname" = "$(hostname)" ]; then
@@ -30,7 +35,7 @@ function download_and_check_if_leader_only {
     local CLEAN_PACKAGE_NAME=${PACKAGE_NAME//-/_}
 
     # Download the wheel file without dependencies
-    pip download -qq --no-deps --dest /tmp $PACKAGE_NAME
+    "$PIP" download -qq --no-deps --dest /tmp $PACKAGE_NAME
 
     # Get the file name of the downloaded package
     local WHL_FILE
@@ -63,7 +68,7 @@ function download_and_check_if_leader_only {
 
 
 if [ -n "$source" ]; then
-    sudo pip3 install --force-reinstall --no-deps "$source"
+    sudo "$PIP" install --force-reinstall --no-deps "$source"
 else
     if download_and_check_if_leader_only "$clean_plugin_name_with_dashes"; then
         if [ "$am_i_leader" = true ]; then
@@ -72,7 +77,7 @@ else
         fi
         echo "Installing LEADER_ONLY plugin on worker"
     fi
-    sudo pip3 install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
+    sudo "$PIP" install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
 fi
 
 

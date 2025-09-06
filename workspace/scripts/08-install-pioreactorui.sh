@@ -16,6 +16,7 @@ source /common.sh
 install_cleanup_trap
 
 SYSTEMD_DIR=/etc/systemd/system/
+PIO_VENV=/opt/pioreactor/venv
 
 # ensure /var/www exists (lighttpd doc-root); static served via alias
 mkdir -p /var/www
@@ -56,9 +57,9 @@ sudo apt-get install -y avahi-utils
 sudo apt-get install -y ufw
 
 # quick tool sanity
-flask --help
+"$PIO_VENV/bin/flask" --help || true
 lighttpd -h
-huey_consumer -h
+"$PIO_VENV/bin/huey_consumer" -h || true
 
 # add yaml mime type (optional)
 echo "application/yaml               yaml yml" | sudo tee -a /etc/mime.types

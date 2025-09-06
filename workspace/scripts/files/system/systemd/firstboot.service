@@ -5,6 +5,7 @@ After=systemd-hostnamed.service network-online.target
 ConditionFileNotEmpty=/usr/local/bin/firstboot.sh
 
 [Service]
+EnvironmentFile=/etc/pioreactor.env
 ExecStart=/bin/bash /usr/local/bin/firstboot.sh
 ExecStartPost=/bin/mv /usr/local/bin/firstboot.sh /usr/local/bin/firstboot.sh.done
 Type=oneshot

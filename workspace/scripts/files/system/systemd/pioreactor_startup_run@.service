@@ -8,7 +8,6 @@ After=network-online.target firstboot.service load_rp2040.service local_access_p
 User=pioreactor
 ExecStart=pio run %I
 Restart=on-failure
-Environment="PATH=/home/pioreactor/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
 EnvironmentFile=/etc/pioreactor.env
 
 [Install]
