@@ -8,6 +8,7 @@ export LC_ALL=C
 
 source /common.sh
 install_cleanup_trap
+PIO_VENV=/opt/pioreactor/venv
 
 if [ "$WORKER" == "1" ]; then
 
@@ -119,4 +120,4 @@ sudo rm /var/lib/man-db/auto-update
 
 
 # reduce the size that journalctl uses. TODO: test this
-sudo crudini --set /etc/systemd/journald.conf Journal SystemMaxUse 20M
+sudo "$PIO_VENV/bin/crudini" --set /etc/systemd/journald.conf Journal SystemMaxUse 20M

@@ -8,6 +8,7 @@ export LC_ALL=C
 
 source /common.sh
 install_cleanup_trap
+PIO_VENV=/opt/pioreactor/venv
 
 cp /files/system/NetworkManager/PioreactorAP.nmconnection /etc/NetworkManager/system-connections/
 cp /files/system/NetworkManager/PioreactorLocalLink.nmconnection /etc/NetworkManager/system-connections/
@@ -22,4 +23,4 @@ sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorDefaultEth.nmcon
 # turn off avahi ipv6? This seems to solve the "hostname-N" problem some users see.
 # Edit1: no, keep use-ipv6=yes, as it significantly improves how fast browsers connect to mqtt.
 # nospace is important!
-sudo crudini --ini-options=nospace --set /etc/avahi/avahi-daemon.conf publish publish-aaaa-on-ipv4 no
+sudo "$PIO_VENV/bin/crudini" --ini-options=nospace --set /etc/avahi/avahi-daemon.conf publish publish-aaaa-on-ipv4 no

@@ -31,12 +31,6 @@ sudo python3 -m venv "$PIO_VENV"
 # Ensure venv pip is recent
 sudo "$PIO_VENV/bin/pip" install --upgrade pip
 
-# Base utilities used across scripts
-sudo "$PIO_VENV/bin/pip" install \
-  --index-url https://www.piwheels.org/simple \
-  --extra-index-url https://pypi.org/simple \
-  crudini==0.9.5 click gpiozero RPi.GPIO
-
 
 # test that crudini works
 "$PIO_VENV/bin/crudini" --help
