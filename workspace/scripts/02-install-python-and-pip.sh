@@ -30,6 +30,7 @@ sudo python3 -m venv "$PIO_VENV"
 
 # Ensure venv pip is recent
 sudo "$PIO_VENV/bin/pip" install --upgrade pip
+sudo "$PIO_VENV/bin/pip" install crudini
 
 
 # test that crudini works
