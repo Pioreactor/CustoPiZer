@@ -75,9 +75,6 @@ if [ "$WORKER" == "1" ]; then
 fi
 
 
-# remove depend. of uninstalled programs.
-# sudo apt-get autoremove -y
-
 # put /tmp into memory, as we write to it a lot.
 echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
 
@@ -90,14 +87,14 @@ echo "force_turbo=1" | sudo tee -a /boot/config.txt
 
 
 # disable services that slow down boot
-sudo systemctl disable raspi-config.service
-sudo systemctl disable triggerhappy.service
+# sudo systemctl disable raspi-config.service
+# sudo systemctl disable triggerhappy.service
 sudo systemctl disable apt-daily.service
 sudo systemctl disable apt-daily-upgrade.service
 sudo systemctl disable alsa-restore.service
 sudo systemctl disable alsa-state.service
 sudo systemctl disable userconfig.service
-sudo systemctl disable rpi-display-backlight.service
+# sudo systemctl disable rpi-display-backlight.service
 sudo systemctl disable rpi-eeprom-update.service
 
 sudo systemctl mask apt-daily-upgrade
