@@ -98,7 +98,7 @@ do
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
-ssh pioreactor@"$ADDRESS" "sudo date --set \"$(date)\" && sudo fake-hwclock save"
+ssh pioreactor@"$ADDRESS" "sudo date --set \"$(date)\""
 ssh pioreactor@"$ADDRESS" "echo \"server $LEADER_ADDRESS iburst prefer\" | sudo tee -a /etc/chrony/chrony.conf || :"
 
 
