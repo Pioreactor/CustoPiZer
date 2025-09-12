@@ -104,17 +104,24 @@ if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME mkdir -p $PIO_DIR/exportable_datasets
     sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
 
-    MCP_WHL="https://github.com/pioreactor/mcp-utils/releases/download/v2.0.1/mcp_utils-2.0.1-py3-none-any.whl"
-
-    sudo pip3 install "$MCP_WHL" \
-      --index-url https://piwheels.org/simple \
-      --extra-index-url https://pypi.org/simple
+    pip3 install -U pip setuptools wheel
+    TMP_WHEELS="$(mktemp -d)"
+    pip3 wheel --no-deps -w "$TMP_WHEELS" "git+https://github.com/pioreactor/mcp-utils.git@2.0.1"
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
         sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo pip3 install \
+          --find-links "$TMP_WHEELS" \
+          "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
+          --index-url https://piwheels.org/simple \
+          --extra-index-url https://pypi.org/simple
     else
-        sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+      sudo pip3 install \
+        --find-links "$TMP_WHEELS" \
+        "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
+        --index-url https://piwheels.org/simple \
+        --extra-index-url https://pypi.org/simple
     fi
 fi
 
