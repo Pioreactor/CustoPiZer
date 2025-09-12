@@ -104,7 +104,11 @@ if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME mkdir -p $PIO_DIR/exportable_datasets
     sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
 
+    MCP_WHL="https://github.com/pioreactor/mcp-utils/releases/download/v2.0.1/mcp_utils-2.0.1-py3-none-any.whl"
 
+    sudo pip3 install "$MCP_WHL" \
+      --index-url https://piwheels.org/simple \
+      --extra-index-url https://pypi.org/simple
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
