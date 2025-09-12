@@ -104,13 +104,12 @@ if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME mkdir -p $PIO_DIR/exportable_datasets
     sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
 
-    pip3 install -U pip setuptools wheel
+    sudo pip3 install -U pip setuptools wheel
     TMP_WHEELS="$(mktemp -d)"
-    pip3 wheel --no-deps -w "$TMP_WHEELS" "git+https://github.com/pioreactor/mcp-utils.git@2.0.1"
+    sudo pip3 wheel --no-deps -w "$TMP_WHEELS" "git+https://github.com/pioreactor/mcp-utils.git@2.0.1"
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
         sudo pip3 install \
           --find-links "$TMP_WHEELS" \
           "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
