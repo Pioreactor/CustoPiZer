@@ -12,6 +12,13 @@ install_cleanup_trap
 USERNAME=pioreactor
 DOT_PIOREACTOR=/home/$USERNAME/.pioreactor
 
+ensure_dot_pioreactor_tree_group_is_www_data() {
+    if [ -d "$DOT_PIOREACTOR" ]; then
+        find "$DOT_PIOREACTOR" -mindepth 0 \( ! -user "$USERNAME" -o ! -group www-data \) -exec chown -h "$USERNAME":www-data {} +
+        find "$DOT_PIOREACTOR" -type d ! -perm -2000 -exec chmod g+s {} +
+    fi
+}
+
 sudo apt-get install -y git
 # Ensure setfacl is available for cache directory ACLs applied at boot
 sudo apt-get install -y acl
@@ -171,3 +178,4 @@ PY
 install -d -m 0755 /usr/share/pioreactorui
 ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
 
+ensure_dot_pioreactor_tree_group_is_www_data
