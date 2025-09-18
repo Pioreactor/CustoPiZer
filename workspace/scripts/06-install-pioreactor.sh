@@ -107,6 +107,7 @@ if [ "$LEADER" == "1" ]; then
     sudo pip3 install -U pip setuptools wheel
 
     if [ "$PIO_VERSION" == "develop" ]; then
+        sudo apt-get install -y python3-numpy
         sudo pip3 install \
           --find-links "$TMP_WHEELS" \
           "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
