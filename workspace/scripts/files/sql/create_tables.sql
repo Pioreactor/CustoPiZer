@@ -138,10 +138,13 @@ CREATE TABLE IF NOT EXISTS logs (
 );
 
 CREATE INDEX IF NOT EXISTS logs_exp_timestamp_ix
-            ON logs (experiment, timestamp DESC);
+    ON logs (experiment, timestamp DESC);
 
 CREATE INDEX IF NOT EXISTS logs_unit_timestamp_ix
-            ON logs (pioreactor_unit, timestamp DESC);
+   ON logs (pioreactor_unit, timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS idx_logs_level_timestamp_desc
+    ON logs (level, timestamp DESC);
 
 CREATE TABLE IF NOT EXISTS experiments (
     experiment TEXT NOT NULL UNIQUE,
@@ -258,8 +261,8 @@ CREATE TABLE IF NOT EXISTS temperature_readings (
 );
 
 
-CREATE INDEX IF NOT EXISTS temperature_readings_ix
-ON temperature_readings (experiment, pioreactor_unit);
+CREATE INDEX temperature_readings_ix
+ON temperature_readings (experiment, pioreactor_unit, timestamp);
 
 
 
@@ -404,7 +407,7 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
 
 
 CREATE UNIQUE INDEX IF NOT EXISTS pioreactor_unit_activity_data_ix
-ON pioreactor_unit_activity_data (experiment, pioreactor_unit, timestamp);
+ON pioreactor_unit_activity_data (experiment, pioreactor_unit);
 
 -- a rollup of the pioreactor_unit_activity_data to the minute
 CREATE VIEW IF NOT EXISTS pioreactor_unit_activity_data_rollup AS

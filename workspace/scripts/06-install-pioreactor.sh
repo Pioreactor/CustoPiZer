@@ -13,6 +13,13 @@ USERNAME=pioreactor
 DOT_PIOREACTOR=/home/$USERNAME/.pioreactor
 PIO_VENV=/opt/pioreactor/venv
 
+ensure_dot_pioreactor_tree_group_is_www_data() {
+    if [ -d "$DOT_PIOREACTOR" ]; then
+        find "$DOT_PIOREACTOR" -mindepth 0 \( ! -user "$USERNAME" -o ! -group www-data \) -exec chown -h "$USERNAME":www-data {} +
+        find "$DOT_PIOREACTOR" -type d ! -perm -2000 -exec chmod g+s {} +
+    fi
+}
+
 sudo apt-get install -y git
 # Ensure setfacl is available for cache directory ACLs applied at boot
 sudo apt-get install -y acl
@@ -133,11 +140,21 @@ if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME cp -r /files/pioreactor/ui/* $DOT_PIOREACTOR/ui
 
 
-    if [ "$PIO_VERSION" == "develop" ]; then
+    sudo pip3 install -U pip setuptools wheel
 
-        sudo "$PIO_VENV/bin/pip" install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+
+    if [ "$PIO_VERSION" == "develop" ]; then
+        sudo "$PIO_VENV/bin/pip" install \
+          --find-links "$TMP_WHEELS" \
+          "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
+          --index-url https://piwheels.org/simple \
+          --extra-index-url https://pypi.org/simple
     else
-        sudo "$PIO_VENV/bin/pip" install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+      sudo "$PIO_VENV/bin/pip" install \
+        --find-links "$TMP_WHEELS" \
+        "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
+        --index-url https://piwheels.org/simple \
+        --extra-index-url https://pypi.org/simple
     fi
 fi
 
@@ -175,3 +192,6 @@ PY
 
 install -d -m 0755 /usr/share/pioreactorui
 ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
+
+
+ensure_dot_pioreactor_tree_group_is_www_data
