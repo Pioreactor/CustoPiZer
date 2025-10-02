@@ -7,8 +7,10 @@ export LC_ALL=C
 
 # Prefer Pioreactor venv if present
 source /etc/pioreactor.env 2>/dev/null || true
-PIP=${PIO_VENV:-/opt/pioreactor/venv}/bin/pip
-PY=${PIO_VENV:-/opt/pioreactor/venv}/bin/python
+VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
+PIP="$VENV_BIN/pip"
+PY="$VENV_BIN/python"
+CRUDINI="$VENV_BIN/crudini"
 
 plugin_name=$1
 
@@ -17,7 +19,7 @@ clean_plugin_name=${plugin_name,,} # lower cased
 clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
 install_folder=$("$PY" -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
-leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
+leader_hostname=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 
 # run a post install script.

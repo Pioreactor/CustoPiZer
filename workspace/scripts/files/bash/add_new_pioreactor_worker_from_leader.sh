@@ -10,12 +10,15 @@ set -x
 set -e
 export LC_ALL=C
 
+VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
+CRUDINI="$VENV_BIN/crudini"
+
 HOSTNAME=$1
 SSHPASS=${2:-raspberry}
 ADDRESS=${3:-"$HOSTNAME".local}
 
 
-LEADER_ADDRESS=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_address)
+LEADER_ADDRESS=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_address)
 
 
 # remove from known_hosts if already present
@@ -68,7 +71,7 @@ echo -e "# Any settings here are specific to $HOSTNAME, and override the setting
 
 # add worker's address to config
 CONFIG=/home/pioreactor/.pioreactor/config.ini
-crudini --set "$CONFIG" cluster.addresses "$HOSTNAME" "$ADDRESS"
+"$CRUDINI" --set "$CONFIG" cluster.addresses "$HOSTNAME" "$ADDRESS"
 
 # add worker to known hosts on leader
 ssh-keyscan "$ADDRESS" >> "/home/pioreactor/.ssh/known_hosts"

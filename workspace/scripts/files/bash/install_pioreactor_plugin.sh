@@ -8,8 +8,10 @@ export LC_ALL=C
 
 # Prefer Pioreactor venv if present
 source /etc/pioreactor.env 2>/dev/null || true
-PIP=${PIO_VENV:-/opt/pioreactor/venv}/bin/pip
-PY=${PIO_VENV:-/opt/pioreactor/venv}/bin/python
+VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
+PIP="$VENV_BIN/pip"
+PY="$VENV_BIN/python"
+CRUDINI="$VENV_BIN/crudini"
 
 plugin_name=$1
 source=$2
@@ -19,7 +21,7 @@ clean_plugin_name=${plugin_name,,} # lower cased
 clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
 install_folder=$("$PY" -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
-leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
+leader_hostname=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 if [ "$leader_hostname" = "$(hostname)" ]; then
   am_i_leader=true
@@ -86,12 +88,12 @@ fi
 if [ "$am_i_leader" = true ]; then
     # merge new config.ini
     if test -f "$install_folder/additional_config.ini"; then
-        crudini --merge /home/pioreactor/.pioreactor/config.ini < "$install_folder/additional_config.ini"
+        "$CRUDINI" --merge /home/pioreactor/.pioreactor/config.ini < "$install_folder/additional_config.ini"
     fi
 
     # add any new sql, restart mqtt_to_db job, too
     if test -f "$install_folder/additional_sql.sql"; then
-        sqlite3 "$(crudini --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
+        sqlite3 "$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
         sudo systemctl restart pioreactor_startup_run@mqtt_to_db_streaming.service
     fi
 

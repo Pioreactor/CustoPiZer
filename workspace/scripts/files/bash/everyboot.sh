@@ -7,6 +7,9 @@ set -e
 
 export LC_ALL=C
 
+VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
+CRUDINI="$VENV_BIN/crudini"
+
 PIOREACTOR_DATA_DIR=/home/pioreactor/.pioreactor
 
 ensure_dot_pioreactor_tree_group_is_www_data() {
@@ -29,7 +32,7 @@ if [ -f "/boot/firmware/config.ini" ]; then
     # Merge the configurations and remove the extra file
     # if config.ini doesn't exist, this creates it.
     # so we need to chown, too.
-    crudini --merge /home/pioreactor/.pioreactor/config.ini < /boot/firmware/config.ini
+    "$CRUDINI" --merge /home/pioreactor/.pioreactor/config.ini < /boot/firmware/config.ini
     chown pioreactor:www-data /home/pioreactor/.pioreactor/config.ini
     rm /boot/firmware/config.ini
 fi

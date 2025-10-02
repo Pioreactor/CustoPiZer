@@ -6,7 +6,7 @@ After=network-online.target firstboot.service load_rp2040.service local_access_p
 
 [Service]
 User=pioreactor
-ExecStart=pio run %I
+ExecStart=/opt/pioreactor/venv/bin/pio run %I
 Restart=on-failure
 EnvironmentFile=/etc/pioreactor.env
 

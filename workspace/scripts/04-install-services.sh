@@ -33,10 +33,13 @@ sudo cp /files/system/systemd/pioreactor-web.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/log-failure@.service $SYSTEMD_DIR
 sudo cp /files/system/scripts/led_control.py /usr/local/bin/led_control.py
 
-    # systemd: alias hostname to pioreactor.local (available on all images)
-sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
-cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
 
+if [ "$LEADER" == "1" ]; then
+    # systemd: alias hostname to pioreactor.local
+    sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
+    sudo systemctl enable avahi_aliases.service
+    cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
+fi
 
 if [ "$WORKER" == "1" ]; then
     # add avahi services

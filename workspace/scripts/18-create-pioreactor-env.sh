@@ -14,9 +14,19 @@ PROFILED_SNIPPET=/etc/profile.d/pioreactor-venv.sh
 echo "Installing $ENV_FILE from template"
 sudo install -o root -g root -m 0644 "$ENV_FILE_SOURCE" "$ENV_FILE"
 
-# Interactive shells: prepend venv/bin to PATH
+# Populate interactive shells with Pioreactor environment variables and PATH defaults.
 cat <<'EOT' | sudo tee "$PROFILED_SNIPPET" >/dev/null
-# Prefer Pioreactor virtualenv in interactive shells
+# Load Pioreactor shared environment for interactive shells.
+if [ -f /etc/pioreactor.env ]; then
+  while IFS='=' read -r key value; do
+    case "$key" in
+      ''|'#'*) continue ;;
+    esac
+    export "$key=$value"
+  done < /etc/pioreactor.env
+fi
+
+# Prefer Pioreactor virtualenv in interactive shells.
 if [ -d "/opt/pioreactor/venv/bin" ]; then
   export VIRTUAL_ENV=/opt/pioreactor/venv
   case ":$PATH:" in

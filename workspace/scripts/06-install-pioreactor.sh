@@ -116,6 +116,12 @@ chown -R $USERNAME:www-data $DOT_PIOREACTOR/web
 find $DOT_PIOREACTOR/web -type d -exec chmod 2775 {} \;
 find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 
+# lgpio install
+sudo apt install swig
+sudo "$PIO_VENV/bin/pip" install lgpio \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
+
 
 # needed for fast yaml
 apt-get install libyaml-dev -y
