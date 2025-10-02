@@ -1,5 +1,5 @@
 [connection]
-id=eth0
+id=PioreactorDefaultEth
 uuid=5e55231f-ea1a-484b-88f9-88e3598c66ae
 type=ethernet
 interface-name=eth0
