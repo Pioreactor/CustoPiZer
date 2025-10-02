@@ -135,11 +135,20 @@ if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME cp -r /files/pioreactor/ui/* $DOT_PIOREACTOR/ui
 
 
-    if [ "$PIO_VERSION" == "develop" ]; then
+    sudo pip3 install -U pip setuptools wheel
 
-        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+    if [ "$PIO_VERSION" == "develop" ]; then
+        sudo pip3 install \
+          --find-links "$TMP_WHEELS" \
+          "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
+          --index-url https://piwheels.org/simple \
+          --extra-index-url https://pypi.org/simple
     else
-        sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+      sudo pip3 install \
+        --find-links "$TMP_WHEELS" \
+        "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
+        --index-url https://piwheels.org/simple \
+        --extra-index-url https://pypi.org/simple
     fi
 fi
 

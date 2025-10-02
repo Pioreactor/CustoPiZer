@@ -90,7 +90,7 @@ ON experiment_worker_assignments
 FOR EACH ROW
 BEGIN
     UPDATE experiment_worker_assignments_history
-       SET unassigned_at = STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW')
+       SET unassigned_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')
      WHERE pioreactor_unit = OLD.pioreactor_unit
        AND experiment = OLD.experiment
        AND assigned_at = OLD.assigned_at

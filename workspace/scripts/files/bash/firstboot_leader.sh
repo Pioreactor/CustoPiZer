@@ -25,7 +25,7 @@ sudo -u $USERNAME crudini --ini-options=nospace --set $PIO_DIR/config.ini cluste
 sudo -u $USERNAME crudini --ini-options=nospace --set $PIO_DIR/config.ini cluster.topology leader_address "$HOSTNAME".local
 sudo -u $USERNAME crudini --ini-options=nospace --set $PIO_DIR/config.ini mqtt broker_address "$HOSTNAME".local
 
-sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%f000Z', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around.  When you are ready, create a new experiment in the dropdown to the left.');"
+sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around.  When you are ready, create a new experiment in the dropdown to the left.');"
 
 
 # create leader's config file (still can use one even if not a worker.)
