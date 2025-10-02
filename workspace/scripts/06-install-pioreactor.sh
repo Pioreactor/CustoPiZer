@@ -125,7 +125,7 @@ sudo "$PIO_VENV/bin/pip" install --no-cache-dir --no-binary pyyaml pyyaml \
   --extra-index-url https://pypi.org/simple
 
 # install numpy from piwheels into the venv to avoid long builds
-sudo "$PIO_VENV/bin/pip" install numpy \
+sudo "$PIO_VENV/bin/pip" install numpy==2.3.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
