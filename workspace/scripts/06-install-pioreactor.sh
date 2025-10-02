@@ -129,6 +129,9 @@ sudo "$PIO_VENV/bin/pip" install numpy==2.3.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
+sudo "$PIO_VENV/bin/pip" install -U setuptools wheel
+
+
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
     sudo -u $USERNAME cp /files/pioreactor/config.example.ini $DOT_PIOREACTOR/config.ini
@@ -138,9 +141,6 @@ if [ "$LEADER" == "1" ]; then
 
     sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/ui/
     sudo -u $USERNAME cp -r /files/pioreactor/ui/* $DOT_PIOREACTOR/ui
-
-
-    sudo pip3 install -U pip setuptools wheel
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
