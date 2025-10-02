@@ -120,7 +120,7 @@ find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 # needed for fast yaml
 apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
-sudo "$PIO_VENV/bin/pip" install --no-cache-dir --no-binary pyyaml pyyaml \
+sudo "$PIO_VENV/bin/pip" install pyyaml=6.0.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
