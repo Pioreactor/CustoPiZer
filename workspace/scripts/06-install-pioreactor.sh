@@ -118,24 +118,26 @@ find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 
 # lgpio install
 sudo apt install swig
-sudo "$PIO_VENV/bin/pip" install lgpio \
+sudo -u pioreactor "$PIO_VENV/bin/pip" install lgpio==0.2.2.0 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
+# this is needed from some internal adafruit stuff! =(
+sudo -u pioreactor "$PIO_VENV/bin/pip" install rpi-lgpio==0.6
 
 # needed for fast yaml
 apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
-sudo "$PIO_VENV/bin/pip" install pyyaml==6.0.2 \
+sudo -u pioreactor "$PIO_VENV/bin/pip" install pyyaml==6.0.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
 # install numpy from piwheels into the venv to avoid long builds
-sudo "$PIO_VENV/bin/pip" install numpy==2.3.2 \
+sudo -u pioreactor "$PIO_VENV/bin/pip" install numpy==2.3.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
-sudo "$PIO_VENV/bin/pip" install -U setuptools wheel
+sudo -u pioreactor "$PIO_VENV/bin/pip" install -U setuptools wheel
 
 
 if [ "$LEADER" == "1" ]; then
@@ -150,13 +152,13 @@ if [ "$LEADER" == "1" ]; then
 
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo "$PIO_VENV/bin/pip" install \
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install \
           --find-links "$TMP_WHEELS" \
           "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
           --index-url https://piwheels.org/simple \
           --extra-index-url https://pypi.org/simple
     else
-      sudo "$PIO_VENV/bin/pip" install \
+      sudo -u pioreactor "$PIO_VENV/bin/pip" install \
         --find-links "$TMP_WHEELS" \
         "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
         --index-url https://piwheels.org/simple \
@@ -168,9 +170,9 @@ fi
 if [ "$WORKER" == "1" ]; then
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo "$PIO_VENV/bin/pip" install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo "$PIO_VENV/bin/pip" install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
 
 fi

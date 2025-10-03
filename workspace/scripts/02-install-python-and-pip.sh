@@ -28,8 +28,8 @@ sudo chown pioreactor:pioreactor /opt/pioreactor
 sudo -u pioreactor python3 -m venv "$PIO_VENV"
 
 # Ensure venv pip is recent
-sudo "$PIO_VENV/bin/pip" install --upgrade pip
-sudo "$PIO_VENV/bin/pip" install crudini
+sudo -u pioreactor "$PIO_VENV/bin/pip" install --upgrade pip
+sudo -u pioreactor "$PIO_VENV/bin/pip" install crudini
 
 
 # test that crudini works
