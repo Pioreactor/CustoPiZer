@@ -23,7 +23,6 @@ sudo pip3 config set global.extra-index-url 'https://www.piwheels.org/simple'
 
 # Create dedicated Pioreactor virtual environment
 PIO_VENV=/opt/pioreactor/venv
-sudo -u pioreactor mkdir -p /opt/pioreactor
 sudo mkdir -p /opt/pioreactor
 sudo chown pioreactor:pioreactor /opt/pioreactor
 sudo -u pioreactor python3 -m venv "$PIO_VENV"
