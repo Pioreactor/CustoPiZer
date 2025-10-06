@@ -14,6 +14,9 @@ Pioreactor Image Modernization Plan
 - Leader+worker boots; API endpoints respond; UI accessible.
 - Backend API installs via pip; FastCGI points to packaged entrypoint.
 - Jobs run; plugins work; `.pioreactor` layout confirmed.
+- `/etc/pioreactor.env` templatized via `18-create-pioreactor-env.sh`; install also drops a profile.d snippet so interactive shells inherit Pioreactor vars and PATH.
+- `14-install-crontabs.sh` now intentionally no-ops so the new systemd timers own all scheduling.
+- Phase 4 deliverables merged: UI is packaged, services point to module entrypoints, and legacy tarball tooling is removed.
 
 Secondary Goals Addressed (performance and portability)
 - Decrease boot time and perceived readiness.
@@ -24,7 +27,7 @@ Secondary Goals Addressed (performance and portability)
 - Phase 1: Targets, EnvironmentFile, and Timers (start here)
   - Add `pioreactor-web.target` for web stack management (restart lighttpd + huey together).
 - Phase 3: Replace `pio workers add` shell-out with native Python
-- Phase 4: Package UI via pip; update services to module entrypoints
+- Phase 4: Package UI via pip; update services to module entrypoints (complete)
 - Phase 5: Unified software; produce leader/worker/leader_worker images
 - Phase 6: Decommission legacy bash; dedupe services
 - Phase 7: Documentation and release
@@ -52,11 +55,13 @@ Secondary Goals Addressed (performance and portability)
     - `backup-database.service` + timer (leader): replaces `pio run backup_database`; `OnCalendar=Sun *-*-* 00:00` (weekly) or keep prior cadence.
     - `ui-exports-cleanup.service` + timer (leader): cleans export dir; `OnCalendar=monthly`.
   - Introduce `/etc/pioreactor.env` creation in the image build (new step writes `DOT_PIOREACTOR=/home/pioreactor/.pioreactor`), and update units to reference `EnvironmentFile=/etc/pioreactor.env` (replace `/etc/environment`).
+    - Status: done via `18-create-pioreactor-env.sh`, which installs the template and profile.d loader for interactive shells.
   - Add tmpfiles rules to provision `/run/pioreactor/{exports,cache}` on boot and move ephemeral data there.
     - Status: done; includes pre-creating cache DB files with correct perms.
   - Stop enabling units directly in `workspace/scripts/04-install-services.sh`, `11-add-firstboot.sh`, and `13-add-everyboot.sh`. Instead, only enable the appropriate target(s).
     - Status: partial; cache-prep unit removed and dependencies cleaned from targets and startup units.
   - Keep cron jobs for one release behind a build flag, then remove `14-install-crontabs.sh` when timers are verified.
+    - Status: done; script now logs a skip message and relies entirely on timers.
   - No role files required; role is determined by image flavor (leader.img, worker.img, leader_worker.img).
 
 - Upstream (pioreactor) dependencies
@@ -116,7 +121,7 @@ Phase 1 — Next PR Outline (CustoPiZer)
   - Lab test: join a fresh worker to a leader using the new CLI; confirm presence on UI and config sync.
   - Performance: End-to-end adoption time dominated by network/ssh; CLI cold start <200ms on target hardware where feasible.
 
-**Phase 4: Package UI via pip; update services**
+**Phase 4: Package UI via pip; update services (complete)**
 - Objectives
   - Move the web API (UI) to a proper Python package in upstream; keep lighttpd; point services at module entrypoints.
   - Both leader and worker images install and run the web API. Workers enable lighttpd's `api-only` config (no static), leaders serve static assets.
@@ -145,7 +150,7 @@ Phase 1 — Next PR Outline (CustoPiZer)
   - Lab test: Upgrade the UI wheel on a leader, confirm no loss of user exports (now under `DOT_PIOREACTOR`) and huey restarts cleanly.
   - Performance: Ensure lighttpd startup is not gated by long oneshots; huey starts independently; UI import path is lean.
 
-Phase 4 — Status in this repo
+Phase 4 — Status in this repo (complete)
 - Packaging landed upstream. Downstream now:
   - Serves static from packaged assets via symlink; no files under `/var/www/pioreactorui`.
   - Restricts worker HTTP surface to `/unit_api` only; leaders expose `/api`, `/unit_api`, `/mcp`.

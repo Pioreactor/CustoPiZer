@@ -39,6 +39,9 @@ chown -R $USERNAME:www-data $DOT_PIOREACTOR/experiment_profiles
 chmod g+s $DOT_PIOREACTOR/experiment_profiles
 echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $DOT_PIOREACTOR/experiment_profiles/README.txt > /dev/null
 
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/hardware
+sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
+
 
 cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_logging_example.yaml
 experiment_profile_name: Demo of logging real-time data

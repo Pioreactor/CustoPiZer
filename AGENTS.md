@@ -1,5 +1,7 @@
 # Repository Guidelines
 
+This project is used to generate our custom Raspberry Pi images for the Pioreactor hardware. We take the published "lite" images from the Raspberry Pi Foundation, and make customization to them.
+
 ## Project Structure & Module Organization
 - `src/`: CustoPiZer core scripts and config used inside the Docker build (e.g., `common.sh`, `customize`, `start_chroot_script`).
 - `workspace/`: Build workspace mounted into the container.

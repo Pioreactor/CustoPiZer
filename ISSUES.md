@@ -27,9 +27,11 @@ Progress Update (current)
 - `everyboot.sh` applies default ACLs to `/run/pioreactor/cache` so new files (WAL/SHM) are always group `rw` regardless of umask.
 - `huey.service` now `After=everyboot.service` to ensure ACLs are in place before it starts.
 - Explicitly install `acl` package during image build to provide `setfacl`.
- - Leader+worker image boots; API endpoints respond; UI accessible.
- - Backend API is pip-installable; FastCGI points to packaged entrypoint.
- - Jobs run; plugins work; `.pioreactor` layout validated.
+- Leader+worker image boots; API endpoints respond; UI accessible.
+- Backend API is pip-installable; FastCGI points to packaged entrypoint.
+- Jobs run; plugins work; `.pioreactor` layout validated.
+- `18-create-pioreactor-env.sh` installs `/etc/pioreactor.env` from the repo template and writes a profile.d snippet so login shells inherit the Pioreactor env and venv PATH.
+- `14-install-crontabs.sh` now emits a skip message and leaves recurring tasks to the systemd timers.
 
 Repository Ground Truth (CustoPiZer)
 - Units and targets under `workspace/scripts/files/system/systemd/` include services, timers, and targets:
@@ -42,6 +44,8 @@ Repository Ground Truth (CustoPiZer)
   - `workspace/scripts/14-install-crontabs.sh` intentionally skips crontab installation (timers replace cron).
 - Worker-only avahi service file exists at `workspace/scripts/files/system/avahi/pioreactor_worker.service`.
 - tmpfiles.d: `workspace/scripts/files/system/tmpfiles.d/pioreactor.conf` provisions `/run/pioreactor/{exports,cache}` at boot.
+- `workspace/scripts/18-create-pioreactor-env.sh` copies `workspace/scripts/files/system/pioreactor.env` into place and writes `/etc/profile.d/pioreactor-venv.sh` so interactive shells export the shared env and prepend the venv bin dir.
+- Shared services (`huey`, `lighttpd`, `avahi_aliases`, `load_rp2040`, `firstboot`, `everyboot`, `local_access_point`, `backup-database`, `ui-exports-cleanup`) now read `EnvironmentFile=/etc/pioreactor.env` from their unit files.
 
 1) Bash Reliance and Brittleness
 - Problem: Fixed bash scripts ship in the image and don’t update with core software. Hard to test/change; logic scattered across many files.
@@ -184,7 +188,7 @@ EnvironmentFile Plan
 
 Migration Checklist (Ordered)
 - Define environment contract
-  - Create `/etc/pioreactor.env` with `DOT_PIOREACTOR=/home/pioreactor/.pioreactor` and other required vars.
+  - Create `/etc/pioreactor.env` with `DOT_PIOREACTOR=/home/pioreactor/.pioreactor` and other required vars. (Done via `18-create-pioreactor-env.sh`, which also adds the `/etc/profile.d/pioreactor-venv.sh` loader.)
   - Adjust all services to use `EnvironmentFile=/etc/pioreactor.env` (replace references to `/etc/environment`).
 
 - Introduce systemd targets
@@ -196,7 +200,7 @@ Migration Checklist (Ordered)
   - Create `network-info.service` + `network-info.timer` to replace root crontab `*/5 * * * *` (use `OnCalendar=*:0/5`).
   - Create `backup-database.service` + timer (leader-only). Mirror previous schedule or standardize to weekly (`OnCalendar=Sun *-*-* 00:00`).
   - Create `ui-exports-cleanup.service` + timer. Mirror `0 0 */29 * *` or standardize to monthly (`OnCalendar=monthly`).
-  - Remove crontab installation from image build after timers are in place.
+  - Remove crontab installation from image build after timers are in place. (Done; `14-install-crontabs.sh` now only logs the skip.)
 
 - Port bash flows to Python (`pio`)
   - `pio workers add`: replace shell-out; implement SSH auth (keep `sshpass`), config sync, chrony hints, reboot.
