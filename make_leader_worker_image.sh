@@ -18,7 +18,7 @@ docker run --rm --privileged \
     -e WORKER=1 \
     -e LEADER=1 \
     -e HEADLESS=$HEADLESS \
-    -v $(pwd)/workspace:/CustoPiZer/workspace/  -v $CONFIG:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
+    -v $(pwd)/workspace:/CustoPiZer/workspace/  -v $CONFIG:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:main \
     && (cd workspace/; zip $OUTPUT output.img) \
     && echo $OUTPUT \
     && md5sum workspace/$OUTPUT \
