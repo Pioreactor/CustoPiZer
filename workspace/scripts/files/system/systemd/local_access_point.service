@@ -5,6 +5,7 @@ After=everyboot.service NetworkManager.service network-online.target
 ConditionPathExists=/boot/firmware/local_access_point
 
 [Service]
+EnvironmentFile=/etc/pioreactor.env
 ExecStart=/bin/bash /usr/local/bin/local_access_point.sh
 Type=oneshot
 RemainAfterExit=yes
@@ -18,4 +19,3 @@ StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target
-

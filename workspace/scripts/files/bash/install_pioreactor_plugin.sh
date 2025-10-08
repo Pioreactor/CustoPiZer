@@ -6,6 +6,13 @@ set -e
 set -x
 export LC_ALL=C
 
+# Prefer Pioreactor venv if present
+source /etc/pioreactor.env 2>/dev/null || true
+VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
+PIP="$VENV_BIN/pip"
+PY="$VENV_BIN/python"
+CRUDINI="$VENV_BIN/crudini"
+
 plugin_name=$1
 source=$2
 
@@ -13,8 +20,8 @@ clean_plugin_name=${plugin_name,,} # lower cased
 
 clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
-install_folder=$(python3 -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
-leader_hostname=$(crudini --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
+install_folder=$("$PY" -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
+leader_hostname=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
 
 if [ "$leader_hostname" = "$(hostname)" ]; then
   am_i_leader=true
@@ -30,7 +37,7 @@ function download_and_check_if_leader_only {
     local CLEAN_PACKAGE_NAME=${PACKAGE_NAME//-/_}
 
     # Download the wheel file without dependencies
-    pip download -qq --no-deps --dest /tmp $PACKAGE_NAME
+    "$PIP" download -qq --no-deps --dest /tmp $PACKAGE_NAME
 
     # Get the file name of the downloaded package
     local WHL_FILE
@@ -63,16 +70,16 @@ function download_and_check_if_leader_only {
 
 
 if [ -n "$source" ]; then
-    sudo pip3 install --force-reinstall --no-deps "$source"
+    sudo "$PIP" install --force-reinstall --no-deps "$source"
 else
-    if download_and_check_if_leader_only $clean_plugin_name_with_dashes; then
+    if download_and_check_if_leader_only "$clean_plugin_name_with_dashes"; then
         if [ "$am_i_leader" = true ]; then
             echo "Not installing LEADER_ONLY plugin on worker"
             exit 0
         fi
         echo "Installing LEADER_ONLY plugin on worker"
     fi
-    sudo pip3 install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
+    sudo "$PIP" install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
 fi
 
 
@@ -81,18 +88,21 @@ fi
 if [ "$am_i_leader" = true ]; then
     # merge new config.ini
     if test -f "$install_folder/additional_config.ini"; then
-        crudini --merge /home/pioreactor/.pioreactor/config.ini < "$install_folder/additional_config.ini"
+        "$CRUDINI" --merge /home/pioreactor/.pioreactor/config.ini < "$install_folder/additional_config.ini"
     fi
 
     # add any new sql, restart mqtt_to_db job, too
     if test -f "$install_folder/additional_sql.sql"; then
-        sqlite3 "$(crudini --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
+        sqlite3 "$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
         sudo systemctl restart pioreactor_startup_run@mqtt_to_db_streaming.service
     fi
 
     # merge UI contribs
     if [ -d "$install_folder/ui/contrib/" ]; then
-        rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/contrib/
+        # backwards compabitle
+        rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/
+    elif [ -d "$install_folder/ui/" ]; then
+        rsync -a "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
     fi
 
     # merge datasets contribs

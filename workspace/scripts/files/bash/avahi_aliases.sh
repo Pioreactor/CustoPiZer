@@ -1,7 +1,11 @@
 #!/bin/bash
 
+source /etc/pioreactor.env 2>/dev/null || true
+VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
+CRUDINI="$VENV_BIN/crudini"
+
 # Retrieve the domain alias from the configuration file
-DOMAIN_ALIAS=$(crudini --get /home/pioreactor/.pioreactor/config.ini ui domain_alias)
+DOMAIN_ALIAS=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini ui domain_alias)
 
 # Function to publish mDNS for each IP
 publish_mdns() {

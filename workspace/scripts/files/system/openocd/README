@@ -8,5 +8,12 @@ In fact, the executable can be used in other RPis, something we take advantage o
 
 The current executable `openocd` was compiled on the Raspberry Pi:
 
-Operating system:       Linux-5.15.61-v7+-armv7l-with-glibc2.31
-Raspberry Pi:           Raspberry Pi 3 Model B Rev 1.2
+Operating system:       Linux-6.12.47+rpt-rpi-v8-aarch64-with-glibc2.41
+Raspberry Pi:           Raspberry Pi 5
+
+
+with compile options:
+
+```
+./configure --enable-bcm2835gpio --disable-werror --enable-linuxgpiod
+```

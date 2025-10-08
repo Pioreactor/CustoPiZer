@@ -1,15 +1,20 @@
 [Unit]
-Description=Huey service for PioreactorUI
-After=network.target firstboot.service
+Description=Huey service for Pioreactor web tasks
+After=network.target firstboot.service everyboot.service
 Before=lighttpd.service
+PartOf=pioreactor-web.target
 
 
 [Service]
-EnvironmentFile=/etc/environment
+# Web environment via /etc/pioreactor.env provides DOT_PIOREACTOR
+EnvironmentFile=/etc/pioreactor.env
+WorkingDirectory=/run/pioreactor
 User=pioreactor
-WorkingDirectory=/var/www/pioreactorui
-ExecStart=huey_consumer pioreactorui.tasks.huey -n -b 1.001 -w 10 -f -C -d 0.05
-ExecStartPost=pio log -m "%n successful" -n systemd --local-only
+# Ensure files created are group-writable/readable for www-data
+UMask=0007
+# Use module path in merged web package
+ExecStart=/opt/pioreactor/venv/bin/huey_consumer pioreactor.web.tasks.huey -n -b 1.001 -w 10 -f -C -d 0.05
+ExecStartPost=/opt/pioreactor/venv/bin/pio  log -m "%n successful" -n systemd --local-only
 StandardOutput=null
 StandardError=null
 Restart=always

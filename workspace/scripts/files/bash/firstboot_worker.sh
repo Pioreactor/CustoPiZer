@@ -7,7 +7,7 @@ export LC_ALL=C
 
 USERNAME=pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
-
+PIO_VENV=/opt/pioreactor/venv
 # clean up if this needs to run again.
 sudo -u $USERNAME rm -f $SSH_DIR/{authorized_keys,known_hosts,id_rsa,id_rsa.pub}
 

@@ -1,15 +1,14 @@
 [Unit]
 Description=Start up %I on boot.
 Wants=network-online.target
-After=network-online.target firstboot.service load_rp2040.service local_access_point.service lighttpd.service create_diskcache.service
+After=network-online.target firstboot.service load_rp2040.service local_access_point.service lighttpd.service huey.service
 
 
 [Service]
 User=pioreactor
-ExecStart=pio run %I
+ExecStart=/opt/pioreactor/venv/bin/pio run %I
 Restart=on-failure
-Environment="PATH=/home/pioreactor/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
-EnvironmentFile=/etc/environment
+EnvironmentFile=/etc/pioreactor.env
 
 [Install]
 WantedBy=multi-user.target

@@ -14,54 +14,63 @@ install_cleanup_trap
 SYSTEMD_DIR=/etc/systemd/system/
 
 sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
-sudo systemctl enable pioreactor_startup_run@monitor.service
-
-# systemd: add long running pioreactor jobs
-sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 
 # systemd: remove wifi powersave - helps with mdns discovery
 sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
-sudo systemctl enable wifi_powersave.service
 
 # install optional hotspot service, both workers and leaders can do this.
 sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
 cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
-sudo systemctl enable local_access_point.service
 
 
-# systemd: needed for setting up dirs in /tmp and sqlite dbs
-sudo cp /files/system/systemd/create_diskcache.service $SYSTEMD_DIR
-sudo systemctl enable create_diskcache.service
-cp /files/bash/create_diskcache.sh /usr/local/bin/create_diskcache.sh
+# Directories under /run are provisioned by tmpfiles.d; no separate cache-prep service needed
 
 # systemd: UI web-workers
 sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
-sudo systemctl enable huey.service
+sudo cp /files/system/systemd/pioreactor-web.target $SYSTEMD_DIR
 
 # systemd: log failures and a python blink code that is nearly independent from Pioreactor code.
 sudo cp /files/system/systemd/log-failure@.service $SYSTEMD_DIR
 sudo cp /files/system/scripts/led_control.py /usr/local/bin/led_control.py
+
 
 if [ "$LEADER" == "1" ]; then
     # systemd: alias hostname to pioreactor.local
     sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
     sudo systemctl enable avahi_aliases.service
     cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
-
-    sudo systemctl enable pioreactor_startup_run@mqtt_to_db_streaming.service # this is leader-only
-
 fi
-
 
 if [ "$WORKER" == "1" ]; then
     # add avahi services
     sudo cp /files/system/avahi/pioreactor_worker.service /etc/avahi/services/
-
-    # systemd: add rp2040 chip load
-    cp /files/bash/load_rp2040.sh /usr/local/bin/load_rp2040.sh
-    sudo cp /files/system/systemd/load_rp2040.service $SYSTEMD_DIR
-    sudo systemctl enable load_rp2040.service
 fi
 
+# systemd: add rp2040 chip load unit and helper (available on all images; worker target will control enablement)
+cp /files/bash/load_rp2040.sh /usr/local/bin/load_rp2040.sh
+sudo cp /files/system/systemd/load_rp2040.service $SYSTEMD_DIR
 
+# systemd: copy timers (not enabled here)
+sudo cp /files/system/systemd/network-info.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/network-info.timer $SYSTEMD_DIR
+sudo cp /files/system/systemd/backup-database.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/backup-database.timer $SYSTEMD_DIR
+sudo cp /files/system/systemd/ui-exports-cleanup.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/ui-exports-cleanup.timer $SYSTEMD_DIR
 
+# Install target units
+sudo cp /files/system/systemd/pioreactor.target $SYSTEMD_DIR
+sudo cp /files/system/systemd/pioreactor-leader.target $SYSTEMD_DIR
+sudo cp /files/system/systemd/pioreactor-worker.target $SYSTEMD_DIR
+
+# Install tmpfiles.d rules to provision /run/pioreactor paths at boot
+sudo install -D -m 0644 /files/system/tmpfiles.d/pioreactor.conf /etc/tmpfiles.d/pioreactor.conf
+
+# Enable only the appropriate targets
+sudo systemctl enable pioreactor.target
+if [ "$LEADER" == "1" ]; then
+    sudo systemctl enable pioreactor-leader.target
+fi
+if [ "$WORKER" == "1" ]; then
+    sudo systemctl enable pioreactor-worker.target
+fi

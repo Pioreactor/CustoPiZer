@@ -12,7 +12,6 @@ install_cleanup_trap
 
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install -y mosquitto mosquitto-clients
-    sudo systemctl enable mosquitto.service
 
     # create auth file
     echo "pioreactor:raspberry" > /etc/mosquitto/pw.txt

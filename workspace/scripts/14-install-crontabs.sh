@@ -9,11 +9,6 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-USERNAME=pioreactor
-
-
-if [ "$LEADER" == "1" ]; then
-    crontab -u "$USERNAME" /files/cron/pioreactor.cron
-fi
-
-crontab -u root /files/cron/root.cron
+# Cron has been replaced by systemd timers in Phase 1.
+# Intentionally skipping crontab installation to avoid duplicate scheduling.
+echo "Skipping crontab installation: using systemd timers instead." >&2

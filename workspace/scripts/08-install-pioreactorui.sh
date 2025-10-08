@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# See also: update_ui.sh is a bash script for updating pioreactorui from tar.gz files.
+# Purpose: Install and configure lighttpd to serve the Pioreactor web API.
+# Notes:
+# - Web API is packaged inside the Python package under pioreactor/web.
+# - Lighttpd manages FastCGI (bin-path=/usr/bin/pioreactor-fcgi).
+# - Leaders serve static assets via alias; workers enable api-only.
 
 set -x
 set -e
@@ -11,57 +15,17 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-UI_FOLDER=/var/www/pioreactorui
 SYSTEMD_DIR=/etc/systemd/system/
+PIO_VENV=/opt/pioreactor/venv
 
+# ensure /var/www exists (lighttpd doc-root); static served via alias
+mkdir -p /var/www
 
-mkdir /var/www
+# install lighttpd and set up mods
+apt-get install -y lighttpd
 
-# needed for fast yaml
-apt-get install libyaml-dev -y
-# https://github.com/yaml/pyyaml/issues/445
-sudo pip3 install --no-cache-dir --no-binary pyyaml pyyaml
-
-# get latest pioreactorUI code from Github.
-
-mkdir $UI_FOLDER
-
-if [ "$PIO_VERSION" == "develop" ]; then
-    curl -sS -o pioreactor_repo.tar.gz -JLO https://github.com/pioreactor/pioreactor/archive/develop.tar.gz
-    tar -xzf pioreactor_repo.tar.gz
-    mv pioreactor-develop/web/{.*,*} $UI_FOLDER
-
-    rm pioreactor_repo.tar.gz
-    rm -rf pioreactor-develop/
-else
-    curl -sS -o pioreactorui.tar.gz -JLO https://github.com/Pioreactor/pioreactor/releases/download/"$PIO_VERSION"/pioreactorui_"$PIO_VERSION".tar.gz
-    tar -xzf pioreactorui.tar.gz -C $UI_FOLDER --strip-components=1
-    rm pioreactorui.tar.gz
-fi
-
-
-# install the dependencies
-# new: dependencies are installed with Pioreactor app
-# sudo pip3 install -r $UI_FOLDER/requirements.txt
-
-# init .env
-mv $UI_FOLDER/.env.example $UI_FOLDER/.env
-
-
-# make correct permissions in new www folders and files
-# https://superuser.com/questions/19318/how-can-i-give-write-access-of-a-folder-to-all-users-in-linux
-chown -R pioreactor:www-data /var/www
-chmod -R g+w /var/www
-find /var/www -type d -exec chmod 2775 {} \;
-find /var/www -type f -exec chmod ug+rw {} \;
-chmod +x $UI_FOLDER/main.fcgi
-
-# install lighttp and set up mods
-apt-get install lighttpd -y
-
-# install our own lighttpd service
+# install our own lighttpd service (enablement handled by pioreactor.target)
 sudo cp /files/system/systemd/lighttpd.service $SYSTEMD_DIR
-sudo systemctl enable lighttpd.service
 
 
 cp /files/system/lighttpd/lighttpd.conf        /etc/lighttpd/lighttpd.conf
@@ -71,6 +35,8 @@ cp /files/system/lighttpd/51-cors.conf         /etc/lighttpd/conf-available/51-c
 cp /files/system/lighttpd/20-compress.conf     /etc/lighttpd/conf-available/20-compress.conf
 cp /files/system/lighttpd/52-api-only.conf     /etc/lighttpd/conf-available/52-api-only.conf
 
+sudo mv /etc/lighttpd/conf-available/10-rewrite.conf /etc/lighttpd/conf-available/01-rewrite.conf
+
 lighttpd-enable-mod expire
 lighttpd-enable-mod fastcgi
 lighttpd-enable-mod rewrite
@@ -79,24 +45,21 @@ lighttpd-enable-mod cors
 # lighttpd-enable-mod compress # this wasn't working, and was causing binary data to leak into json responses...
 
 if [ "$LEADER" != "1" ]; then
-    # workers only have an api, not served static files.
+    # workers serve API-only (no static assets)
     lighttpd-enable-mod api-only
 fi
 
 
-# we add entries to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
-# see avahi_aliases.service for how this works
-sudo apt-get install avahi-utils -y
+# we add entries to mDNS: pioreactor.local, see avahi_aliases.service
+sudo apt-get install -y avahi-utils
 
-# install ufw since this is pretty common in larger networks
-sudo apt install ufw -y
+# install ufw since this is pretty commonly needed in larger networks
+sudo apt-get install -y ufw
 
-# test that tools works:
-flask --help
+# quick tool sanity
+"$PIO_VENV/bin/flask" --help || true
 lighttpd -h
-huey_consumer -h
+"$PIO_VENV/bin/huey_consumer" -h || true
 
-
-# install yaml
+# add yaml mime type (optional)
 echo "application/yaml               yaml yml" | sudo tee -a /etc/mime.types
-

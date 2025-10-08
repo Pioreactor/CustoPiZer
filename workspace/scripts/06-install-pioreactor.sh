@@ -10,32 +10,40 @@ source /common.sh
 install_cleanup_trap
 
 USERNAME=pioreactor
-PIO_DIR=/home/$USERNAME/.pioreactor
+DOT_PIOREACTOR=/home/$USERNAME/.pioreactor
+PIO_VENV=/opt/pioreactor/venv
+
+ensure_dot_pioreactor_tree_group_is_www_data() {
+    if [ -d "$DOT_PIOREACTOR" ]; then
+        find "$DOT_PIOREACTOR" -mindepth 0 \( ! -user "$USERNAME" -o ! -group www-data \) -exec chown -h "$USERNAME":www-data {} +
+        find "$DOT_PIOREACTOR" -type d ! -perm -2000 -exec chmod g+s {} +
+    fi
+}
 
 sudo apt-get install -y git
+# Ensure setfacl is available for cache directory ACLs applied at boot
+sudo apt-get install -y acl
 
 
-sudo -u $USERNAME mkdir -p $PIO_DIR
-sudo -u $USERNAME mkdir -p $PIO_DIR/storage
-sudo -u $USERNAME mkdir -p $PIO_DIR/models
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/jobs
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/automations/{dosing,led,temperature}
-sudo -u $USERNAME mkdir -p $PIO_DIR/plugins/ui/contrib/charts
-echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" |                       sudo -u $USERNAME tee $PIO_DIR/plugins/README.txt > /dev/null
-echo "Directory for adding to the UI using yaml files, see docs: https://docs.pioreactor.com/developer-guide/adding-plugins-to-ui" | sudo -u $USERNAME tee $PIO_DIR/plugins/ui/README.txt > /dev/null
-
-sudo -u $USERNAME mkdir -p $PIO_DIR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
-chown -R $USERNAME:www-data $PIO_DIR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
-chmod g+s $PIO_DIR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
-
-sudo -u $USERNAME mkdir -p $PIO_DIR/experiment_profiles
-chown -R $USERNAME:www-data $PIO_DIR/experiment_profiles
-chmod g+s $PIO_DIR/experiment_profiles
-echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $PIO_DIR/experiment_profiles/README.txt > /dev/null
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/storage
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/models
 
 
-cat <<EOT >> $PIO_DIR/experiment_profiles/demo_logging_example.yaml
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
+chown -R $USERNAME:www-data $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
+chmod g+s $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
+
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/experiment_profiles
+chown -R $USERNAME:www-data $DOT_PIOREACTOR/experiment_profiles
+chmod g+s $DOT_PIOREACTOR/experiment_profiles
+echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $DOT_PIOREACTOR/experiment_profiles/README.txt > /dev/null
+
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/hardware
+sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
+
+
+cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_logging_example.yaml
 experiment_profile_name: Demo of logging real-time data
 
 metadata:
@@ -71,7 +79,7 @@ common:
 EOT
 
 
-cat <<EOT >> $PIO_DIR/experiment_profiles/demo_stirring_example.yaml
+cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_stirring_example.yaml
 experiment_profile_name: Demo stirring example
 
 metadata:
@@ -94,27 +102,66 @@ common:
           hours_elapsed: 0.05
 EOT
 
-sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
+sudo -u $USERNAME touch $DOT_PIOREACTOR/unit_config.ini
+
+# .pioreactor/plugins/ mimics .pioreactor dir
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins
+echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" | sudo -u $USERNAME tee $DOT_PIOREACTOR/plugins/README.txt > /dev/null
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/jobs
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/automations/{dosing,led,temperature}
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/charts
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
+
+# Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
+# /run/pioreactor/exports is created at boot via systemd-tmpfiles.
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/web
+chown -R $USERNAME:www-data $DOT_PIOREACTOR/web
+find $DOT_PIOREACTOR/web -type d -exec chmod 2775 {} \;
+find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
+
+# lgpio install
+sudo apt install swig
+sudo -u pioreactor "$PIO_VENV/bin/pip" install lgpio==0.2.2.0 \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
+
+# this is needed from some internal adafruit stuff! =(
+sudo -u pioreactor "$PIO_VENV/bin/pip" install rpi-lgpio==0.6
+
+# needed for fast yaml
+apt-get install libyaml-dev -y
+# https://github.com/yaml/pyyaml/issues/445
+sudo -u pioreactor "$PIO_VENV/bin/pip" install pyyaml==6.0.2 \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
+
+# install numpy from piwheels into the venv to avoid long builds
+sudo -u pioreactor "$PIO_VENV/bin/pip" install numpy==2.3.2 \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
+
+sudo -u pioreactor "$PIO_VENV/bin/pip" install -U setuptools wheel
 
 
 if [ "$LEADER" == "1" ]; then
     sudo apt-get install sshpass
-    sudo -u $USERNAME cp /files/pioreactor/config.example.ini $PIO_DIR/config.ini
+    sudo -u $USERNAME cp /files/pioreactor/config.example.ini $DOT_PIOREACTOR/config.ini
 
-    sudo -u $USERNAME mkdir -p $PIO_DIR/exportable_datasets
-    sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $PIO_DIR/exportable_datasets/
+    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/exportable_datasets
+    sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $DOT_PIOREACTOR/exportable_datasets/
 
-    sudo pip3 install -U pip setuptools wheel
+    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/ui/
+    sudo -u $USERNAME cp -r /files/pioreactor/ui/* $DOT_PIOREACTOR/ui
+
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo apt-get install -y python3-numpy
-        sudo pip3 install \
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install \
           --find-links "$TMP_WHEELS" \
           "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
           --index-url https://piwheels.org/simple \
           --extra-index-url https://pypi.org/simple
     else
-      sudo pip3 install \
+      sudo -u pioreactor "$PIO_VENV/bin/pip" install \
         --find-links "$TMP_WHEELS" \
         "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
         --index-url https://piwheels.org/simple \
@@ -124,12 +171,11 @@ fi
 
 
 if [ "$WORKER" == "1" ]; then
-    sudo apt-get install -y python3-numpy
 
     if [ "$PIO_VERSION" == "develop" ]; then
-        sudo pip3 install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@pioreactor2#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     else
-        sudo pip3 install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
     fi
 
 fi
@@ -139,3 +185,24 @@ fi
 sudo apt-get install -y jq
 sudo apt-get install -y rsyslog
 sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 -y # used for Pillow
+
+
+# Create/refresh symlink for static assets to package location (leaders and workers)
+# Lighttpd serves /static/ from /usr/share/pioreactorui/static which points into the installed wheel.
+STATIC_DIR=$("$PIO_VENV/bin/python" - <<'PY'
+import sys
+try:
+    import importlib.resources as r
+    import pioreactor.web as web
+    p = r.files(web)/'static'
+    print(p)
+except Exception:
+    sys.exit(1)
+PY
+)
+
+install -d -m 0755 /usr/share/pioreactorui
+ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
+
+
+ensure_dot_pioreactor_tree_group_is_www_data

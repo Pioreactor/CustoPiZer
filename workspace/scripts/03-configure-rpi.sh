@@ -8,6 +8,7 @@ export LC_ALL=C
 
 source /common.sh
 install_cleanup_trap
+PIO_VENV=/opt/pioreactor/venv
 
 if [ "$WORKER" == "1" ]; then
 
@@ -73,24 +74,9 @@ if [ "$WORKER" == "1" ]; then
 
 fi
 
-# the below will remove swap, which should help extend the life of SD cards:
-# https://raspberrypi.stackexchange.com/questions/169/how-can-i-extend-the-life-of-my-sd-card
-sudo apt-get remove dphys-swapfile -y
-
-# remove some redundant programs
-sudo apt-get remove system-config-printer -y
-
-# remove depend. of uninstalled programs.
-sudo apt-get autoremove -y
 
 # put /tmp into memory, as we write to it a lot.
 echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
-
-# add environment variable for TMPDIR
-echo "TMPDIR=/tmp/" | sudo tee -a /etc/environment
-# add env variable for lgpio working dir
-echo "LG_WD=/tmp" | sudo tee -a /etc/environment # no trailing slash!
-
 
 ### faster boot
 
@@ -101,14 +87,14 @@ echo "force_turbo=1" | sudo tee -a /boot/firmware/config.txt
 
 
 # disable services that slow down boot
-sudo systemctl disable raspi-config.service
-sudo systemctl disable triggerhappy.service
+# sudo systemctl disable raspi-config.service
+# sudo systemctl disable triggerhappy.service
 sudo systemctl disable apt-daily.service
 sudo systemctl disable apt-daily-upgrade.service
 sudo systemctl disable alsa-restore.service
 sudo systemctl disable alsa-state.service
 sudo systemctl disable userconfig.service
-sudo systemctl disable rpi-display-backlight.service
+# sudo systemctl disable rpi-display-backlight.service
 sudo systemctl disable rpi-eeprom-update.service
 
 sudo systemctl mask apt-daily-upgrade
@@ -131,4 +117,4 @@ sudo rm /var/lib/man-db/auto-update
 
 
 # reduce the size that journalctl uses. TODO: test this
-sudo crudini --set /etc/systemd/journald.conf Journal SystemMaxUse 20M
+sudo "$PIO_VENV/bin/crudini" --set /etc/systemd/journald.conf Journal SystemMaxUse 20M
