@@ -16,6 +16,8 @@ PIO_VENV=/opt/pioreactor/venv
 ensure_dot_pioreactor_tree_group_is_www_data() {
     if [ -d "$DOT_PIOREACTOR" ]; then
         find "$DOT_PIOREACTOR" -mindepth 0 \( ! -user "$USERNAME" -o ! -group www-data \) -exec chown -h "$USERNAME":www-data {} +
+        chmod g+w "$DOT_PIOREACTOR"
+        find "$DOT_PIOREACTOR" -mindepth 1 \( -type d -o -type f \) -exec chmod g+w {} +
         find "$DOT_PIOREACTOR" -type d ! -perm -2000 -exec chmod g+s {} +
     fi
 }

@@ -17,7 +17,6 @@ HOSTNAME=$1
 SSHPASS=${2:-raspberry}
 ADDRESS=${3:-"$HOSTNAME".local}
 
-
 LEADER_ADDRESS=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_address)
 
 
@@ -68,6 +67,8 @@ UNIT_CONFIG=/home/pioreactor/.pioreactor/config_"$HOSTNAME".ini
 rm -f "$UNIT_CONFIG"
 touch "$UNIT_CONFIG"
 echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> "$UNIT_CONFIG"
+chown pioreactor:www-data "$UNIT_CONFIG"
+chmod g+w "$UNIT_CONFIG"
 
 # add worker's address to config
 CONFIG=/home/pioreactor/.pioreactor/config.ini

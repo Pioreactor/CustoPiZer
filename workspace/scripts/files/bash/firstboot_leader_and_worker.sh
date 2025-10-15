@@ -11,6 +11,15 @@ SSH_DIR=/home/$USERNAME/.ssh
 DB_LOC=$("$PIO_VENV/bin/crudini" --get $PIO_DIR/config.ini storage database)
 HOSTNAME=$(hostname)
 PIO_VENV=/opt/pioreactor/venv
+
+ensure_dot_pioreactor_tree_group_is_www_data() {
+    if [ -d "$PIO_DIR" ]; then
+        find "$PIO_DIR" -mindepth 0 \( ! -user "$USERNAME" -o ! -group www-data \) -exec chown -h "$USERNAME":www-data {} +
+        chmod g+w "$PIO_DIR"
+        find "$PIO_DIR" -mindepth 1 \( -type d -o -type f \) -exec chmod g+w {} +
+        find "$PIO_DIR" -type d ! -perm -2000 -exec chmod g+s {} +
+    fi
+}
 # clean up if this needs to run again.
 sudo -u $USERNAME rm -f $SSH_DIR/{authorized_keys,known_hosts,id_rsa,id_rsa.pub}
 
@@ -38,3 +47,5 @@ sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set $PIO_DIR/c
 
 
 cp -a "$PIO_DIR/config_$HOSTNAME.ini" "$PIO_DIR/unit_config.ini"
+
+ensure_dot_pioreactor_tree_group_is_www_data

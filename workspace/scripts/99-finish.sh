@@ -18,6 +18,8 @@ PIO_DIR=/home/$USERNAME/.pioreactor
 ensure_dot_pioreactor_tree_group_is_www_data() {
     if [ -d "$PIO_DIR" ]; then
         find "$PIO_DIR" -mindepth 0 \( ! -user "$USERNAME" -o ! -group www-data \) -exec chown -h "$USERNAME":www-data {} +
+        chmod g+w "$PIO_DIR"
+        find "$PIO_DIR" -mindepth 1 \( -type d -o -type f \) -exec chmod g+w {} +
         find "$PIO_DIR" -type d ! -perm -2000 -exec chmod g+s {} +
     fi
 }

@@ -29,6 +29,16 @@ else
   am_i_leader=false
 fi
 
+ensure_dot_pioreactor_tree_group_is_www_data() {
+    local base_dir="/home/pioreactor/.pioreactor"
+    if [ -d "$base_dir" ]; then
+        find "$base_dir" -mindepth 0 \( ! -user pioreactor -o ! -group www-data \) -exec chown -h pioreactor:www-data {} +
+        chmod g+w "$base_dir"
+        find "$base_dir" -mindepth 1 \( -type d -o -type f \) -exec chmod g+w {} +
+        find "$base_dir" -type d ! -perm -2000 -exec chmod g+s {} +
+    fi
+}
+
 
 function download_and_check_if_leader_only {
     # define the package name
@@ -118,6 +128,8 @@ fi
 if test -f "$install_folder/post_install.sh"; then
     bash "$install_folder/post_install.sh"
 fi
+
+ensure_dot_pioreactor_tree_group_is_www_data
 
 
 exit 0
