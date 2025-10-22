@@ -9,5 +9,3 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-
-sudo touch /var/lib/cloud/instance/locale-check.skip
