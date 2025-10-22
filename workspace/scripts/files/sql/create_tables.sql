@@ -406,8 +406,9 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
 );
 
 
+# heads up: we need this specific index for to handle ON CONFLICT statements in the triggers. Don't change it.
 CREATE UNIQUE INDEX IF NOT EXISTS pioreactor_unit_activity_data_ix
-ON pioreactor_unit_activity_data (experiment, pioreactor_unit);
+ON pioreactor_unit_activity_data (experiment, pioreactor_unit, timestamp);
 
 -- a rollup of the pioreactor_unit_activity_data to the minute
 CREATE VIEW IF NOT EXISTS pioreactor_unit_activity_data_rollup AS

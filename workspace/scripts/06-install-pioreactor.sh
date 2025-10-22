@@ -137,7 +137,10 @@ sudo -u pioreactor "$PIO_VENV/bin/pip" install pyyaml==6.0.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
-# install numpy from piwheels into the venv to avoid long builds
+
+# install numpy from piwheels into the venv to avoid long builds. But first install C deps.
+sudo apt-get install -y libopenblas0-pthread liblapack3
+
 sudo -u pioreactor "$PIO_VENV/bin/pip" install numpy==2.3.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple

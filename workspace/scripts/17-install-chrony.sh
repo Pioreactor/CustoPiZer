@@ -18,3 +18,13 @@ if [ "$LEADER" == "1" ]; then
     echo "local stratum 10" | sudo tee -a  /etc/chrony/chrony.conf
 fi
 
+
+# trixie doesn't have fake-hwclock, but bullseye did. So leaders on bullseye who try to add
+# a worker on trixie will encounter failure. Add an empty fake-hwclock.
+sudo tee /usr/local/bin/fake-hwclock >/dev/null <<'EOF'
+#!/bin/sh
+# dummy fake-hwclock command
+echo "Deprecated. This does nothing."
+exit 0
+EOF
+sudo chmod +x /usr/local/bin/fake-hwclock
