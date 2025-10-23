@@ -81,8 +81,10 @@ jobs:
       run: |
         IMAGE_LEADER_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-lw.outputs.zip_name }}
         echo "IMAGE_LEADER_WORKER_ZIP=${{ steps.package-image-lw.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_LEADER_WORKER_SIZE=${{ steps.package-image-lw.outputs.image_size }}" >> $GITHUB_ENV
         echo "IMAGE_LEADER_WORKER_URL=$IMAGE_LEADER_WORKER_URL" >> $GITHUB_ENV
         echo "Link to leader-worker image: $IMAGE_LEADER_WORKER_URL" >> $GITHUB_STEP_SUMMARY
+        echo "Leader-worker image size (bytes): ${{ steps.package-image-lw.outputs.image_size }}" >> $GITHUB_STEP_SUMMARY
 
 
     - name: "🏗 Run CustoPiZer L"
@@ -110,8 +112,10 @@ jobs:
       run: |
         IMAGE_LEADER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-l.outputs.zip_name }}
         echo "IMAGE_LEADER_ZIP=${{ steps.package-image-l.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_LEADER_SIZE=${{ steps.package-image-l.outputs.image_size }}" >> $GITHUB_ENV
         echo "IMAGE_LEADER_URL=$IMAGE_LEADER_URL" >> $GITHUB_ENV
         echo "Link to leader image: $IMAGE_LEADER_URL" >> $GITHUB_STEP_SUMMARY
+        echo "Leader image size (bytes): ${{ steps.package-image-l.outputs.image_size }}" >> $GITHUB_STEP_SUMMARY
 
 
 
@@ -140,8 +144,10 @@ jobs:
     - name: 📨 Export zip name to env W
       run: |
         echo "IMAGE_WORKER_ZIP=${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_WORKER_SIZE=${{ steps.package-image-w.outputs.image_size }}" >> $GITHUB_ENV
         echo "IMAGE_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
         echo "Link to worker image: $IMAGE_WORKER_URL" >> $GITHUB_STEP_SUMMARY
+        echo "Worker image size (bytes): ${{ steps.package-image-w.outputs.image_size }}" >> $GITHUB_STEP_SUMMARY
 
 
 
@@ -156,13 +162,13 @@ jobs:
         fail_on_unmatched_files: true
         files: |
           build/${{ env.IMAGE_LEADER_WORKER_ZIP }}
-          build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.md5
-          build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.sha256
+          build/${{ env.IMAGE_LEADER_WORKER }}.md5
+          build/${{ env.IMAGE_LEADER_WORKER }}.sha256
           build/${{ env.IMAGE_LEADER_ZIP }}
-          build/${{ env.IMAGE_LEADER_ZIP }}.md5
-          build/${{ env.IMAGE_LEADER_ZIP }}.sha256
+          build/${{ env.IMAGE_LEADER }}.md5
+          build/${{ env.IMAGE_LEADER }}.sha256
           build/${{ env.IMAGE_WORKER_ZIP }}
-          build/${{ env.IMAGE_WORKER_ZIP }}.md5
-          build/${{ env.IMAGE_WORKER_ZIP }}.sha256
+          build/${{ env.IMAGE_WORKER }}.md5
+          build/${{ env.IMAGE_WORKER }}.sha256
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
