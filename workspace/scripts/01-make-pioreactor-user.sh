@@ -31,7 +31,7 @@ echo 'pioreactor ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo -f /etc/
 
 # change default password for the pi user, as per RPi Foundations recommendation. Not sure if this works...
 chpasswd <<<"pi:notaraspberry"
-rm /etc/ssh/sshd_config.d/rename_user.conf
+rm -f /etc/ssh/sshd_config.d/rename_user.conf
 
 ##### set some SSH stuff, populated on firstboot.
 sudo -u pioreactor rm -rf $SSH_DIR # remove if already exists.

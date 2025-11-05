@@ -13,9 +13,9 @@ CRUDINI="$VENV_BIN/crudini"
 PIOREACTOR_DATA_DIR=/home/pioreactor/.pioreactor
 
 # Check if config file exists (if not: likely a worker)
-if [ ! -f "/home/pioreactor/.pioreactor/config.ini" ]; then
+if [ ! -f "$PIOREACTOR_DATA_DIR/config.ini" ]; then
     # start the blue LED to signal to the user that it's working.
-    python /usr/local/bin/led_control.py --static &
+    python3 /usr/local/bin/led_control.py --static &
 
 fi
 
@@ -25,8 +25,8 @@ if [ -f "/boot/firmware/config.ini" ]; then
     # Merge the configurations and remove the extra file
     # if config.ini doesn't exist, this creates it.
     # so we need to chown, too.
-    "$CRUDINI" --merge /home/pioreactor/.pioreactor/config.ini < /boot/firmware/config.ini
-    chown pioreactor:www-data /home/pioreactor/.pioreactor/config.ini
+    "$CRUDINI" --merge "$PIOREACTOR_DATA_DIR/config.ini" < /boot/firmware/config.ini
+    chown pioreactor:www-data "$PIOREACTOR_DATA_DIR/config.ini"
     rm /boot/firmware/config.ini
 fi
 

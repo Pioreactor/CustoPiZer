@@ -122,7 +122,7 @@ find $DOT_PIOREACTOR/web -type d -exec chmod 2775 {} \;
 find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 
 # lgpio install
-sudo apt install swig
+sudo apt install swig -y
 sudo -u pioreactor "$PIO_VENV/bin/pip" install lgpio==0.2.2.0 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
@@ -149,7 +149,7 @@ sudo -u pioreactor "$PIO_VENV/bin/pip" install -U setuptools wheel
 
 
 if [ "$LEADER" == "1" ]; then
-    sudo apt-get install sshpass
+    sudo apt-get install -y sshpass
     sudo -u $USERNAME cp /files/pioreactor/config.example.ini $DOT_PIOREACTOR/config.ini
 
     sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/exportable_datasets
