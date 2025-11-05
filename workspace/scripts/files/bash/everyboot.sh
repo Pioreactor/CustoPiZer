@@ -35,9 +35,5 @@ nmcli radio wifi on || :
 
 # Ensure cache directory ACLs grant group rw on new files (WAL/SHM)
 if [ -d "/run/pioreactor/cache" ]; then
-    if command -v setfacl >/dev/null 2>&1; then
-        setfacl -m g:www-data:rwX -m d:g:www-data:rwX /run/pioreactor/cache || :
-    else
-        echo "setfacl not found; skipping ACL setup for /run/pioreactor/cache" >&2 || :
-    fi
+    setfacl -m g:www-data:rwX -m d:g:www-data:rwX /run/pioreactor/cache || :
 fi
