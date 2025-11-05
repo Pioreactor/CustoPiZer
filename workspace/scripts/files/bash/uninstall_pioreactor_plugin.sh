@@ -40,6 +40,6 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
     # pios sync-configs --shared
 fi
 
-sudo "$PIP" uninstall -y "$clean_plugin_name_with_dashes"
+sudo -u pioreactor "$PIP" uninstall -y "$clean_plugin_name_with_dashes"
 
 exit 0

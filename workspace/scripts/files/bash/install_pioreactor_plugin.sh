@@ -80,7 +80,7 @@ function download_and_check_if_leader_only {
 
 
 if [ -n "$source" ]; then
-    sudo "$PIP" install --force-reinstall --no-deps "$source"
+    sudo -u pioreactor "$PIP" install --force-reinstall --no-deps "$source"
 else
     if download_and_check_if_leader_only "$clean_plugin_name_with_dashes"; then
         if [ "$am_i_leader" = true ]; then
@@ -89,7 +89,7 @@ else
         fi
         echo "Installing LEADER_ONLY plugin on worker"
     fi
-    sudo "$PIP" install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
+    sudo -u pioreactor "$PIP" install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
 fi
 
 

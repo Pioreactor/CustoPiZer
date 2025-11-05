@@ -493,8 +493,8 @@ CREATE TABLE IF NOT EXISTS experiment_worker_assignments (
 CREATE TABLE IF NOT EXISTS workers (
     pioreactor_unit TEXT NOT NULL, -- id
     added_at TEXT NOT NULL,
-    model_name TEXT NOT NULL,
-    model_version TEXT NOT NULL,
+    model_name TEXT,
+    model_version TEXT,
     is_active INTEGER DEFAULT 1 NOT NULL,
     UNIQUE (pioreactor_unit)
 );
