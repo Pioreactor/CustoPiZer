@@ -1,1 +1,0 @@
-*/5 * * * * (head -n 15 /boot/firmware/network_info.txt && journalctl -u NetworkManager --no-pager -b) > /tmp/network_info.txt && cp /tmp/network_info.txt /boot/firmware/network_info.txt
