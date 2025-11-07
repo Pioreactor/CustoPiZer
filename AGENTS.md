@@ -11,4 +11,7 @@ This project is used to generate our custom Raspberry Pi images for the Pioreact
 - CI: `.github/workflows/custopize.yaml` triggers containerized builds and publishes release assets.
 
 
-See ISSUES.md and PLAN.md for issue tracking and project planning.
+## Other relevant files
+
+
+see RPi-filesystem-locations.md for a list of important Raspberry Pi Locations for Pioreactor Images
