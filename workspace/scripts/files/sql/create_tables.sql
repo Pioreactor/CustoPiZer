@@ -406,7 +406,7 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
 );
 
 
-# heads up: we need this specific index for to handle ON CONFLICT statements in the triggers. Don't change it.
+-- heads up: we need this specific index for to handle ON CONFLICT statements in the triggers. Don't change it.
 CREATE UNIQUE INDEX IF NOT EXISTS pioreactor_unit_activity_data_ix
 ON pioreactor_unit_activity_data (experiment, pioreactor_unit, timestamp);
 
