@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS raw_od_readings (
 );
 
 CREATE INDEX IF NOT EXISTS raw_od_readings_ix
-ON od_readings (experiment, pioreactor_unit, timestamp);
+ON raw_od_readings (experiment, pioreactor_unit, timestamp);
 
 
 
@@ -425,7 +425,7 @@ SELECT
     sum(remove_waste_ml) AS sum_remove_waste_ml,
     sum(add_alt_media_ml) AS sum_add_alt_media_ml
 FROM pioreactor_unit_activity_data
-GROUP BY experiment, pioreactor_unit, timestamp;
+GROUP BY experiment, pioreactor_unit, datetime(strftime('%Y-%m-%dT%H:%M:00', timestamp));
 
 
 CREATE TABLE IF NOT EXISTS calibrations (
