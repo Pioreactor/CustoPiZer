@@ -11,6 +11,25 @@ install_cleanup_trap
 
 SSH_DIR=/home/pioreactor/.ssh
 
+
+sudo tee /etc/update-motd.d/10-pioreactor >/dev/null <<'EOF'
+#!/bin/sh
+printf '\033[38;2;120;81;169m╭──────────────────────────────────────────────────╮
+│ >_ Pioreactor                                    │
+╰──────────────────────────────────────────────────╯\033[0m\n'
+EOF
+sudo chmod +x /etc/update-motd.d/10-pioreactor
+
+sudo rm /etc/motd
+
+
+
+# set locale
+sudo sed -i 's/^# *en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+sudo locale-gen en_US.UTF-8
+sudo update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+# create user
 adduser --gecos "" --disabled-password pioreactor
 chpasswd <<<"pioreactor:raspberry"
 usermod -a -G sudo pioreactor

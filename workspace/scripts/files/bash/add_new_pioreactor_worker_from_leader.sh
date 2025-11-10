@@ -3,8 +3,6 @@
 # first argument is the name of the new/hostname pioreactor worker
 # second optional argument is the worker password, default "raspberry"
 # third optional argument is the Pioreactor version, default "1.1"
-# forth optional argument is the Pioreactor model, default "pioreactor_20ml"
-# fifth optional argument is the address of the new Pioreactor, default "<hostname>.local"
 
 set -x
 set -e
