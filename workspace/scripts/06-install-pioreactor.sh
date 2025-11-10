@@ -36,16 +36,18 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/storage/calibrations/{stirring,od,med
 chown -R $USERNAME:www-data $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
 chmod g+s $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
 
-sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/experiment_profiles
-chown -R $USERNAME:www-data $DOT_PIOREACTOR/experiment_profiles
-chmod g+s $DOT_PIOREACTOR/experiment_profiles
-echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $DOT_PIOREACTOR/experiment_profiles/README.txt > /dev/null
-
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/hardware
 sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
 
 
-cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_logging_example.yaml
+if [ "$LEADER" == "1" ]; then
+
+  sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/experiment_profiles
+  chown -R $USERNAME:www-data $DOT_PIOREACTOR/experiment_profiles
+  chmod g+s $DOT_PIOREACTOR/experiment_profiles
+  echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $DOT_PIOREACTOR/experiment_profiles/README.txt > /dev/null
+
+  cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_logging_example.yaml
 experiment_profile_name: Demo of logging real-time data
 
 metadata:
@@ -81,7 +83,7 @@ common:
 EOT
 
 
-cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_stirring_example.yaml
+  cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_stirring_example.yaml
 experiment_profile_name: Demo stirring example
 
 metadata:
@@ -104,6 +106,8 @@ common:
           hours_elapsed: 0.05
 EOT
 
+fi
+
 sudo -u $USERNAME touch $DOT_PIOREACTOR/unit_config.ini
 
 # .pioreactor/plugins/ mimics .pioreactor dir
@@ -122,7 +126,7 @@ find $DOT_PIOREACTOR/web -type d -exec chmod 2775 {} \;
 find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 
 # lgpio install
-sudo apt install swig -y
+sudo apt install swig liblgpio-dev -y
 sudo -u pioreactor "$PIO_VENV/bin/pip" install lgpio==0.2.2.0 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
@@ -193,18 +197,8 @@ sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 -y # used
 
 
 # Create/refresh symlink for static assets to package location (leaders and workers)
-# Lighttpd serves /static/ from /usr/share/pioreactorui/static which points into the installed wheel.
-STATIC_DIR=$("$PIO_VENV/bin/python" - <<'PY'
-import sys
-try:
-    import importlib.resources as r
-    import pioreactor.web as web
-    p = r.files(web)/'static'
-    print(p)
-except Exception:
-    sys.exit(1)
-PY
-)
+# Lighttpd serves /static/ from /usr/share/pioreactorui/static which points into the installed wheel. py3.13 specific.
+STATIC_DIR="/opt/pioreactor/venv/lib/python3.13/site-packages/pioreactor/web/static"
 
 install -d -m 0755 /usr/share/pioreactorui
 ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
