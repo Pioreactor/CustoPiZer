@@ -15,12 +15,13 @@ SSH_DIR=/home/pioreactor/.ssh
 sudo tee /etc/update-motd.d/10-pioreactor >/dev/null <<'EOF'
 #!/bin/sh
 printf '\033[38;2;120;81;169m╭──────────────────────────────────────────────────╮
-│ >_ Pioreactor                                    │
+│ >_ pioreactor                                    │
 ╰──────────────────────────────────────────────────╯\033[0m\n'
 EOF
 sudo chmod +x /etc/update-motd.d/10-pioreactor
 
 sudo rm /etc/motd
+sudo rm /etc/update-motd.d/10-uname
 
 
 
