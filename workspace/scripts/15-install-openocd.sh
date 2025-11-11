@@ -11,7 +11,7 @@ install_cleanup_trap
 
 if [ "$WORKER" == "1" ]; then
 
-    apt-get install -y libftdi-dev libusb-1.0-0-dev
+    apt-get install -y libftdi-dev libusb-1.0-0-dev libgpiod-dev
 
     # move executable
 

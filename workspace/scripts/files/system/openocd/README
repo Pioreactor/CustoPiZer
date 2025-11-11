@@ -8,6 +8,11 @@ In fact, the executable can be used in other RPis, something we take advantage o
 
 The current executable `openocd` was compiled on the Raspberry Pi:
 
+```
+sudo apt-get install -y libjim-dev libjim0.83 libgpiod-dev
+```
+
+
 Operating system:       Linux-6.12.47+rpt-rpi-v8-aarch64-with-glibc2.41
 Raspberry Pi:           Raspberry Pi 5
 
