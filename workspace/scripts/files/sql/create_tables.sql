@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS od_readings (
     timestamp TEXT NOT NULL,
     od_reading REAL NOT NULL,
     angle INTEGER NOT NULL,
-    channel INTEGER CHECK (channel IN (1, 2)) NOT NULL,
+    channel INTEGER CHECK (channel IN (1, 2, 3, 4)) NOT NULL,
     FOREIGN KEY (experiment) REFERENCES experiments (
         experiment
     ) ON DELETE CASCADE
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS raw_od_readings (
     pioreactor_unit TEXT NOT NULL,
     timestamp TEXT NOT NULL,
     od_reading REAL NOT NULL,
-    channel INTEGER CHECK (channel IN (1, 2)) NOT NULL,
+    channel INTEGER CHECK (channel IN (1, 2, 3, 4)) NOT NULL,
     FOREIGN KEY (experiment) REFERENCES experiments (
         experiment
     ) ON DELETE CASCADE

@@ -16,7 +16,6 @@ Reference list of on-device paths that matter once a custom Pioreactor Raspberry
 | `/home/pioreactor/.pioreactor/storage/local_persistent_pioreactor_metadata.sqlite` | Persistent cache | Stores long-lived metadata that survives reboots. |
 | `/home/pioreactor/.pioreactor/hardware/` | Hardware definition packs | YAML that describes hats, models, sensors, and calibration values consumed by the Pioreactor hardware subsystem. |
 | `/home/pioreactor/.pioreactor/experiment_profiles/` | User experiment profiles | Drop `.py` / `.json` profile definitions here so they show up in the UI for scheduling. |
-| `/home/pioreactor/.pioreactor/logs/` | Optional per-user logs | Custom scripts can log here when `/var/log/pioreactor.log` is unsuitable. |
 | `/home/pioreactor/.ssh/` | Device SSH keys | Created during image build so leaders can add workers securely. |
 | `/run/pioreactor/` | Runtime scratch space (`$RUN_PIOREACTOR`) | tmpfs directory for caches, sockets, Huey queues, and general runtime coordination. Cleared on reboot. |
 | `/run/pioreactor/cache/` | Volatile caches | Includes `local_intermittent_pioreactor_metadata.sqlite` and UI/Huey cache files that can be safely discarded. |
