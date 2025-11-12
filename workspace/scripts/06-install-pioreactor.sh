@@ -120,10 +120,6 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
 
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
-sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/web
-chown -R $USERNAME:www-data $DOT_PIOREACTOR/web
-find $DOT_PIOREACTOR/web -type d -exec chmod 2775 {} \;
-find $DOT_PIOREACTOR/web -type f -exec chmod 0644 {} \;
 
 # lgpio install
 sudo apt install swig liblgpio-dev -y

@@ -17,7 +17,7 @@ Decisions Confirmed
 - Replace cron with systemd timers.
 - Keep `sshpass` for now unless a clearly easier user flow is demonstrated.
  - Ephemeral runtime lives under `/run/pioreactor` exposed via `RUN_PIOREACTOR`; `LG_WD` points to `/run/pioreactor`.
- - UI exports are served from `/run/pioreactor/exports` (cleared on reboot). Nothing under `~/.pioreactor/web/exports`.
+- UI exports are served from `/run/pioreactor/exports` (cleared on reboot). Nothing under `~/.pioreactor`.
 - lighttpd FastCGI socket is `/run/pioreactor/pioreactor_web.sock`.
 
 Progress Update (current)
