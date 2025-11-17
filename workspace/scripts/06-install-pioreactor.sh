@@ -59,27 +59,27 @@ common:
     stirring:
       actions:
         - type: start
-          hours_elapsed: 0.0
+          t: 0s
           options:
             target_rpm: 400.0
         - type: log
-          hours_elapsed: 0.001
+          t: 2s
           options:
             message: "\${{job_name()}} starting at target \${{::stirring:target_rpm}} RPM"
         - type: log
-          hours_elapsed: 0.005
+          t: 10s
           options:
             message: "Increasing to 800 RPM in \${{unit()}}. Try changing the target RPM in the UI."
         - type: update
-          hours_elapsed: 0.005
+          t: 10s
           options:
             target_rpm: 800.0
         - type: log
-          hours_elapsed: 0.019
+          t: 15s
           options:
             message: "Value of target_rpm in \${{unit()}} is \${{::stirring:target_rpm}} RPM. Stopping."
         - type: stop
-          hours_elapsed: 0.02
+          t: 20s
 EOT
 
 
@@ -95,15 +95,15 @@ common:
     stirring:
       actions:
         - type: start
-          hours_elapsed: 0.0
+          t: 0s
           options:
             target_rpm: 400.0
         - type: update
-          hours_elapsed: 0.025
+          t: 1.5m
           options:
             target_rpm: 800.0
         - type: stop
-          hours_elapsed: 0.05
+          t: 3m
 EOT
 
 fi
