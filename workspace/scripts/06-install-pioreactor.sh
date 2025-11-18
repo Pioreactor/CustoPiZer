@@ -137,6 +137,12 @@ sudo -u pioreactor "$PIO_VENV/bin/pip" install pyyaml==6.0.2 \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 
+# needed for the LED at boot
+sudo -u pioreactor "$PIO_VENV/bin/pip" install gpiozero \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
+
+
 
 # install numpy from piwheels into the venv to avoid long builds. But first install C deps.
 sudo apt-get install -y libopenblas0-pthread liblapack3

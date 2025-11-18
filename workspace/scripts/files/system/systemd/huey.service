@@ -10,8 +10,8 @@ PartOf=pioreactor-web.target
 EnvironmentFile=/etc/pioreactor.env
 WorkingDirectory=/run/pioreactor
 User=pioreactor
-# Ensure files created are group-writable/readable for www-data
-UMask=0007
+# Ensure files remain readable by lighttpd after pip reinstalls; keep group write
+UMask=0002
 # Use module path in merged web package
 ExecStart=/opt/pioreactor/venv/bin/huey_consumer pioreactor.web.tasks.huey -n -b 1.001 -w 10 -f -C -d 0.05
 ExecStartPost=/opt/pioreactor/venv/bin/pio  log -m "%n successful" -n systemd --local-only

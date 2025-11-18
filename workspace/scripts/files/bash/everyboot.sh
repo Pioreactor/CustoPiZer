@@ -15,7 +15,7 @@ PIOREACTOR_DATA_DIR=/home/pioreactor/.pioreactor
 # Check if config file exists (if not: likely a worker)
 if [ ! -f "$PIOREACTOR_DATA_DIR/config.ini" ]; then
     # start the blue LED to signal to the user that it's working.
-    python3 /usr/local/bin/led_control.py --static &
+    /opt/pioreactor/venv/bin/python /usr/local/bin/led_control.py --static &
 
 fi
 
