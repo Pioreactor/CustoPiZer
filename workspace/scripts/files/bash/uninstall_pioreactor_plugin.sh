@@ -32,7 +32,7 @@ if [ "$leader_hostname" == "$(hostname)" ]; then
     # delete yamls from ui
     (cd "$install_folder"/ui/ && find ./ -type f) | awk '{print "/home/pioreactor/.pioreactor/plugins/ui/"$1}' | xargs rm
     # delete yamls from datasets
-    (cd "$install_folder"/exportable_datasets/ && find ./ -type f) | awk '{print "/home/pioreactor/.pioreactor/plugins/exportable_datasetss/"$1}' | xargs rm
+    (cd "$install_folder"/exportable_datasets/ && find ./ -type f) | awk '{print "/home/pioreactor/.pioreactor/plugins/exportable_datasets/"$1}' | xargs rm
 
     # TODO: remove sections from config.ini
     # this is complicated because sometimes we edit sections, instead of adding full sections. Ex: we edit [PWM] in relay plugin.

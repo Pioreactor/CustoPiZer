@@ -5,12 +5,12 @@ set -e
 
 export LC_ALL=C
 
+PIO_VENV=/opt/pioreactor/venv
 USERNAME=pioreactor
 PIO_DIR=/home/$USERNAME/.pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
 DB_LOC=$("$PIO_VENV/bin/crudini" --get $PIO_DIR/config.ini storage database)
 HOSTNAME=$(hostname)
-PIO_VENV=/opt/pioreactor/venv
 
 ensure_dot_pioreactor_tree_group_is_www_data() {
     if [ -d "$PIO_DIR" ]; then

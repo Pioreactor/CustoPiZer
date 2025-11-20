@@ -5,4 +5,4 @@ After=network.target
 [Service]
 Type=oneshot
 EnvironmentFile=/etc/pioreactor.env
-ExecStart=/opt/pioreactor/venv/bin/pio log -m "Service %i failed to start" -l ERRORq
+ExecStart=/opt/pioreactor/venv/bin/pio log -m "Service %i failed to start" -l ERROR

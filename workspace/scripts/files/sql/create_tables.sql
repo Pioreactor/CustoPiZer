@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS od_readings (
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_ix
-ON od_readings (experiment, pioreactor_unit, timestamp);
+ON od_readings (experiment, pioreactor_unit, channel, timestamp);
 
 CREATE TABLE IF NOT EXISTS raw_od_readings (
     experiment TEXT NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS raw_od_readings (
 );
 
 CREATE INDEX IF NOT EXISTS raw_od_readings_ix
-ON raw_od_readings (experiment, pioreactor_unit, timestamp);
+ON raw_od_readings (experiment, pioreactor_unit, channel, timestamp);
 
 
 

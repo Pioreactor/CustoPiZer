@@ -1,6 +1,6 @@
 # CustoPiZer for Pioreactor
 
-This repo contains the scripts to serially modify an original RPi image (say, from the RPi Foundation), to add Pioreactor software and files.
+This repo contains the scripts to serially modify an original RPi image (say, from the RPi Foundation), to add Pioreactor software and files. Builds currently target Raspberry Pi OS based on Debian Trixie (ships with Python 3.13).
 
 ### How does it work?
 
@@ -64,3 +64,10 @@ These are applied by the top-level `make_*_image.sh` scripts and in CI.
 
 **Cache**
 - Transient UI/Huey/cache files live under `/run/pioreactor/cache` (created on boot via tmpfiles), replacing the previous `/tmp/pioreactor_cache`.
+
+## Repository Purpose and Usage
+- Builds Pioreactor-ready Raspberry Pi OS images from the official “lite” base by applying ordered customizations in `workspace/scripts/`.
+- Produces three headless image flavors (leader, worker, leader+worker) that differ only by enabled systemd targets; build locally with Docker via `make_leader_image.sh`, `make_worker_image.sh`, or `make_leader_worker_image.sh` (`bash <script> <pio_version> ./config.local`), which output zipped `.img` files in `workspace/`.
+- GitHub Actions receives dispatches from upstream `pioreactor` releases, runs the same containerized build (see `action.yml`), and attaches the images to the latest release; nightly images are hosted at `https://nightly.pioreactor.com/`.
+- Artifacts: `workspace/scripts/files/` (systemd units/targets/timers, bash helpers, lighttpd configs, tmpfiles rules, firstboot/everyboot scripts, NetworkManager profiles) and `src/` (CustoPiZer driver files used in the container build).
+- End users download the desired image (leader/worker/leader_worker) from GitHub releases or nightlies, flash to an SD card, and boot; services come pre-enabled via targets (`pioreactor.target`, `pioreactor-leader.target`, `pioreactor-worker.target`, `pioreactor-web.target`) so Pioreactor CLI/UI work immediately.
