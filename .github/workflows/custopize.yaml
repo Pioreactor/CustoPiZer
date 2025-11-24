@@ -145,12 +145,32 @@ jobs:
 
     - name: 📨 Export zip name to env W
       run: |
+        IMAGE_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-w.outputs.zip_name }}
         echo "IMAGE_WORKER_ZIP=${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
         echo "IMAGE_WORKER_SIZE=${{ steps.package-image-w.outputs.image_size }}" >> $GITHUB_ENV
-        echo "IMAGE_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_WORKER_URL=$IMAGE_WORKER_URL" >> $GITHUB_ENV
         echo "Link to worker image: $IMAGE_WORKER_URL" >> $GITHUB_STEP_SUMMARY
         echo "Worker image size (bytes): ${{ steps.package-image-w.outputs.image_size }}" >> $GITHUB_STEP_SUMMARY
 
+
+    - name: "📝 Write image size metadata"
+      run: |
+        cat > build/image-sizes.json <<EOF
+        {
+          "leader_worker": {
+            "zip": "${{ env.IMAGE_LEADER_WORKER_ZIP }}",
+            "size_bytes": ${{ env.IMAGE_LEADER_WORKER_SIZE }}
+          },
+          "leader": {
+            "zip": "${{ env.IMAGE_LEADER_ZIP }}",
+            "size_bytes": ${{ env.IMAGE_LEADER_SIZE }}
+          },
+          "worker": {
+            "zip": "${{ env.IMAGE_WORKER_ZIP }}",
+            "size_bytes": ${{ env.IMAGE_WORKER_SIZE }}
+          }
+        }
+        EOF
 
 
     - name: "🔖 Create release & attach assets"
@@ -172,5 +192,6 @@ jobs:
           build/${{ env.IMAGE_WORKER_ZIP }}
           build/${{ env.IMAGE_WORKER }}.md5
           build/${{ env.IMAGE_WORKER }}.sha256
+          build/image-sizes.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

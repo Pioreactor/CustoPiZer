@@ -96,6 +96,7 @@ sudo systemctl disable alsa-state.service
 sudo systemctl disable userconfig.service
 # sudo systemctl disable rpi-display-backlight.service
 sudo systemctl disable rpi-eeprom-update.service
+sudo systemctl disable ModemManager.service
 
 sudo systemctl mask apt-daily-upgrade
 sudo systemctl mask apt-daily

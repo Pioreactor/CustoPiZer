@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-This project is used to generate our custom Raspberry Pi images for the Pioreactor hardware. We take the published "lite" images from the Raspberry Pi Foundation, and make customization to them.
+This project is used to generate our custom Raspberry Pi images for the Pioreactor hardware. We take the published "lite" images from the Raspberry Pi Foundation, and make customization to them. The current source images are Debian Trixie (13), with python 3.13 installed.
 
 ## Project Structure & Module Organization
 - `src/`: CustoPiZer core scripts and config used inside the Docker build (e.g., `common.sh`, `customize`, `start_chroot_script`).
@@ -11,7 +11,7 @@ This project is used to generate our custom Raspberry Pi images for the Pioreact
 - CI: `.github/workflows/custopize.yaml` triggers containerized builds and publishes release assets.
 
 
-## Other relevant files
+## Other relevant files and information
 
 
 see RPi-filesystem-locations.md for a list of important Raspberry Pi Locations for Pioreactor Images
