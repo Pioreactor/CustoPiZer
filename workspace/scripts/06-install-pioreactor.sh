@@ -118,6 +118,8 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/automations/{dosing,led,te
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/charts
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
 
+curl https://raw.githubusercontent.com/Pioreactor/list-of-plugins/refs/heads/main/plugins.json > $DOT_PIOREACTOR/plugins/api_plugins_allowlist.json
+
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
 
