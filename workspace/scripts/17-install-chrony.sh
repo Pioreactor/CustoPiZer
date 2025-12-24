@@ -16,6 +16,9 @@ if [ "$LEADER" == "1" ]; then
     # this IP range is for the local-access-point set up by nmcli
     echo "allow all" | sudo tee -a  /etc/chrony/chrony.conf
     echo "local stratum 10" | sudo tee -a  /etc/chrony/chrony.conf
+else
+    echo "makestep 3600 -1" | sudo tee -a  /etc/chrony/chrony.conf
+    echo "maxchange 7200 1 -1" | sudo tee -a  /etc/chrony/chrony.conf
 fi
 
 

@@ -22,7 +22,6 @@ Reference list of on-device paths that matter once a custom Pioreactor Raspberry
 | `/run/pioreactor/exports/` | Web export staging | Lighttpd serves `/exports/` from here so downloads never touch persistent storage. |
 | `/var/log/pioreactor.log` | System log for Pioreactor services | Configured via `config.ini` and read by both CLI and UI. Rotate with journald/logrotate as needed. |
 | `/opt/pioreactor/venv/` | System Python virtual environment | Hosts the Pioreactor Python installation (`pio`, `pios`, services). Activate manually for debugging. |
-| `/home/pioreactor/.local/bin/` | User-level executables | Supplementary scripts installed via `pip --user`. |
-| `/tmp/` | Temporary workspace | Referenced by `TMPDIR` in `pioreactor.env` for short-lived files outside tmpfs. |
+| `/tmp/` | Temporary workspace | Referenced by `TMPDIR` in `pioreactor.env` for short-lived files. |
 
 These paths assume the default `pioreactor` user and the standard environment variables distributed in `pioreactor.env`. Override them only when you fully control downstream references.

@@ -205,5 +205,8 @@ STATIC_DIR="/opt/pioreactor/venv/lib/python3.13/site-packages/pioreactor/web/sta
 install -d -m 0755 /usr/share/pioreactorui
 ln -sfn "$STATIC_DIR" /usr/share/pioreactorui/static
 
+# Precompile bytecode to reduce first-import overhead on device.
+sudo -u pioreactor "$PIO_VENV/bin/python" -m compileall -q "$PIO_VENV/lib/python3.13/site-packages"
+
 
 ensure_dot_pioreactor_tree_group_is_www_data
