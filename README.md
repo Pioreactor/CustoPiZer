@@ -46,6 +46,7 @@ Check with `systemctl list-dependencies pioreactor*.target` and `systemctl list-
 - Shared env for units at `/etc/pioreactor.env`:
   - `DOT_PIOREACTOR=/home/pioreactor/.pioreactor` (used to locate configs and data)
   - `RUN_PIOREACTOR=/run/pioreactor` (tmpfs for ephemeral runtime files)
+  - `PIO_EXPORTS_DIR=/run/pioreactor/exports` (override to redirect `/exports/` storage)
   - `LG_WD=/run/pioreactor` and `TMPDIR=/tmp/` for temp paths
 - Units reference it via `EnvironmentFile=/etc/pioreactor.env`.
 
@@ -57,7 +58,7 @@ Check with `systemctl list-dependencies pioreactor*.target` and `systemctl list-
 These are applied by the top-level `make_*_image.sh` scripts and in CI.
 
 **Exports Location**
-- `/exports/` is served from `/run/pioreactor/exports` (tmpfs, cleared on reboot). No exports are stored under `~/.pioreactor`.
+- `/exports/` is served from `/run/pioreactor/exports` (tmpfs, cleared on reboot). No exports are stored under `~/.pioreactor` unless you set `PIO_EXPORTS_DIR` to a persistent path, which will be symlinked into `/run/pioreactor/exports` on boot.
 
 **FastCGI Socket**
 - lighttpd connects to the Flask backend via Unix socket `RUN_PIOREACTOR/pioreactor_web.sock`.

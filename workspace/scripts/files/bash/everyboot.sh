@@ -37,3 +37,18 @@ nmcli radio wifi on || :
 if [ -d "/run/pioreactor/cache" ]; then
     setfacl -m g:www-data:rwX -m d:g:www-data:rwX /run/pioreactor/cache || :
 fi
+
+RUN_EXPORTS_DIR=/run/pioreactor/exports
+EXPORTS_DIR="${PIO_EXPORTS_DIR:-$RUN_EXPORTS_DIR}"
+
+if [ "$EXPORTS_DIR" != "$RUN_EXPORTS_DIR" ]; then
+    mkdir -p "$EXPORTS_DIR"
+    chown pioreactor:www-data "$EXPORTS_DIR"
+    chmod 2775 "$EXPORTS_DIR"
+
+    if [ -e "$RUN_EXPORTS_DIR" ] || [ -L "$RUN_EXPORTS_DIR" ]; then
+        rm -rf "$RUN_EXPORTS_DIR"
+    fi
+
+    ln -s "$EXPORTS_DIR" "$RUN_EXPORTS_DIR"
+fi

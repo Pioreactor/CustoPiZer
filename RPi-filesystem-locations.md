@@ -19,7 +19,7 @@ Reference list of on-device paths that matter once a custom Pioreactor Raspberry
 | `/home/pioreactor/.ssh/` | Device SSH keys | Created during image build so leaders can add workers securely. |
 | `/run/pioreactor/` | Runtime scratch space (`$RUN_PIOREACTOR`) | tmpfs directory for caches, sockets, Huey queues, and general runtime coordination. Cleared on reboot. |
 | `/run/pioreactor/cache/` | Volatile caches | Includes `local_intermittent_pioreactor_metadata.sqlite` and UI/Huey cache files that can be safely discarded. |
-| `/run/pioreactor/exports/` | Web export staging | Lighttpd serves `/exports/` from here so downloads never touch persistent storage. |
+| `/run/pioreactor/exports/` | Web export staging | Lighttpd serves `/exports/` from here so downloads never touch persistent storage unless `PIO_EXPORTS_DIR` overrides it. |
 | `/var/log/pioreactor.log` | System log for Pioreactor services | Configured via `config.ini` and read by both CLI and UI. Rotate with journald/logrotate as needed. |
 | `/opt/pioreactor/venv/` | System Python virtual environment | Hosts the Pioreactor Python installation (`pio`, `pios`, services). Activate manually for debugging. |
 | `/tmp/` | Temporary workspace | Referenced by `TMPDIR` in `pioreactor.env` for short-lived files. |

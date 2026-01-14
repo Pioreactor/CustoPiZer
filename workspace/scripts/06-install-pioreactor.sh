@@ -32,9 +32,9 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/storage
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/models
 
 
-sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
-chown -R $USERNAME:www-data $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
-chmod g+s $DOT_PIOREACTOR/storage/calibrations/{stirring,od,media_pump,waste_pump,alt_media_pump}
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,od90,od135,media_pump,waste_pump,alt_media_pump}
+chown -R $USERNAME:www-data $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,od90,od135,media_pump,waste_pump,alt_media_pump}
+chmod g+s $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,od90,od135,media_pump,waste_pump,alt_media_pump}
 
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/hardware
 sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
@@ -122,6 +122,12 @@ curl https://raw.githubusercontent.com/Pioreactor/list-of-plugins/refs/heads/mai
 
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
+
+# pillow install and adafruit display library
+sudo apt install libjpeg-dev zlib1g-dev
+sudo -u pioreactor "$PIO_VENV/bin/pip" install pillow==12.0.0
+sudo -u pioreactor "$PIO_VENV/bin/pip" install adafruit-circuitpython-ssd1306==2.12.22
+
 
 # lgpio install
 sudo apt install swig liblgpio-dev -y
