@@ -75,9 +75,6 @@ if [ "$WORKER" == "1" ]; then
 fi
 
 
-# put /tmp into memory, as we write to it a lot.
-echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
-
 ### faster boot
 
 # from http://himeshp.blogspot.com/2018/08/fast-boot-with-raspberry-pi.html
