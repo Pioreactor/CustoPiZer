@@ -11,7 +11,7 @@ EnvironmentFile=/etc/pioreactor.env
 ExecStartPre=/usr/sbin/lighttpd -tt -f /etc/lighttpd/lighttpd.conf
 ExecStart=/usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf
 ExecReload=/bin/kill -USR1 $MAINPID
-Restart=on-failure
+Restart=always
 UMask=0007
 
 [Install]
