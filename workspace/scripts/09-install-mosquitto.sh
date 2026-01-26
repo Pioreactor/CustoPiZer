@@ -17,6 +17,8 @@ if [ "$LEADER" == "1" ]; then
     echo "pioreactor:raspberry" > /etc/mosquitto/pw.txt
     # hash password
     mosquitto_passwd -U /etc/mosquitto/pw.txt
+    sudo chown mosquitto:mosquitto /etc/mosquitto/pw.txt
+    sudo chmod 0700 /etc/mosquitto/pw.txt
 
 
     grep -qxF 'log_type error'     /etc/mosquitto/mosquitto.conf     || echo "log_type error" | sudo tee /etc/mosquitto/mosquitto.conf -a
