@@ -124,7 +124,7 @@ curl https://raw.githubusercontent.com/Pioreactor/list-of-plugins/refs/heads/mai
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
 
 # pillow install and adafruit display library
-sudo apt install libjpeg-dev zlib1g-dev
+sudo apt install libjpeg-dev zlib1g-dev -y
 sudo -u pioreactor "$PIO_VENV/bin/pip" install pillow==12.0.0
 sudo -u pioreactor "$PIO_VENV/bin/pip" install adafruit-circuitpython-ssd1306==2.12.22
 
