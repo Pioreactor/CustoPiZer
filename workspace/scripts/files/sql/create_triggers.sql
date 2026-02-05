@@ -4,6 +4,12 @@ BEGIN
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET od_reading=excluded.od_reading;
 END;
 
+CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_od_readings_fused AFTER INSERT ON od_readings_fused
+BEGIN
+    INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,od_fused) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.od_reading)
+    ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET od_fused=excluded.od_fused;
+END;
+
 
 CREATE TRIGGER IF NOT EXISTS update_pioreactor_unit_activity_data_from_od_readings_filtered AFTER INSERT ON od_readings_filtered
 BEGIN
