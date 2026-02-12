@@ -2,30 +2,16 @@
 display_name: Turbidostat
 automation_name: turbidostat
 description: >
-  Every 15 sec, check if the  nOD or OD, is above the Target nOD or Target OD, respectively. If so, exchange volume amount.
-
-
-  Only set either Target nOD or Target OD, not both.
+  Every 15s, check if the OD signal is above the target value. If so, exchange volume amount.
 
 fields:
-  - key: target_normalized_od
+  - key: target_biomass
     default: null
-    unit: AU
-    label: Target nOD
-    type: numeric
-  - key: target_od
-    default: null
-    unit: OD
-    label: Target OD
+    unit: OD/AU
+    label: Target
     type: numeric
   - key: exchange_volume_ml
     default: 1.0
     unit: mL
     label: Exchange volume
-    type: numeric
-  - key: duration
-    default: 0.25
-    unit: min
-    label: Time between check
-    disabled: True
     type: numeric

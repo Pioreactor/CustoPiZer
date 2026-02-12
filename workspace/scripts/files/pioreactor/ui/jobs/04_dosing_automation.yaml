@@ -11,7 +11,7 @@ published_settings:
     label: Time between dosing
     type: numeric
     display: true
-    description: Change how long to wait between dilutions. Typically between 0.5 and 60 minutes. Changing may immediately trigger a dosing event.
+    description: Change how long to wait between (possible) dilutions. Typically between 0.5 and 60 minutes. Changing may immediately trigger a dosing event.
   - key: exchange_volume_ml
     unit: mL
     label: Exchange volume
