@@ -31,6 +31,10 @@ sudo -u pioreactor python3 -m venv "$PIO_VENV"
 sudo -u pioreactor "$PIO_VENV/bin/pip" install --upgrade pip
 sudo -u pioreactor "$PIO_VENV/bin/pip" install crudini
 
+# these live in /home/pioreactor/.config/pip/pip.conf
+sudo -u pioreactor pip3 config set global.disable-pip-version-check true # don't check for latest pip
+sudo -u pioreactor pip3 config set global.root-user-action "ignore"
+sudo -u pioreactor pip3 config set global.extra-index-url 'https://www.piwheels.org/simple'
 
 
 # test that crudini works
