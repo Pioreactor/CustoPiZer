@@ -9,6 +9,37 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 PIO_VENV=/opt/pioreactor/venv
+RUN_TMPFS_SIZE="50%"
+BOOT_CONFIG="/boot/firmware/config.txt"
+KERNEL_CMDLINE="/boot/firmware/cmdline.txt"
+
+[ -f "$BOOT_CONFIG" ] || die "Could not find $BOOT_CONFIG"
+[ -f "$KERNEL_CMDLINE" ] || die "Could not find $KERNEL_CMDLINE"
+
+enable_auto_initramfs_boot() {
+    if grep -qE '^[[:space:]]*auto_initramfs=' "$BOOT_CONFIG"; then
+        sudo sed -i -E 's/^[[:space:]]*auto_initramfs=.*/auto_initramfs=1/' "$BOOT_CONFIG"
+    else
+        echo "auto_initramfs=1" | sudo tee -a "$BOOT_CONFIG"
+    fi
+}
+
+set_initramfs_runsize_on_kernel_cmdline() {
+    local cmdline_without_runsize
+    cmdline_without_runsize="$(sed -E 's/(^| )initramfs\.runsize=[^ ]+//g; s/[[:space:]]+/ /g; s/^ //; s/ $//' "$KERNEL_CMDLINE")"
+
+    if [ -n "$cmdline_without_runsize" ]; then
+        echo "${cmdline_without_runsize} initramfs.runsize=${RUN_TMPFS_SIZE}" | sudo tee "$KERNEL_CMDLINE" > /dev/null
+    else
+        echo "initramfs.runsize=${RUN_TMPFS_SIZE}" | sudo tee "$KERNEL_CMDLINE" > /dev/null
+    fi
+}
+
+install_initramfs_tools_if_missing() {
+    if ! command -v update-initramfs >/dev/null 2>&1; then
+        sudo apt-get install -y initramfs-tools
+    fi
+}
 
 if [ "$WORKER" == "1" ]; then
 
@@ -81,6 +112,12 @@ fi
 echo "disable_splash=1" | sudo tee -a /boot/firmware/config.txt
 echo "initial_turbo=30" | sudo tee -a /boot/firmware/config.txt
 echo "force_turbo=1" | sudo tee -a /boot/firmware/config.txt
+
+# Make /run tmpfs sizing deterministic via initramfs, not runtime remounting.
+enable_auto_initramfs_boot
+set_initramfs_runsize_on_kernel_cmdline
+install_initramfs_tools_if_missing
+sudo update-initramfs -u -k all
 
 
 # disable services that slow down boot

@@ -99,7 +99,72 @@
       ],
       "subitems": [
         {
-          "name": "Pioreactor 26.2.23 (latest)",
+          "name": "Pioreactor 26.2.26 (latest)",
+          "description": "Leader & worker images for 26.2.26.",
+          "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+          "random": false,
+          "devices": [
+            "pi5-32bit",
+            "pi4-32bit",
+            "pi3-32bit",
+            "pi2-32bit"
+          ],
+          "subitems": [
+            {
+              "name": "Pioreactor Leader + Worker",
+              "description": "Pioreactor Leader + Worker image for Pioreactor 26.2.26",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.2.26/pioreactor_leader_worker.zip",
+              "image_download_size": 911317513,
+              "release_date": "2026-02-26",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 3205497856,
+              "extract_sha256": "4c008532ac1003483734f4d0fa9b59c086b00bf57c2aa327c85e1466f25932df"
+            },
+            {
+              "name": "Pioreactor Worker",
+              "description": "Pioreactor Worker image for Pioreactor 26.2.26",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.2.26/pioreactor_worker.zip",
+              "image_download_size": 910764952,
+              "release_date": "2026-02-26",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 3202352128,
+              "extract_sha256": "cdcdc820a43addffa65354286a4fdb9ddd00061a3a6f13681c9ae18966d604a8"
+            },
+            {
+              "name": "Pioreactor Leader",
+              "description": "Pioreactor Leader image for Pioreactor 26.2.26",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.2.26/pioreactor_leader.zip",
+              "image_download_size": 905524269,
+              "release_date": "2026-02-26",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 3189769216,
+              "extract_sha256": "5e24afdd59a9575bc283c1fb434e811e7ea118a9daf599ef39c423ba4e60d373"
+            }
+          ]
+        },
+        {
+          "name": "Pioreactor 26.2.23",
           "description": "Leader & worker images for 26.2.23.",
           "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
           "random": false,
