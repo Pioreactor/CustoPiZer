@@ -3,7 +3,7 @@ chart_key: current_volume_ml
 data_source: liquid_volumes # SQL table
 title: "Volume in bioreactor"
 data_source_column: liquid_volume
-mqtt_topic: dosing_automation/current_volume_ml
+mqtt_topic: bioreactor/current_volume_ml
 source: app
 y_axis_label: mL
 interpolation: stepAfter

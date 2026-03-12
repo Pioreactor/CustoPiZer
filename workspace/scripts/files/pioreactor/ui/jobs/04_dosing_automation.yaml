@@ -11,31 +11,24 @@ published_settings:
     label: Time between dosing
     type: numeric
     display: true
-    description: Change how long to wait between (possible) dilutions. Typically between 0.5 and 60 minutes. Changing may immediately trigger a dosing event.
+    description: Change how long to wait between dilutions. Typically between 0.5 and 60 minutes. Changing may immediately trigger a dosing event.
   - key: exchange_volume_ml
     unit: mL
     label: Exchange volume
     type: numeric
     display: true
     description: Change the volume per dilution. Typical values are between 0.0mL and 2.0mL.
-  - key: target_normalized_od
-    unit: AU
-    label: Target nOD
+  - key: target_biomass
+    unit: OD/AU
+    label: Target biomass
     type: numeric
     display: true
-    description: Change the target normalized optical density. Typical values are between 1.0 AU and 100.0 AU.
-  - key: target_od
-    unit: OD
-    label: Target OD
-    type: numeric
+    description: Change the target biomass value, in the units of the selected biomass signal.
+  - key: biomass_signal
+    label: Biomass signal
+    type: string
     display: true
-    description: Change the target optical density. Only used if running "Turbidostat Targeting OD" automation.
+    description: One of normalized_od, od_fused, or od. If multiple OD signal channels exist, prefer normalized_od or od_fused.
   - key: automation_name
-    type: string
-    display: false
-  - key: max_working_volume_ml
-    type: string
-    display: false
-  - key: current_volume_ml
     type: string
     display: false

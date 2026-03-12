@@ -96,7 +96,6 @@ if [ "$WORKER" == "1" ]; then
 
 
         # disable bluetooth
-        sudo systemctl disable hciuart
         echo "dtoverlay=disable-bt" | sudo tee -a /boot/firmware/config.txt
         sudo systemctl disable bluetooth.service
         sudo apt remove --purge bluez -y
