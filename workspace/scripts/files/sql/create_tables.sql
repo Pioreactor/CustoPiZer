@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS experiment_tags (
 );
 
 
-CREATE INDEX experiment_tags_experiment_created_at_tag_ix
+CREATE INDEX IF NOT EXISTS experiment_tags_experiment_created_at_tag_ix
 ON experiment_tags (experiment, created_at, tag);
 
 
