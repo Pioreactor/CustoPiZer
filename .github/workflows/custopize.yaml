@@ -9,6 +9,11 @@ on:
         description: "Pioreactor version"
         required: true
         default: ''
+      publish_release:
+        description: "Create a GitHub Release and upload assets"
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -175,7 +180,7 @@ jobs:
 
     - name: "🔖 Create release & attach assets"
       uses: softprops/action-gh-release@v1
-      if: github.event_name == 'repository_dispatch'
+      if: github.event_name == 'repository_dispatch' || github.event.inputs.publish_release == 'true'
       with:
         name: "${{ env.RELEASE_NAME }}"
         tag_name: "${{ env.RELEASE_TAG }}"
