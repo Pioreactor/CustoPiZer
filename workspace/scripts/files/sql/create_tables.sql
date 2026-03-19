@@ -28,6 +28,20 @@ CREATE INDEX IF NOT EXISTS raw_od_readings_ix
 ON raw_od_readings (experiment, pioreactor_unit, channel, timestamp);
 
 
+CREATE TABLE IF NOT EXISTS experiment_tags (
+    experiment TEXT NOT NULL,
+    tag TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (experiment, tag),
+    FOREIGN KEY (experiment) REFERENCES experiments (
+        experiment
+    ) ON DELETE CASCADE
+);
+
+
+CREATE INDEX experiment_tags_experiment_created_at_tag_ix
+ON experiment_tags (experiment, created_at, tag);
+
 
 CREATE TABLE IF NOT EXISTS od_readings_fused (
     experiment TEXT NOT NULL,
