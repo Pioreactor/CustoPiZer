@@ -9,8 +9,84 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+purge_installed_packages() {
+    local packages=("$@")
+    local installed_packages=()
+    local package
 
+    for package in "${packages[@]}"; do
+        if dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q "install ok installed"; then
+            installed_packages+=("$package")
+        fi
+    done
+
+    if [ "${#installed_packages[@]}" -gt 0 ]; then
+        sudo apt-get purge -y "${installed_packages[@]}"
+    fi
+}
+
+purge_installed_packages_matching_patterns() {
+    local patterns=("$@")
+    local installed_packages=()
+    local pattern
+
+    for pattern in "${patterns[@]}"; do
+        while IFS= read -r package; do
+            [ -n "$package" ] || continue
+            installed_packages+=("$package")
+        done < <(dpkg-query -W -f='${binary:Package}\n' | grep -E "$pattern" || true)
+    done
+
+    if [ "${#installed_packages[@]}" -gt 0 ]; then
+        mapfile -t installed_packages < <(printf '%s\n' "${installed_packages[@]}" | sort -u)
+        sudo apt-get purge -y "${installed_packages[@]}"
+    fi
+}
+
+if [ "$HEADLESS" == "1" ]; then
+    purge_installed_packages \
+        7zip \
+        bluez \
+        bluez-firmware \
+        cifs-utils \
+        cloud-guest-utils \
+        cloud-init \
+        console-setup \
+        console-setup-linux \
+        kbd \
+        keyboard-configuration \
+        libcamera-ipa \
+        libcamera0.6 \
+        mkvtoolnix \
+        modemmanager \
+        ntfs-3g \
+        rpi-cloud-init-mods \
+        rpi-connect-lite \
+        rpicam-apps-core \
+        rpicam-apps-lite \
+        udisks2 \
+        usb-modeswitch \
+        usb-modeswitch-data \
+        v4l-utils \
+        xkb-data
+fi
+
+purge_installed_packages \
+    firmware-atheros \
+    firmware-libertas \
+    firmware-mediatek \
+    libjpeg-dev \
+    liblgpio-dev \
+    libyaml-dev \
+    python3-dev \
+    swig \
+    zlib1g-dev
+
+purge_installed_packages rpi-eeprom
+purge_installed_packages_matching_patterns '^linux-headers-' '^linux-kbuild-.*rpt'
+sudo apt-get autoremove --purge -y
 sudo apt-get clean
+
 
 USERNAME=pioreactor
 DOT_PIOREACTOR=/home/$USERNAME/.pioreactor
