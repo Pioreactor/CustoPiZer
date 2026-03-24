@@ -22,7 +22,9 @@ ensure_dot_pioreactor_tree_group_is_www_data() {
     fi
 }
 
-sudo apt-get install -y git
+if [ "$PIO_VERSION" == "develop" ]; then
+    sudo apt-get install -y git
+fi
 # Ensure setfacl is available for cache directory ACLs applied at boot
 sudo apt-get install -y acl
 
