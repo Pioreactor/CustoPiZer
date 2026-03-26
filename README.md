@@ -49,6 +49,7 @@ Check with `systemctl list-dependencies pioreactor*.target` and `systemctl list-
   - `PIO_EXPORTS_DIR=/run/pioreactor/exports` (override to redirect `/exports/` storage)
   - `LG_WD=/run/pioreactor` and `TMPDIR=/tmp/` for temp paths
 - Units reference it via `EnvironmentFile=/etc/pioreactor.env`.
+- `/usr/local/bin/pio` and `/usr/local/bin/pios` source `/etc/pioreactor.env` before delegating into `/opt/pioreactor/venv/bin`, so non-interactive SSH commands and `nohup` inherit the same Pioreactor environment.
 
 **Image Flavors → Targets**
 - Leader: enable `pioreactor.target` + `pioreactor-leader.target`.
