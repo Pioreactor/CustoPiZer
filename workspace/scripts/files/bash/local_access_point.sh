@@ -5,8 +5,9 @@ set -e
 
 export LC_ALL=C
 
+source /etc/pioreactor.env 2>/dev/null || true
 VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
-CRUDINI="$VENV_BIN/crudini"
+PIO="$VENV_BIN/pio"
 
 rfkill unblock wifi
 
@@ -19,9 +20,9 @@ sudo nmcli radio wifi on
 iw reg set "$(head -c 2 /boot/firmware/local_access_point)"
 
 
-sudo nmcli connection modify PioreactorAP wifi.ssid "$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini local_access_point ssid)"
-sudo nmcli connection modify PioreactorAP 802-11-wireless-security.proto "$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini local_access_point proto  2> /dev/null || echo 'rsn')"
-sudo nmcli connection modify PioreactorAP 802-11-wireless-security.psk "$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)"
+sudo nmcli connection modify PioreactorAP wifi.ssid "$(sudo -u pioreactor "$PIO" config get local_access_point ssid)"
+sudo nmcli connection modify PioreactorAP 802-11-wireless-security.proto "$(sudo -u pioreactor "$PIO" config get local_access_point proto 2> /dev/null || echo 'rsn')"
+sudo nmcli connection modify PioreactorAP 802-11-wireless-security.psk "$(sudo -u pioreactor "$PIO" config get local_access_point passphrase)"
 
 
 sudo nmcli con up PioreactorAP

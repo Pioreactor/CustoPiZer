@@ -38,13 +38,11 @@ sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set $DOT_PIORE
 sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around.  When you are ready, create a new experiment in the dropdown to the left.');"
 
 
-# create leader's config file (still can use one even if not a worker.)
-sudo -u $USERNAME touch "$DOT_PIOREACTOR/config_$HOSTNAME.ini" # set with the correct read/write permissions
-printf '# Any settings here are specific to %s, the leader, and override the settings in config.ini\n\n' "$HOSTNAME" >> "$DOT_PIOREACTOR/config_$HOSTNAME.ini"
+# create the leader's local unit-specific config file.
+sudo -u $USERNAME touch "$DOT_PIOREACTOR/unit_config.ini" # set with the correct read/write permissions
+printf '# Any settings here are specific to %s, the leader, and override the settings in config.ini\n\n' "$HOSTNAME" >> "$DOT_PIOREACTOR/unit_config.ini"
 
-sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set "$DOT_PIOREACTOR/config_$HOSTNAME.ini" cluster.topology leader_address 127.0.0.1
-sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set "$DOT_PIOREACTOR/config_$HOSTNAME.ini" mqtt broker_address 127.0.0.1
-
-cp -a "$DOT_PIOREACTOR/config_$HOSTNAME.ini" "$DOT_PIOREACTOR/unit_config.ini"
+sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set "$DOT_PIOREACTOR/unit_config.ini" cluster.topology leader_address 127.0.0.1
+sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set "$DOT_PIOREACTOR/unit_config.ini" mqtt broker_address 127.0.0.1
 
 ensure_dot_pioreactor_tree_group_is_www_data

@@ -8,14 +8,15 @@ set -x
 set -e
 export LC_ALL=C
 
+source /etc/pioreactor.env 2>/dev/null || true
 VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
-CRUDINI="$VENV_BIN/crudini"
+PIO="$VENV_BIN/pio"
 
 HOSTNAME=$1
 SSHPASS=${2:-raspberry}
 ADDRESS=${3:-"$HOSTNAME".local}
 
-LEADER_ADDRESS=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_address)
+LEADER_ADDRESS=$(sudo -u pioreactor "$PIO" config get cluster.topology leader_address --shared)
 
 
 # remove from known_hosts if already present
@@ -58,26 +59,15 @@ fi
 # copy public key over
 sshpass -p "$SSHPASS" ssh-copy-id pioreactor@"$ADDRESS"
 
-# remove any existing config (for idempotent)
-# we do this first so the user can see it on the Pioreactors/ page
-UNIT_CONFIG=/home/pioreactor/.pioreactor/config_"$HOSTNAME".ini
-
-rm -f "$UNIT_CONFIG"
-touch "$UNIT_CONFIG"
-echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> "$UNIT_CONFIG"
-chown pioreactor:www-data "$UNIT_CONFIG"
-chmod g+w "$UNIT_CONFIG"
-
 # add worker's address to config
 CONFIG=/home/pioreactor/.pioreactor/config.ini
-"$CRUDINI" --set "$CONFIG" cluster.addresses "$HOSTNAME" "$ADDRESS"
+sudo -u pioreactor "$PIO" config set cluster.addresses "$HOSTNAME" "$ADDRESS" --shared
 
 # add worker to known hosts on leader
 ssh-keyscan "$ADDRESS" >> "/home/pioreactor/.ssh/known_hosts"
 
-# sync-configs
+# sync shared config.ini. The worker owns its own live unit_config.ini.
 scp "$CONFIG" pioreactor@"$ADDRESS":/home/pioreactor/.pioreactor/config.ini
-scp "$UNIT_CONFIG" pioreactor@"$ADDRESS":/home/pioreactor/.pioreactor/unit_config.ini
 
 sleep 1
 

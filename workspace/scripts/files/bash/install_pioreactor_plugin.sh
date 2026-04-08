@@ -10,6 +10,7 @@ export LC_ALL=C
 source /etc/pioreactor.env 2>/dev/null || true
 VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
 PIP="$VENV_BIN/pip"
+PIO="$VENV_BIN/pio"
 PY="$VENV_BIN/python"
 CRUDINI="$VENV_BIN/crudini"
 
@@ -21,7 +22,7 @@ clean_plugin_name=${plugin_name,,} # lower cased
 clean_plugin_name_with_dashes=${clean_plugin_name//_/-}
 clean_plugin_name_with_underscores=${clean_plugin_name//-/_}
 install_folder=$("$PY" -c "import site; print(site.getsitepackages()[0])")/${clean_plugin_name_with_underscores}
-leader_hostname=$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini cluster.topology leader_hostname)
+leader_hostname=$(sudo -u pioreactor "$PIO" config get cluster.topology leader_hostname)
 
 if [ "$leader_hostname" = "$(hostname)" ]; then
   am_i_leader=true
@@ -101,16 +102,16 @@ elif [ -d "$install_folder/ui/" ]; then
     rsync -a "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
 fi
 
+# merge into unit_config.ini
+if test -f "$install_folder/additional_config.ini"; then
+    "$CRUDINI" --merge /home/pioreactor/.pioreactor/unit_config.ini < "$install_folder/additional_config.ini"
+fi
 
 if [ "$am_i_leader" = true ]; then
-    # merge new config.ini
-    if test -f "$install_folder/additional_config.ini"; then
-        "$CRUDINI" --merge /home/pioreactor/.pioreactor/config.ini < "$install_folder/additional_config.ini"
-    fi
 
     # add any new sql, restart mqtt_to_db job, too
     if test -f "$install_folder/additional_sql.sql"; then
-        sqlite3 "$("$CRUDINI" --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
+        sqlite3 "$(sudo -u pioreactor "$PIO" config get storage database)" < "$install_folder/additional_sql.sql"
         sudo systemctl restart pioreactor_startup_run@mqtt_to_db_streaming.service
     fi
 
@@ -120,8 +121,6 @@ if [ "$am_i_leader" = true ]; then
         rsync -a "$install_folder/exportable_datasets/" /home/pioreactor/.pioreactor/plugins/exportable_datasets/
     fi
 
-    # broadcast to cluster, don't crap out if we can't sync to a worker.
-    pios sync-configs --shared || :
 fi
 
 # run a post install scripts.
