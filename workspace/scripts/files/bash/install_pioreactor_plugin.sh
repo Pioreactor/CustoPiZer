@@ -83,16 +83,23 @@ if [ -n "$source" ]; then
     sudo -u pioreactor "$PIP" install --force-reinstall --no-deps "$source"
 else
     if download_and_check_if_leader_only "$clean_plugin_name_with_dashes"; then
-        if [ "$am_i_leader" = true ]; then
+        if [ "$am_i_leader" = false ]; then
             echo "Not installing LEADER_ONLY plugin on worker"
             exit 0
         fi
-        echo "Installing LEADER_ONLY plugin on worker"
+        echo "Installing LEADER_ONLY plugin on leader"
     fi
     sudo -u pioreactor "$PIP" install --upgrade --force-reinstall --ignore-installed "$clean_plugin_name_with_dashes"
 fi
 
 
+# merge UI contribs
+if [ -d "$install_folder/ui/contrib/" ]; then
+    # backwards compabitle
+    rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/
+elif [ -d "$install_folder/ui/" ]; then
+    rsync -a "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
+fi
 
 
 if [ "$am_i_leader" = true ]; then
@@ -107,13 +114,6 @@ if [ "$am_i_leader" = true ]; then
         sudo systemctl restart pioreactor_startup_run@mqtt_to_db_streaming.service
     fi
 
-    # merge UI contribs
-    if [ -d "$install_folder/ui/contrib/" ]; then
-        # backwards compabitle
-        rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/
-    elif [ -d "$install_folder/ui/" ]; then
-        rsync -a "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
-    fi
 
     # merge datasets contribs
     if [ -d "$install_folder/exportable_datasets/" ]; then

@@ -27,10 +27,10 @@ if test -f "$install_folder/pre_uninstall.sh"; then
     sudo bash "$install_folder/pre_uninstall.sh"
 fi
 
+# delete yamls from ui
+(cd "$install_folder"/ui/ && find ./ -type f) | awk '{print "/home/pioreactor/.pioreactor/plugins/ui/"$1}' | xargs rm
 
 if [ "$leader_hostname" == "$(hostname)" ]; then
-    # delete yamls from ui
-    (cd "$install_folder"/ui/ && find ./ -type f) | awk '{print "/home/pioreactor/.pioreactor/plugins/ui/"$1}' | xargs rm
     # delete yamls from datasets
     (cd "$install_folder"/exportable_datasets/ && find ./ -type f) | awk '{print "/home/pioreactor/.pioreactor/plugins/exportable_datasets/"$1}' | xargs rm
 
