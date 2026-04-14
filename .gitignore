@@ -1,4 +1,6 @@
 .vscode
 *.img
 aptcache
-*.img.zip
+*.img.zip.tickets
+.tickets
+scratch/
