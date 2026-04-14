@@ -41,6 +41,32 @@ chmod g+s $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,od90,od135,media_p
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/hardware
 sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
 
+copy_ui_jobs_and_automations() {
+    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/jobs"
+    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/automations"
+    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/jobs/. "$DOT_PIOREACTOR/ui/jobs/"
+    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/automations/. "$DOT_PIOREACTOR/ui/automations/"
+}
+
+copy_full_ui_tree() {
+    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui"
+    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/. "$DOT_PIOREACTOR/ui/"
+}
+
+install_pioreactor_package() {
+    if [ "$PIO_VERSION" == "develop" ]; then
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install \
+          "pioreactor[$1] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
+          --index-url https://piwheels.org/simple \
+          --extra-index-url https://pypi.org/simple
+    else
+        sudo -u pioreactor "$PIO_VENV/bin/pip" install \
+          "pioreactor[$1] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
+          --index-url https://piwheels.org/simple \
+          --extra-index-url https://pypi.org/simple
+    fi
+}
+
 
 if [ "$LEADER" == "1" ]; then
 
@@ -169,32 +195,22 @@ if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/exportable_datasets
     sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $DOT_PIOREACTOR/exportable_datasets/
 
-    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/ui/
-    sudo -u $USERNAME cp -r /files/pioreactor/ui/* $DOT_PIOREACTOR/ui
+    copy_full_ui_tree
 
 
-    if [ "$PIO_VERSION" == "develop" ]; then
-        sudo -u pioreactor "$PIO_VENV/bin/pip" install \
-          "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" \
-          --index-url https://piwheels.org/simple \
-          --extra-index-url https://pypi.org/simple
-    else
-      sudo -u pioreactor "$PIO_VENV/bin/pip" install \
-        "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" \
-        --index-url https://piwheels.org/simple \
-        --extra-index-url https://pypi.org/simple
-    fi
 fi
 
 
 if [ "$WORKER" == "1" ]; then
+    copy_ui_jobs_and_automations
+fi
 
-    if [ "$PIO_VERSION" == "develop" ]; then
-        sudo -u pioreactor "$PIO_VENV/bin/pip" install "pioreactor[leader_worker] @ git+https://github.com/pioreactor/pioreactor.git@develop#egg=pioreactor&subdirectory=core" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
-    else
-        sudo -u pioreactor "$PIO_VENV/bin/pip" install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl" --index-url https://piwheels.org/simple --extra-index-url https://pypi.org/simple
-    fi
-
+if [ "$LEADER" == "1" ] && [ "$WORKER" == "1" ]; then
+    install_pioreactor_package leader_worker
+elif [ "$LEADER" == "1" ]; then
+    install_pioreactor_package leader
+elif [ "$WORKER" == "1" ]; then
+    install_pioreactor_package worker
 fi
 
 
