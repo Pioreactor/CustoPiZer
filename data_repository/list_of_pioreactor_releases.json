@@ -12942,7 +12942,7 @@
         "state": "uploaded",
         "size": 269,
         "digest": "sha256:312f5bf24d706c43a12e0d67fd63511df46c27981e7b03d00344152cf812a563",
-        "download_count": 2,
+        "download_count": 3,
         "created_at": "2026-04-17T19:57:50Z",
         "updated_at": "2026-04-17T19:57:51Z",
         "browser_download_url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.4.3/image-sizes.json"
