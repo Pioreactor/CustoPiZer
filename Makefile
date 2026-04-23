@@ -1,6 +1,6 @@
 .PHONY: update-pioreactor-os-list
 
-LATEST_PIOREACTOR_RELEASE_URL := https://api.github.com/repos/Pioreactor/CustoPiZer/releases/tags/26.4.3
+LATEST_PIOREACTOR_RELEASE_URL := https://api.github.com/repos/Pioreactor/CustoPiZer/releases/latest
 PIOREACTOR_BRANCH := pioreactor
 PIOREACTOR_OS_LIST_FILES := \
 	Makefile \
@@ -11,5 +11,5 @@ PIOREACTOR_OS_LIST_FILES := \
 update-pioreactor-os-list:
 	python3 scripts/update_pioreactor_os_list.py $(LATEST_PIOREACTOR_RELEASE_URL)
 	git add $(PIOREACTOR_OS_LIST_FILES)
-	git commit -m "Update Pioreactor OS list for 26.4.3"
+	git commit -m "Update Pioreactor OS list"
 	git push origin $(PIOREACTOR_BRANCH)
