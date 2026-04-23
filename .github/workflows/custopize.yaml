@@ -1,5 +1,8 @@
 name: "CustoPiZe"
 
+permissions:
+  contents: write
+
 on:
   repository_dispatch:
     types: pioreactor_release
@@ -23,6 +26,8 @@ jobs:
 
     - name: "⬇ Checkout"
       uses: actions/checkout@v4
+      with:
+        ref: pioreactor
 
     - name: "🔎 Determine Pioreactor version"
       run: |
@@ -44,10 +49,12 @@ jobs:
     - name: "📝 Prepare release"
       run: |
         now=$(date +"%Y%m%d%H%M%S")
+        published_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         RELEASE_NAME="Pioreactor ${{ env.PIOREACTOR_VERSION }} (build $now)"
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
         RELEASE_TAG="${{ env.PIOREACTOR_VERSION }}"
         echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+        echo "RELEASE_PUBLISHED_AT=$published_at" >> $GITHUB_ENV
         
         # release body
         cat <<EOF > ./build/release.md
@@ -200,3 +207,79 @@ jobs:
           build/image-sizes.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: "📝 Write release manifest"
+      if: github.event_name == 'repository_dispatch' || github.event.inputs.publish_release == 'true'
+      env:
+        RELEASE_NAME: ${{ env.RELEASE_NAME }}
+        RELEASE_PUBLISHED_AT: ${{ env.RELEASE_PUBLISHED_AT }}
+        RELEASE_TAG: ${{ env.RELEASE_TAG }}
+        IMAGE_LEADER: ${{ env.IMAGE_LEADER }}
+        IMAGE_LEADER_SIZE: ${{ env.IMAGE_LEADER_SIZE }}
+        IMAGE_LEADER_ZIP: ${{ env.IMAGE_LEADER_ZIP }}
+        IMAGE_LEADER_WORKER: ${{ env.IMAGE_LEADER_WORKER }}
+        IMAGE_LEADER_WORKER_SIZE: ${{ env.IMAGE_LEADER_WORKER_SIZE }}
+        IMAGE_LEADER_WORKER_ZIP: ${{ env.IMAGE_LEADER_WORKER_ZIP }}
+        IMAGE_WORKER: ${{ env.IMAGE_WORKER }}
+        IMAGE_WORKER_SIZE: ${{ env.IMAGE_WORKER_SIZE }}
+        IMAGE_WORKER_ZIP: ${{ env.IMAGE_WORKER_ZIP }}
+      run: |
+        python3 - <<'PY'
+        import json
+        import os
+        from pathlib import Path
+
+        build_dir = Path("build")
+        release_tag = os.environ["RELEASE_TAG"]
+
+        def read_checksum(filename: str) -> str:
+            return (build_dir / filename).read_text().split()[0]
+
+        def asset_entry(base_name: str, zip_name: str, extract_size: str) -> dict:
+            zip_path = build_dir / zip_name
+            return {
+                "name": zip_name,
+                "browser_download_url": f"https://github.com/Pioreactor/CustoPiZer/releases/download/{release_tag}/{zip_name}",
+                "size": zip_path.stat().st_size,
+                "extract_size": int(extract_size),
+                "extract_sha256": read_checksum(f"{base_name}.sha256"),
+            }
+
+        manifest = {
+            "tag_name": release_tag,
+            "name": os.environ["RELEASE_NAME"],
+            "published_at": os.environ["RELEASE_PUBLISHED_AT"],
+            "draft": False,
+            "prerelease": "rc" in release_tag,
+            "assets": [
+                asset_entry(
+                    os.environ["IMAGE_LEADER_WORKER"],
+                    os.environ["IMAGE_LEADER_WORKER_ZIP"],
+                    os.environ["IMAGE_LEADER_WORKER_SIZE"],
+                ),
+                asset_entry(
+                    os.environ["IMAGE_WORKER"],
+                    os.environ["IMAGE_WORKER_ZIP"],
+                    os.environ["IMAGE_WORKER_SIZE"],
+                ),
+                asset_entry(
+                    os.environ["IMAGE_LEADER"],
+                    os.environ["IMAGE_LEADER_ZIP"],
+                    os.environ["IMAGE_LEADER_SIZE"],
+                ),
+            ],
+        }
+
+        (build_dir / "release-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        PY
+
+    - name: "🤖 Configure git identity"
+      if: github.event_name == 'repository_dispatch' || github.event.inputs.publish_release == 'true'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+    - name: "🗂 Update os_list and push metadata"
+      if: github.event_name == 'repository_dispatch' || github.event.inputs.publish_release == 'true'
+      run: |
+        make update-pioreactor-os-list RELEASE_MANIFEST=build/release-manifest.json

@@ -21,6 +21,7 @@ ZIP_ASSETS = {
     "Pioreactor Leader + Worker": "pioreactor_leader_worker.zip",
     "Pioreactor Worker": "pioreactor_worker.zip",
 }
+ZIP_ASSET_ORDER = {filename: index for index, filename in enumerate(ZIP_ASSETS.values())}
 
 def load_json(path: Path):
     with path.open() as fh:
@@ -91,46 +92,9 @@ def image_size_from_zip(zip_path: str) -> int:
         return archive.getinfo(locate_image_member(archive, zip_path)).file_size
 
 
-def parse_checksum_body(body: str) -> str:
-    # Expect format: "<sha256>  filename"
-    return body.split()[0]
-
-
-def fetch_checksum(checksum_url: str) -> str:
-    with urllib.request.urlopen(checksum_url) as response:
-        body = response.read().decode().strip()
-    return parse_checksum_body(body)
-
-
-def load_precomputed_sizes(size_asset: dict | None) -> Dict[str, int]:
-    if not size_asset:
-        return {}
-    url = size_asset.get("browser_download_url")
-    if not url:
-        return {}
-    try:
-        with urllib.request.urlopen(url) as response:
-            payload = json.load(response)
-    except Exception as exc:
-        print(f"    failed to load precomputed sizes from {url}: {exc}")
-        return {}
-
-    size_map: Dict[str, int] = {}
-    for entry in payload.values():
-        zip_name = entry.get("zip")
-        size_bytes = entry.get("size_bytes")
-        if zip_name and isinstance(size_bytes, int):
-            size_map[zip_name] = size_bytes
-    if size_map:
-        print(f"    loaded precomputed sizes from {url}")
-    return size_map
-
-
 def fetch_asset_metadata(
     asset_url: str,
-    checksum_url: str | None,
     cache: Dict[str, Dict[str, int]],
-    compressed_size: int | None,
     compute_extract_size: bool,
     precomputed_extract_size: int | None = None,
     precomputed_sha256: str | None = None,
@@ -138,21 +102,12 @@ def fetch_asset_metadata(
     cached = cache.get(asset_url, {})
     extract_size = precomputed_extract_size or cached.get("extract_size")
     extract_sha256 = precomputed_sha256 or cached.get("extract_sha256")
-    updated_cache = False
-
-    if not extract_sha256 and checksum_url:
-        try:
-            extract_sha256 = fetch_checksum(checksum_url)
-            print(f"    checksum from {checksum_url}")
-            updated_cache = True
-        except Exception as exc:
-            print(f"    failed to fetch checksum from {checksum_url}: {exc}")
 
     needs_size = extract_size is None
     needs_sha = extract_sha256 is None
     if not needs_size and not needs_sha:
         print(f"    cache hit for {asset_url}")
-        if updated_cache or asset_url not in cache:
+        if asset_url not in cache:
             cache[asset_url] = {
                 "extract_size": extract_size,
                 "extract_sha256": extract_sha256,
@@ -160,7 +115,7 @@ def fetch_asset_metadata(
             write_cache(cache)
         return extract_size, extract_sha256
 
-    must_download_for_sha = needs_sha and not checksum_url and not precomputed_sha256
+    must_download_for_sha = needs_sha and not precomputed_sha256
     must_download_for_size = needs_size and compute_extract_size
 
     if needs_size and not (must_download_for_size or must_download_for_sha):
@@ -200,6 +155,57 @@ def fetch_asset_metadata(
     return extract_size, extract_sha256
 
 
+def normalize_release_asset(asset: dict, cache: Dict[str, Dict[str, int]]) -> dict | None:
+    name = asset.get("name")
+    if name not in ZIP_ASSET_ORDER:
+        return None
+
+    url = asset.get("browser_download_url")
+    if not url:
+        return None
+
+    cached = cache.get(url, {})
+    normalized = {
+        "name": name,
+        "browser_download_url": url,
+        "size": asset.get("size"),
+    }
+
+    extract_size = asset.get("extract_size", cached.get("extract_size"))
+    if extract_size is not None:
+        normalized["extract_size"] = extract_size
+
+    extract_sha256 = asset.get("extract_sha256", cached.get("extract_sha256"))
+    if extract_sha256:
+        normalized["extract_sha256"] = extract_sha256
+
+    return normalized
+
+
+def normalize_release(release: dict, cache: Dict[str, Dict[str, int]]) -> dict:
+    version = release.get("tag_name")
+    if not version:
+        return release
+
+    normalized_assets = [
+        asset
+        for asset in (
+            normalize_release_asset(asset, cache) for asset in release.get("assets", [])
+        )
+        if asset is not None
+    ]
+    normalized_assets.sort(key=lambda asset: ZIP_ASSET_ORDER[asset["name"]])
+
+    return {
+        "tag_name": version,
+        "name": release.get("name") or f"Pioreactor {version}",
+        "published_at": release.get("published_at", ""),
+        "draft": bool(release.get("draft", False)),
+        "prerelease": bool(release.get("prerelease", False)),
+        "assets": normalized_assets,
+    }
+
+
 def iso_date(published_at: str) -> str:
     if not published_at:
         return ""
@@ -234,11 +240,6 @@ def mark_latest(entries: list[dict]) -> None:
         entries[0]["name"] = f"{entries[0]['name']}{suffix}"
 
 
-def checksum_name_for_zip(zip_name: str) -> str:
-    base = zip_name[:-4] if zip_name.endswith(".zip") else zip_name
-    return f"{base}.img.sha256"
-
-
 def build_release_subitems(
     version: str,
     release_date: str,
@@ -251,8 +252,6 @@ def build_release_subitems(
         "Pioreactor Worker": 1,
         "Pioreactor Leader": 2,
     }
-    size_asset = assets_by_name.get("image-sizes.json")
-    precomputed_sizes = load_precomputed_sizes(size_asset)
     ordered: list[dict | None] = [None, None, None]
     for label, filename in ZIP_ASSETS.items():
         asset = assets_by_name.get(filename)
@@ -261,15 +260,11 @@ def build_release_subitems(
             continue
 
         url = asset["browser_download_url"]
-        checksum_asset = assets_by_name.get(checksum_name_for_zip(filename))
-        checksum_url = checksum_asset["browser_download_url"] if checksum_asset else None
         extract_size, extract_sha256 = fetch_asset_metadata(
             url,
-            checksum_url,
             cache,
-            compressed_size=asset.get("size"),
             compute_extract_size=compute_extract_size,
-            precomputed_extract_size=precomputed_sizes.get(filename),
+            precomputed_extract_size=asset.get("extract_size"),
             precomputed_sha256=asset.get("extract_sha256"),
         )
 
@@ -353,8 +348,9 @@ def build_output(
     apply_latest_label: bool = False,
     compute_extract_size: bool = True,
 ) -> dict | None:
+    normalized_releases = [normalize_release(release, cache) for release in releases]
     entries = build_entries(
-        releases,
+        normalized_releases,
         release_filter,
         cache,
         compute_extract_size=compute_extract_size,
@@ -381,9 +377,9 @@ def build_output(
 
 
 def main() -> None:
-    releases = load_json(RELEASES_PATH)
-    reference = load_json(REFERENCE_PATH)
     cache = ensure_cache()
+    releases = [normalize_release(release, cache) for release in load_json(RELEASES_PATH)]
+    reference = load_json(REFERENCE_PATH)
     release_filter = parse_filter()
 
     print(f"Loaded {len(releases)} releases")

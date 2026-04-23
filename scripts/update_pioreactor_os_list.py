@@ -1,7 +1,6 @@
 import argparse
 import json
 import sys
-import urllib.request
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -16,17 +15,14 @@ from build_pioreactor_imager_list import (  # noqa: E402
     build_output,
     ensure_cache,
     load_json,
+    normalize_release,
     parse_filter,
     save_json,
     write_cache,
 )
 
 
-def fetch_release_blob(source: str) -> dict:
-    if source.startswith("http://") or source.startswith("https://"):
-        with urllib.request.urlopen(source) as response:
-            return json.load(response)
-
+def load_release_metadata(source: str) -> dict:
     path = Path(source).expanduser()
     with path.open() as fh:
         return json.load(fh)
@@ -34,13 +30,10 @@ def fetch_release_blob(source: str) -> dict:
 
 def upsert_release(releases: list[dict], new_release: dict) -> list[dict]:
     tag = new_release.get("tag_name")
-    release_id = new_release.get("id")
 
     updated = []
     for release in releases:
         if tag and release.get("tag_name") == tag:
-            continue
-        if release_id and release.get("id") == release_id:
             continue
         updated.append(release)
 
@@ -50,11 +43,11 @@ def upsert_release(releases: list[dict], new_release: dict) -> list[dict]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Fetch a Pioreactor release JSON and rebuild os_list_pioreactor.json."
+        description="Update Pioreactor release metadata and rebuild os_list_pioreactor.json."
     )
     parser.add_argument(
         "source",
-        help="GitHub release API url or path to a saved release JSON blob.",
+        help="Path to a normalized release metadata JSON file.",
     )
     parser.add_argument(
         "--no-latest",
@@ -88,14 +81,14 @@ def main() -> None:
     parser.set_defaults(compute_extract_size=True)
     args = parser.parse_args()
 
-    release_blob = fetch_release_blob(args.source)
+    cache = ensure_cache()
+    release_metadata = normalize_release(load_release_metadata(args.source), cache)
 
-    releases = load_json(args.releases_path)
-    releases = upsert_release(releases, release_blob)
+    releases = [normalize_release(release, cache) for release in load_json(args.releases_path)]
+    releases = upsert_release(releases, release_metadata)
     save_json(args.releases_path, releases)
     print(f"Updated release list at {args.releases_path}")
 
-    cache = ensure_cache()
     reference = load_json(args.reference_path)
     output = build_output(
         releases,
