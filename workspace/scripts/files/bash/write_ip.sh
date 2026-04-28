@@ -14,8 +14,11 @@ for i in {1..30}; do
     sleep 1
 done
 
+# Get the active Wi-Fi SSID, when connected over Wi-Fi.
+WIFI_SSID=$(nmcli -t --escape no -f active,ssid dev wifi 2>/dev/null | awk -F: '$1 == "yes" {print substr($0, 5); exit}')
+
 # Initialize an empty variable for network information
-NETWORK_INFO="HOSTNAME=$(hostname)\nIP=$IP\n"
+NETWORK_INFO="HOSTNAME=$(hostname)\nIP=$IP\nWIFI_SSID=$WIFI_SSID\n"
 
 # Iterate over all network interfaces
 for iface in /sys/class/net/*; do
