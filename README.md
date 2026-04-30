@@ -73,3 +73,11 @@ These are applied by the top-level `make_*_image.sh` scripts and in CI.
 - GitHub Actions receives dispatches from upstream `pioreactor` releases, runs the same containerized build (see `action.yml`), and attaches the images to the latest release; nightly images are hosted at `https://nightly.pioreactor.com/`.
 - Artifacts: `workspace/scripts/files/` (systemd units/targets/timers, bash helpers, lighttpd configs, tmpfiles rules, firstboot/everyboot scripts, NetworkManager profiles) and `src/` (CustoPiZer driver files used in the container build).
 - End users download the desired image (leader/worker/leader_worker) from GitHub releases or nightlies, flash to an SD card, and boot; services come pre-enabled via targets (`pioreactor.target`, `pioreactor-leader.target`, `pioreactor-worker.target`, `pioreactor-web.target`) so Pioreactor CLI/UI work immediately.
+
+## Shared Pioreactor assets
+- The Pioreactor application repo owns shared provisioning assets under `packaging/shared-assets`, including SQL schema files, default config, exportable datasets, and UI descriptor YAML.
+- Before building images, run `scripts/sync_pioreactor_assets.sh ../pioreactor`.
+- The local `make_*_image.sh` scripts run this automatically using `PIOREACTOR_REPO` or `../pioreactor`.
+- The GitHub workflow checks out the matching Pioreactor ref and syncs those assets before each image build.
+- The synced destinations under `workspace/scripts/files/sql/`, `workspace/scripts/files/pioreactor/config.example.ini`, `workspace/scripts/files/pioreactor/exportable_datasets/`, `workspace/scripts/files/pioreactor/ui/`, and the shared leader service/config files are generated build inputs and intentionally ignored by Git here.
+- CustoPiZer still owns image-only boot and hardware services such as firstboot, worker targets, local access point setup, and RP2040 loading.

@@ -4,3 +4,18 @@ aptcache
 *.img.zip.tickets
 .tickets
 scratch/
+
+# Generated from ../pioreactor/packaging by scripts/sync_pioreactor_assets.sh.
+# CustoPiZer keeps image-owned files here, but these shared Pioreactor assets
+# should not be edited or committed from this repository.
+workspace/scripts/files/sql/
+workspace/scripts/files/pioreactor/config.example.ini
+workspace/scripts/files/pioreactor/exportable_datasets/
+workspace/scripts/files/pioreactor/ui/
+workspace/scripts/files/system/lighttpd/10-expire.conf
+workspace/scripts/files/system/lighttpd/50-pioreactorui.conf
+workspace/scripts/files/system/lighttpd/51-cors.conf
+workspace/scripts/files/system/lighttpd/lighttpd.conf
+workspace/scripts/files/system/logrotate/pioreactor
+workspace/scripts/files/system/pioreactor.env
+workspace/scripts/files/system/tmpfiles.d/pioreactor.conf

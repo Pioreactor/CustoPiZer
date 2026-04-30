@@ -39,6 +39,14 @@ jobs:
           echo "Version from workflow dispatch: $PIOREACTOR_VERSION"
         fi
         echo "PIOREACTOR_VERSION=$PIOREACTOR_VERSION" >> $GITHUB_ENV
+    - name: "⬇ Checkout Pioreactor assets"
+      uses: actions/checkout@v4
+      with:
+        repository: Pioreactor/pioreactor
+        ref: ${{ env.PIOREACTOR_VERSION }}
+        path: pioreactor-source
+    - name: "🔁 Sync Pioreactor assets"
+      run: bash scripts/sync_pioreactor_assets.sh "${{ github.workspace }}/pioreactor-source"
     - name: "⬇ Download RPi image"
       id: download_rpi_image
       run: |
