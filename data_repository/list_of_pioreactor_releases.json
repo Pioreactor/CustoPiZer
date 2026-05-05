@@ -1006,5 +1006,35 @@
         "extract_sha256": "e178685c98c0b12e3c1d3315f35b28d12aeecca502b51a44090b739f303298d3"
       }
     ]
+  },
+  {
+    "tag_name": "26.5.0rc0",
+    "name": "Pioreactor 26.5.0rc0 (build 20260505142709)",
+    "published_at": "2026-05-05T14:27:09Z",
+    "draft": false,
+    "prerelease": true,
+    "assets": [
+      {
+        "name": "pioreactor_leader.zip",
+        "browser_download_url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.5.0rc0/pioreactor_leader.zip",
+        "size": 918514208,
+        "extract_size": 2476737536,
+        "extract_sha256": "a5ac2400a5c7699da5209097ad5ae612c8584fdaa5f3f6f5cbef3d0c4ed6653d"
+      },
+      {
+        "name": "pioreactor_leader_worker.zip",
+        "browser_download_url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.5.0rc0/pioreactor_leader_worker.zip",
+        "size": 938920997,
+        "extract_size": 2500854784,
+        "extract_sha256": "fabab217624adc829a8cd516825c0216449ba3ede025adcbb856b2ad5e6a6c1b"
+      },
+      {
+        "name": "pioreactor_worker.zip",
+        "browser_download_url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.5.0rc0/pioreactor_worker.zip",
+        "size": 937895708,
+        "extract_size": 2497709056,
+        "extract_sha256": "4aabd76394d1036fc0d34297e0037ed5fde33ec543b432e9eaa8544d1d9d579e"
+      }
+    ]
   }
 ]
