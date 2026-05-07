@@ -44,8 +44,10 @@ sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
 copy_ui_jobs_and_automations() {
     sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/jobs"
     sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/automations"
+    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/settings"
     sudo -u "$USERNAME" cp -r /files/pioreactor/ui/jobs/. "$DOT_PIOREACTOR/ui/jobs/"
     sudo -u "$USERNAME" cp -r /files/pioreactor/ui/automations/. "$DOT_PIOREACTOR/ui/automations/"
+    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/settings/. "$DOT_PIOREACTOR/ui/settings/"
 }
 
 copy_full_ui_tree() {
@@ -144,6 +146,7 @@ echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/de
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/jobs
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/automations/{dosing,led,temperature}
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/charts
+sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/settings
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
 
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
