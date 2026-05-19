@@ -1,4 +1,11 @@
 repos:
+  - repo: local
+    hooks:
+      - id: check-conflict-markers
+        name: Check for Git conflict markers
+        entry: python3 scripts/check_conflict_markers.py
+        language: system
+        types: [text]
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0  # or specific git tag
     hooks:
