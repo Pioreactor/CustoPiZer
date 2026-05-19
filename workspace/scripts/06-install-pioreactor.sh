@@ -73,69 +73,9 @@ install_pioreactor_package() {
 if [ "$LEADER" == "1" ]; then
 
   sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/experiment_profiles
+  rsync -a --ignore-existing --chown=$USERNAME:www-data /files/pioreactor/experiment_profiles/ $DOT_PIOREACTOR/experiment_profiles/
   chown -R $USERNAME:www-data $DOT_PIOREACTOR/experiment_profiles
   chmod g+s $DOT_PIOREACTOR/experiment_profiles
-  echo "Directory for adding experiment profiles: https://docs.pioreactor.com/developer-guide/experiment-profiles" |                   sudo -u $USERNAME tee $DOT_PIOREACTOR/experiment_profiles/README.txt > /dev/null
-
-  cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_logging_example.yaml
-experiment_profile_name: Demo of logging real-time data
-
-metadata:
-  author: Cam Davidson-Pilon
-  description: A  profile to demonstrate logging real-time data, start stirring in your Pioreactor(s), update RPM, and log the value.
-
-common:
-  jobs:
-    stirring:
-      actions:
-        - type: start
-          t: 0s
-          options:
-            target_rpm: 400.0
-        - type: log
-          t: 2s
-          options:
-            message: "\${{job_name()}} starting at target \${{::stirring:target_rpm}} RPM"
-        - type: log
-          t: 10s
-          options:
-            message: "Increasing to 800 RPM in \${{unit()}}. Try changing the target RPM in the UI."
-        - type: update
-          t: 10s
-          options:
-            target_rpm: 800.0
-        - type: log
-          t: 15s
-          options:
-            message: "Value of target_rpm in \${{unit()}} is \${{::stirring:target_rpm}} RPM. Stopping."
-        - type: stop
-          t: 20s
-EOT
-
-
-  cat <<EOT >> $DOT_PIOREACTOR/experiment_profiles/demo_stirring_example.yaml
-experiment_profile_name: Demo stirring example
-
-metadata:
-  author: Cam Davidson-Pilon
-  description: A simple profile to start stirring in your Pioreactor(s), update RPM at 90 seconds, and turn off after 180 seconds.
-
-common:
-  jobs:
-    stirring:
-      actions:
-        - type: start
-          t: 0s
-          options:
-            target_rpm: 400.0
-        - type: update
-          t: 1.5m
-          options:
-            target_rpm: 800.0
-        - type: stop
-          t: 3m
-EOT
-
 fi
 
 sudo -u $USERNAME touch $DOT_PIOREACTOR/unit_config.ini

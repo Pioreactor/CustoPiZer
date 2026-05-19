@@ -46,6 +46,12 @@ usermod -a -G netdev pioreactor
 
 chmod 755 /home/pioreactor
 
+if [ -d /files/agents ]; then
+    sudo -u pioreactor mkdir -p /home/pioreactor/.agents
+    sudo cp -a /files/agents/. /home/pioreactor/.agents/
+    sudo chown -R pioreactor:pioreactor /home/pioreactor/.agents
+fi
+
 # make sure pioreactor doesn't require a password when running as sudo
 echo 'pioreactor ALL=(ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/010_pioreactor-nopasswd
 

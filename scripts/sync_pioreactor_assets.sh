@@ -8,6 +8,7 @@ REPO_ROOT=$(cd -- "$SCRIPT_DIR/.." && pwd)
 PIOREACTOR_REPO=${1:-"${PIOREACTOR_REPO:-../pioreactor}"}
 PIOREACTOR_ASSETS="$PIOREACTOR_REPO/packaging/shared-assets"
 PIOREACTOR_LINUX_LEADER_FILES="$PIOREACTOR_REPO/packaging/linux-leader/files"
+PIOREACTOR_AGENTS="$PIOREACTOR_REPO/.agents"
 TARGET_FILES="$REPO_ROOT/workspace/scripts/files"
 
 die() {
@@ -17,17 +18,22 @@ die() {
 
 [ -d "$PIOREACTOR_ASSETS" ] || die "Could not find Pioreactor assets at $PIOREACTOR_ASSETS"
 [ -d "$PIOREACTOR_LINUX_LEADER_FILES" ] || die "Could not find Pioreactor Linux leader files at $PIOREACTOR_LINUX_LEADER_FILES"
+[ -d "$PIOREACTOR_AGENTS" ] || die "Could not find Pioreactor agents at $PIOREACTOR_AGENTS"
 
 mkdir -p \
+  "$TARGET_FILES/agents" \
   "$TARGET_FILES/sql" \
   "$TARGET_FILES/pioreactor/exportable_datasets" \
+  "$TARGET_FILES/pioreactor/experiment_profiles" \
   "$TARGET_FILES/pioreactor/ui" \
   "$TARGET_FILES/system/lighttpd" \
   "$TARGET_FILES/system/logrotate" \
   "$TARGET_FILES/system/tmpfiles.d"
 
 rsync -a --delete "$PIOREACTOR_ASSETS/sql/" "$TARGET_FILES/sql/"
+rsync -a --delete "$PIOREACTOR_AGENTS/" "$TARGET_FILES/agents/"
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/exportable_datasets/" "$TARGET_FILES/pioreactor/exportable_datasets/"
+rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/experiment_profiles/" "$TARGET_FILES/pioreactor/experiment_profiles/"
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/ui/" "$TARGET_FILES/pioreactor/ui/"
 install -m 0644 "$PIOREACTOR_ASSETS/pioreactor/config.example.ini" "$TARGET_FILES/pioreactor/config.example.ini"
 

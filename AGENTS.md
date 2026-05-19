@@ -10,8 +10,14 @@ This project is used to generate our custom Raspberry Pi images for the Pioreact
 - Top-level helpers: `make_leader_image.sh`, `make_worker_image.sh`, `make_leader_worker_image.sh`, `enter_image.sh`.
 - CI: `.github/workflows/custopize.yaml` triggers containerized builds and publishes release assets.
 
+## Verification loop
+
+- use shellcheck for changed shell scripts
+- do not assume Docker is installed locally
+- for image changes, identify the affected script and explain which build target would exercise it
 
 ## Other relevant files and information
 
- - See RPi-filesystem-locations.md for a list of important Raspberry Pi Locations for Pioreactor Images
- - See  for a list of preinstalled software on the Lite images.
+ - See `metadata/RPi-filesystem-locations.md` for a list of important Raspberry Pi Locations for Pioreactor Images
+ - See `metadata/2025-12-04-raspios-trixie-arm64-lite-sizes.tsv` for a list of preinstalled software on the Lite images.
+ - Some files under workspace/scripts/files/ may be generated or synced from the Pioreactor repo. Before editing assets there, check whether a sync script or source asset owns the file.

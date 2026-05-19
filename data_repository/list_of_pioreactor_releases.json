@@ -1006,6 +1006,7 @@
         "extract_sha256": "e178685c98c0b12e3c1d3315f35b28d12aeecca502b51a44090b739f303298d3"
       }
     ]
+<<<<<<< HEAD
   },
   {
     "tag_name": "26.5.0rc0",
