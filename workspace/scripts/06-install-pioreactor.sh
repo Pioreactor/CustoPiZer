@@ -94,7 +94,10 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
 
 # pillow install and adafruit display library
 sudo apt install libjpeg-dev zlib1g-dev -y
-sudo -u pioreactor "$PIO_VENV/bin/pip" install pillow==12.0.0
+sudo -u pioreactor "$PIO_VENV/bin/pip" install pillow==12.0.0 \
+  --no-index \
+  --find-links /files/wheels \
+  --only-binary pillow
 sudo -u pioreactor "$PIO_VENV/bin/pip" install adafruit-circuitpython-ssd1306==2.12.22
 
 
@@ -111,8 +114,9 @@ sudo -u pioreactor "$PIO_VENV/bin/pip" install rpi-lgpio==0.6
 apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
 sudo -u pioreactor "$PIO_VENV/bin/pip" install pyyaml==6.0.2 \
-  --index-url https://www.piwheels.org/simple \
-  --extra-index-url https://pypi.org/simple
+  --no-index \
+  --find-links /files/wheels \
+  --only-binary PyYAML
 
 # needed for the LED at boot
 sudo -u pioreactor "$PIO_VENV/bin/pip" install gpiozero \
@@ -125,8 +129,9 @@ sudo -u pioreactor "$PIO_VENV/bin/pip" install gpiozero \
 sudo apt-get install -y libopenblas0-pthread liblapack3
 
 sudo -u pioreactor "$PIO_VENV/bin/pip" install numpy==2.3.2 \
-  --index-url https://www.piwheels.org/simple \
-  --extra-index-url https://pypi.org/simple
+  --no-index \
+  --find-links /files/wheels \
+  --only-binary numpy
 
 sudo -u pioreactor "$PIO_VENV/bin/pip" install -U setuptools wheel
 

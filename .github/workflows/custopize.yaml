@@ -47,6 +47,8 @@ jobs:
         path: pioreactor-source
     - name: "🔁 Sync Pioreactor assets"
       run: bash scripts/sync_pioreactor_assets.sh "${{ github.workspace }}/pioreactor-source"
+    - name: "⬇ Download Python wheels"
+      run: bash scripts/download_python_wheels.sh
     - name: "⬇ Download RPi image"
       id: download_rpi_image
       run: |

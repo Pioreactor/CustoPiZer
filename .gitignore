@@ -1,4 +1,7 @@
 .vscode
+.env
+.envrc
+.venv/
 *.img
 aptcache
 *.img.zip.tickets
@@ -19,3 +22,4 @@ workspace/scripts/files/system/lighttpd/lighttpd.conf
 workspace/scripts/files/system/logrotate/pioreactor
 workspace/scripts/files/system/pioreactor.env
 workspace/scripts/files/system/tmpfiles.d/pioreactor.conf
+workspace/scripts/files/wheels/
