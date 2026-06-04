@@ -8,6 +8,7 @@ set -x
 set -e
 export LC_ALL=C
 
+# shellcheck source=/dev/null
 source /etc/pioreactor.env 2>/dev/null || true
 VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
 PIO="$VENV_BIN/pio"
@@ -90,7 +91,9 @@ do
 done
 
 # sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
+# shellcheck disable=SC2029
 ssh pioreactor@"$ADDRESS" "sudo date --set \"$(date)\""
+# shellcheck disable=SC2029
 ssh pioreactor@"$ADDRESS" "echo \"server $LEADER_ADDRESS iburst prefer\" | sudo tee -a /etc/chrony/chrony.conf || :"
 
 

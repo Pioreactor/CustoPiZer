@@ -21,6 +21,7 @@ sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 # install optional hotspot service, both workers and leaders can do this.
 sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
 cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
+cp /files/bash/start_pioreactor_huey.sh /usr/local/bin/start_pioreactor_huey.sh
 
 
 # Directories under /run are provisioned by tmpfiles.d; no separate cache-prep service needed

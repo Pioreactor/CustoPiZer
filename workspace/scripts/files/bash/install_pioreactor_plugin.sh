@@ -7,6 +7,7 @@ set -x
 export LC_ALL=C
 
 # Prefer Pioreactor venv if present
+# shellcheck source=/dev/null
 source /etc/pioreactor.env 2>/dev/null || true
 VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
 PIP="$VENV_BIN/pip"
@@ -48,31 +49,33 @@ function download_and_check_if_leader_only {
     local CLEAN_PACKAGE_NAME=${PACKAGE_NAME//-/_}
 
     # Download the wheel file without dependencies
-    "$PIP" download -qq --no-deps --dest /tmp $PACKAGE_NAME
+    "$PIP" download -qq --no-deps --dest /tmp "$PACKAGE_NAME"
 
     # Get the file name of the downloaded package
     local WHL_FILE
-    WHL_FILE=$(ls /tmp/$CLEAN_PACKAGE_NAME*.whl)
+    local WHL_FILES
+    WHL_FILES=(/tmp/"$CLEAN_PACKAGE_NAME"*.whl)
+    WHL_FILE=${WHL_FILES[0]}
 
     # create a temp directory
     local TEMPDIR
     TEMPDIR=$(mktemp -d)
 
     # unzip the wheel file into temp directory
-    unzip $WHL_FILE -d $TEMPDIR
+    unzip "$WHL_FILE" -d "$TEMPDIR"
 
     # check if LEADER_ONLY file exists
-    if [ -f $TEMPDIR/LEADER_ONLY ]; then
+    if [ -f "$TEMPDIR/LEADER_ONLY" ]; then
         # if file exists, return 0 (true in bash)
         # remove the temp directory
-        rm -rf $TEMPDIR
-        rm  /tmp/$CLEAN_PACKAGE_NAME*.whl
+        rm -rf "$TEMPDIR"
+        rm /tmp/"$CLEAN_PACKAGE_NAME"*.whl
         return 0
     else
         # if file does not exist, return 1 (false in bash)
         # remove the temp directory
-        rm -rf $TEMPDIR
-        rm  /tmp/$CLEAN_PACKAGE_NAME*.whl
+        rm -rf "$TEMPDIR"
+        rm /tmp/"$CLEAN_PACKAGE_NAME"*.whl
         return 1
     fi
 

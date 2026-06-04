@@ -18,39 +18,22 @@ done
 WIFI_SSID=$(nmcli -t --escape no -f active,ssid dev wifi 2>/dev/null | awk -F: '$1 == "yes" {print substr($0, 5); exit}')
 
 LOCAL_ACCESS_POINT_PATH=/boot/firmware/local_access_point
-LOCAL_ACCESS_POINT_STATUS=missing
-LOCAL_ACCESS_POINT_FILES=
-LOCAL_ACCESS_POINT_COUNTRY_CODE=
-LOCAL_ACCESS_POINT_NOTE="No /boot/firmware/local_access_point file found. Add a file named exactly local_access_point to enable the access point."
+LOCAL_ACCESS_POINT_STATUS=not_found
+LOCAL_ACCESS_POINT_NOTE="No /boot/firmware/local_access_point file found."
 
-shopt -s nullglob nocaseglob
-LOCAL_ACCESS_POINT_MATCHES=(/boot/firmware/*local*access*point*)
-shopt -u nullglob nocaseglob
-
-if [ -f "$LOCAL_ACCESS_POINT_PATH" ]; then
+if [ -e "$LOCAL_ACCESS_POINT_PATH" ]; then
     LOCAL_ACCESS_POINT_STATUS=found
-    LOCAL_ACCESS_POINT_FILES=$(basename "$LOCAL_ACCESS_POINT_PATH")
-    LOCAL_ACCESS_POINT_COUNTRY_CODE=$(head -c 2 "$LOCAL_ACCESS_POINT_PATH")
     LOCAL_ACCESS_POINT_NOTE="Found /boot/firmware/local_access_point."
-elif [ -e "$LOCAL_ACCESS_POINT_PATH" ]; then
-    LOCAL_ACCESS_POINT_STATUS=invalid
-    LOCAL_ACCESS_POINT_FILES=$(basename "$LOCAL_ACCESS_POINT_PATH")
-    LOCAL_ACCESS_POINT_NOTE="Found /boot/firmware/local_access_point, but it is not a regular file. Replace it with a file containing the two-letter country code."
-elif [ "${#LOCAL_ACCESS_POINT_MATCHES[@]}" -gt 0 ]; then
+elif [ -e "$LOCAL_ACCESS_POINT_PATH (2)" ]; then
     LOCAL_ACCESS_POINT_STATUS=wrong_filename
-    for filepath in "${LOCAL_ACCESS_POINT_MATCHES[@]}"; do
-        filename=$(basename "$filepath")
-        if [ -z "$LOCAL_ACCESS_POINT_FILES" ]; then
-            LOCAL_ACCESS_POINT_FILES="$filename"
-        else
-            LOCAL_ACCESS_POINT_FILES="$LOCAL_ACCESS_POINT_FILES,$filename"
-        fi
-    done
-    LOCAL_ACCESS_POINT_NOTE="Found $LOCAL_ACCESS_POINT_FILES. Rename the intended file to exactly local_access_point. For example, local_access_point (2) will not be used."
+    LOCAL_ACCESS_POINT_NOTE="Found local_access_point (2). Rename it to exactly local_access_point."
+elif [ -e "$LOCAL_ACCESS_POINT_PATH.txt" ]; then
+    LOCAL_ACCESS_POINT_STATUS=wrong_filename
+    LOCAL_ACCESS_POINT_NOTE="Found local_access_point.txt. Rename it to exactly local_access_point."
 fi
 
 # Initialize an empty variable for network information
-NETWORK_INFO="HOSTNAME=$(hostname)\nIP=$IP\nWIFI_SSID=$WIFI_SSID\nLOCAL_ACCESS_POINT_STATUS=$LOCAL_ACCESS_POINT_STATUS\nLOCAL_ACCESS_POINT_FILES=$LOCAL_ACCESS_POINT_FILES\nLOCAL_ACCESS_POINT_COUNTRY_CODE=$LOCAL_ACCESS_POINT_COUNTRY_CODE\nLOCAL_ACCESS_POINT_NOTE=$LOCAL_ACCESS_POINT_NOTE\n"
+NETWORK_INFO="HOSTNAME=$(hostname)\nIP=$IP\nWIFI_SSID=$WIFI_SSID\nLOCAL_ACCESS_POINT_STATUS=$LOCAL_ACCESS_POINT_STATUS\nLOCAL_ACCESS_POINT_NOTE=$LOCAL_ACCESS_POINT_NOTE\n"
 
 # Iterate over all network interfaces
 for iface in /sys/class/net/*; do

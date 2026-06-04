@@ -6,6 +6,7 @@ set -x
 export LC_ALL=C
 
 # Prefer Pioreactor venv if present
+# shellcheck source=/dev/null
 source /etc/pioreactor.env 2>/dev/null || true
 VENV_BIN="${PIO_VENV:-/opt/pioreactor/venv}/bin"
 PIP="$VENV_BIN/pip"
