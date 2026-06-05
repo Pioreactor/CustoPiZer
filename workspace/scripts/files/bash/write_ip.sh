@@ -43,7 +43,7 @@ for iface in /sys/class/net/*; do
 done
 
 # Write the information to a file in key-value format
-# Use > since we want to rewrite on every boot (not append)
-echo -e "$NETWORK_INFO" > /boot/firmware/network_info.txt
+# Do not use tee -a here: rewrite the file on every run.
+echo -e "$NETWORK_INFO" | sudo tee /boot/firmware/network_info.txt >/dev/null
 
 sudo nmcli device status | sudo tee -a /boot/firmware/network_info.txt

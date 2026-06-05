@@ -130,11 +130,15 @@ sudo systemctl disable userconfig.service
 # sudo systemctl disable rpi-display-backlight.service
 sudo systemctl disable rpi-eeprom-update.service
 sudo systemctl disable ModemManager.service
+sudo systemctl disable getty@tty1.service
+sudo systemctl disable serial-getty@ttyAMA0.service
 
 sudo systemctl mask apt-daily-upgrade
 sudo systemctl mask apt-daily
 sudo systemctl disable apt-daily-upgrade.timer
 sudo systemctl disable apt-daily.timer
+sudo systemctl disable man-db.timer
+sudo systemctl mask man-db.timer
 
 
 # turn off ipv6
