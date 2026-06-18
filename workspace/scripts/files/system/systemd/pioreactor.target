@@ -1,7 +1,7 @@
 [Unit]
 Description=Pioreactor Common Services
 After=network-online.target
-Wants=pioreactor-web.target avahi_aliases.service everyboot.service firstboot.service wifi_powersave.service write_ip.service local_access_point.service pioreactor_startup_run@monitor.service network-info.timer
+Wants=pioreactor-web.target avahi_aliases.service everyboot.service firstboot.service wifi_powersave.service write_ip.service bootfs_wifi.service local_access_point.service pioreactor_startup_run@monitor.service network-info.timer
 
 [Install]
 WantedBy=multi-user.target

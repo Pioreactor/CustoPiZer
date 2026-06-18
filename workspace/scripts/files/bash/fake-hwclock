@@ -1,0 +1,83 @@
+#!/bin/sh
+
+set -eu
+
+CLOCK_FILE="${FAKE_HWCLOCK_FILE:-/var/lib/fake-hwclock/saved-clock}"
+MIN_VALID_TIME="${FAKE_HWCLOCK_MIN_VALID_TIME:-2024-01-01T00:00:00Z}"
+
+log() {
+    logger -t fake-hwclock "$*"
+}
+
+timestamp_to_epoch() {
+    date -u -d "$1" +%s
+}
+
+save_clock() {
+    now="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    now_epoch="$(timestamp_to_epoch "$now")"
+    min_epoch="$(timestamp_to_epoch "$MIN_VALID_TIME")"
+
+    if [ "$now_epoch" -lt "$min_epoch" ]; then
+        log "Not saving invalid system time: $now"
+        exit 0
+    fi
+
+    if [ -f "$CLOCK_FILE" ]; then
+        saved_time="$(sed -n '1p' "$CLOCK_FILE")"
+        if saved_epoch="$(timestamp_to_epoch "$saved_time" 2>/dev/null)" && [ "$saved_epoch" -gt "$now_epoch" ]; then
+            log "Not overwriting newer saved time $saved_time with $now"
+            exit 0
+        fi
+    fi
+
+    install -d -m 0755 "$(dirname "$CLOCK_FILE")"
+    tmp_file="${CLOCK_FILE}.$$"
+    printf '%s\n' "$now" > "$tmp_file"
+    chmod 0644 "$tmp_file"
+    mv "$tmp_file" "$CLOCK_FILE"
+    log "Saved system time: $now"
+}
+
+load_clock() {
+    if [ ! -f "$CLOCK_FILE" ]; then
+        exit 0
+    fi
+
+    saved_time="$(sed -n '1p' "$CLOCK_FILE")"
+    if ! saved_epoch="$(timestamp_to_epoch "$saved_time" 2>/dev/null)"; then
+        log "Ignoring invalid saved time: $saved_time"
+        exit 0
+    fi
+
+    current_epoch="$(date -u +%s)"
+    if [ "$saved_epoch" -le "$current_epoch" ]; then
+        log "Saved time is not newer than system time: $saved_time"
+        exit 0
+    fi
+
+    date -u -s "$saved_time"
+    log "Restored system time: $saved_time"
+}
+
+show_clock() {
+    if [ -f "$CLOCK_FILE" ]; then
+        sed -n '1p' "$CLOCK_FILE"
+    fi
+}
+
+case "${1:-}" in
+    save)
+        save_clock
+        ;;
+    load)
+        load_clock
+        ;;
+    show)
+        show_clock
+        ;;
+    *)
+        echo "Usage: fake-hwclock {load|save|show}" >&2
+        exit 2
+        ;;
+esac

@@ -1,0 +1,13 @@
+[Unit]
+Description=Connect to Wi-Fi from boot partition credentials
+Wants=network-online.target NetworkManager.service
+After=everyboot.service NetworkManager.service network-online.target
+Before=local_access_point.service
+ConditionPathExists=/boot/firmware/wifi.ini
+
+[Service]
+ExecStart=/bin/bash /usr/local/bin/bootfs_wifi.sh
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

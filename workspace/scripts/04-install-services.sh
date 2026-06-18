@@ -19,9 +19,18 @@ sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 
 # install optional hotspot service, both workers and leaders can do this.
+sudo cp /files/system/systemd/bootfs_wifi.service $SYSTEMD_DIR
+cp /files/bash/bootfs_wifi.sh /usr/local/bin/bootfs_wifi.sh
 sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
 cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 cp /files/bash/start_pioreactor_huey.sh /usr/local/bin/start_pioreactor_huey.sh
+
+# Keep time roughly monotonic on Raspberry Pis without RTC or internet.
+cp /files/bash/fake-hwclock /usr/local/bin/fake-hwclock
+chmod +x /usr/local/bin/fake-hwclock
+sudo cp /files/system/systemd/fake-hwclock-load.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/fake-hwclock-save.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/fake-hwclock-save.timer $SYSTEMD_DIR
 
 
 # Directories under /run are provisioned by tmpfiles.d; no separate cache-prep service needed
@@ -68,6 +77,8 @@ sudo cp /files/system/systemd/pioreactor-worker.target $SYSTEMD_DIR
 sudo install -D -m 0644 /files/system/tmpfiles.d/pioreactor.conf /etc/tmpfiles.d/pioreactor.conf
 
 # Enable only the appropriate targets
+sudo systemctl enable fake-hwclock-load.service
+sudo systemctl enable fake-hwclock-save.timer
 sudo systemctl enable pioreactor.target
 if [ "$LEADER" == "1" ]; then
     sudo systemctl enable pioreactor-leader.target

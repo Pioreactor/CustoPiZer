@@ -1,0 +1,13 @@
+[Unit]
+Description=Restore saved system clock
+DefaultDependencies=no
+Before=sysinit.target time-set.target chrony.service
+Wants=time-set.target
+ConditionPathExists=/var/lib/fake-hwclock/saved-clock
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/fake-hwclock load
+
+[Install]
+WantedBy=sysinit.target

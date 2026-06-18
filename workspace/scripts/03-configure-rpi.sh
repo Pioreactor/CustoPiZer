@@ -51,9 +51,6 @@ if [ "$WORKER" == "1" ]; then
     echo "dtparam=audio=off"    | sudo tee -a /boot/firmware/config.txt
     echo "camera_auto_detect=0" | sudo tee -a /boot/firmware/config.txt
 
-    # disable USB. This fails for the RPi Zero and A models, hence the starting "-"" to ignore error
-    # TODO: -echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
-
     # remove activelow LED
     # TODO this doesn't work for RPi Zero, https://mlagerberg.gitbooks.io/raspberry-pi/content/5.2-leds.html
     echo "dtparam=act_led_trigger=none" | sudo tee -a /boot/firmware/config.txt

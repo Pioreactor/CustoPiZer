@@ -1,7 +1,7 @@
 [Unit]
 Description=Start local access point conditionally
 Wants=network-online.target
-After=everyboot.service NetworkManager.service network-online.target
+After=bootfs_wifi.service everyboot.service NetworkManager.service network-online.target
 ConditionPathExists=/boot/firmware/local_access_point
 
 [Service]

@@ -1,0 +1,6 @@
+[Unit]
+Description=Save system clock
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/fake-hwclock save
