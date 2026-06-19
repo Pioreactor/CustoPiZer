@@ -16,12 +16,47 @@ CACHE_PATH = DATA_REPOSITORY_DIR / "pioreactor_image_cache.json"
 
 ICON_PLACEHOLDER = "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948"
 DEVICE_TAGS = ["pi5-32bit", "pi4-32bit", "pi3-32bit", "pi2-32bit"]
+ZERO_W_DEVICE_TAGS = ["pi1-32bit"]
+ZERO_DEVICE = {
+    "name": "Raspberry Pi Zero",
+    "tags": ZERO_W_DEVICE_TAGS,
+    "default": False,
+    "icon": "https://downloads.raspberrypi.com/imager/icons/RPi_Zero.png",
+    "description": "Raspberry Pi Zero, Zero W, and Zero WH",
+    "matching_type": "inclusive",
+    "capabilities": [],
+}
 ZIP_ASSETS = {
     "Pioreactor Leader": "pioreactor_leader.zip",
     "Pioreactor Leader + Worker": "pioreactor_leader_worker.zip",
     "Pioreactor Worker": "pioreactor_worker.zip",
+    "Pioreactor Worker for Raspberry Pi Zero W": "pioreactor_zero_w_worker.zip",
 }
 ZIP_ASSET_ORDER = {filename: index for index, filename in enumerate(ZIP_ASSETS.values())}
+ASSET_DEVICE_TAGS = {
+    "Pioreactor Worker for Raspberry Pi Zero W": ZERO_W_DEVICE_TAGS,
+}
+
+
+def unique_preserving_order(values: Iterable[str]) -> list[str]:
+    seen = set()
+    unique = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        unique.append(value)
+    return unique
+
+
+def pioreactor_imager_metadata(reference: dict) -> dict:
+    imager = dict(reference.get("imager", {}))
+    devices = list(imager.get("devices", []))
+    if not any(device.get("tags") == ZERO_W_DEVICE_TAGS for device in devices):
+        devices.append(ZERO_DEVICE)
+    imager["devices"] = devices
+    return imager
+
 
 def load_json(path: Path):
     with path.open() as fh:
@@ -250,9 +285,10 @@ def build_release_subitems(
     positions = {
         "Pioreactor Leader + Worker": 0,
         "Pioreactor Worker": 1,
-        "Pioreactor Leader": 2,
+        "Pioreactor Worker for Raspberry Pi Zero W": 2,
+        "Pioreactor Leader": 3,
     }
-    ordered: list[dict | None] = [None, None, None]
+    ordered: list[dict | None] = [None, None, None, None]
     for label, filename in ZIP_ASSETS.items():
         asset = assets_by_name.get(filename)
         if not asset:
@@ -276,7 +312,7 @@ def build_release_subitems(
             "image_download_size": asset.get("size"),
             "release_date": release_date,
             "init_format": "systemd",
-            "devices": DEVICE_TAGS,
+            "devices": ASSET_DEVICE_TAGS.get(label, DEVICE_TAGS),
             "extract_size": extract_size,
             "extract_sha256": extract_sha256,
         }
@@ -307,13 +343,16 @@ def build_release_entry(
     if not subitems:
         print(f"  no downloadable assets located for {version}, skipping release")
         return None
+    release_device_tags = unique_preserving_order(
+        device for subitem in subitems for device in subitem.get("devices", [])
+    )
 
     return {
         "name": f"Pioreactor {version}",
         "description": f"Leader & worker images for {version}.",
         "icon": ICON_PLACEHOLDER,
         "random": False,
-        "devices": DEVICE_TAGS,
+        "devices": release_device_tags,
         "subitems": subitems,
     }
 
@@ -361,15 +400,19 @@ def build_output(
     if apply_latest_label:
         mark_latest(entries)
 
+    pioreactor_device_tags = unique_preserving_order(
+        device for entry in entries for device in entry.get("devices", [])
+    )
+
     return {
-        "imager": reference.get("imager", {}),
+        "imager": pioreactor_imager_metadata(reference),
         "os_list": [
             {
                 "name": "Pioreactor",
                 "description": "Pioreactor images for leader and worker roles.",
                 "icon": ICON_PLACEHOLDER,
                 "random": False,
-                "devices": DEVICE_TAGS,
+                "devices": pioreactor_device_tags,
                 "subitems": entries,
             }
         ],

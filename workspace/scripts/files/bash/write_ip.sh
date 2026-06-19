@@ -47,3 +47,9 @@ done
 echo -e "$NETWORK_INFO" | sudo tee /boot/firmware/network_info.txt >/dev/null
 
 sudo nmcli device status | sudo tee -a /boot/firmware/network_info.txt
+
+{
+    echo
+    echo "Recent NetworkManager logs:"
+    journalctl -u NetworkManager -b --no-pager -n 80
+} | sudo tee -a /boot/firmware/network_info.txt >/dev/null

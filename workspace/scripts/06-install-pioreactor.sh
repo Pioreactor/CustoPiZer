@@ -53,6 +53,18 @@ copy_full_ui_tree() {
     sudo -u "$USERNAME" cp -r /files/pioreactor/ui/. "$DOT_PIOREACTOR/ui/"
 }
 
+apply_zero_w_worker_unit_defaults() {
+    {
+        echo "# Raspberry Pi Zero W worker image defaults."
+        echo "# These override shared config.ini values for this unit only."
+        echo
+    } | sudo -u "$USERNAME" tee -a "$DOT_PIOREACTOR/unit_config.ini" >/dev/null
+
+    sudo -u "$USERNAME" "$PIO_VENV/bin/crudini" --ini-options=nospace --set "$DOT_PIOREACTOR/unit_config.ini" monitor.config enable_button false
+    sudo -u "$USERNAME" "$PIO_VENV/bin/crudini" --ini-options=nospace --set "$DOT_PIOREACTOR/unit_config.ini" monitor.config self_check_interval_hours 24
+    sudo -u "$USERNAME" "$PIO_VENV/bin/crudini" --ini-options=nospace --set "$DOT_PIOREACTOR/unit_config.ini" stirring.config use_rpm 0
+}
+
 install_pioreactor_package() {
     if [ "$PIO_VERSION" == "develop" ]; then
         sudo -u pioreactor "$PIO_VENV/bin/pip" install \
@@ -77,6 +89,9 @@ if [ "$LEADER" == "1" ]; then
 fi
 
 sudo -u $USERNAME touch $DOT_PIOREACTOR/unit_config.ini
+if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" = "zero_w_worker" ]; then
+    apply_zero_w_worker_unit_defaults
+fi
 
 # .pioreactor/plugins/ mimics .pioreactor dir
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins

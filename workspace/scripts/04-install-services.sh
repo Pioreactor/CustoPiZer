@@ -21,8 +21,10 @@ sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 # install optional hotspot service, both workers and leaders can do this.
 sudo cp /files/system/systemd/bootfs_wifi.service $SYSTEMD_DIR
 cp /files/bash/bootfs_wifi.sh /usr/local/bin/bootfs_wifi.sh
-sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
-cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
+if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" != "zero_w_worker" ]; then
+    sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
+    cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
+fi
 cp /files/bash/start_pioreactor_huey.sh /usr/local/bin/start_pioreactor_huey.sh
 
 # Keep time roughly monotonic on Raspberry Pis without RTC or internet.
@@ -72,6 +74,13 @@ sudo cp /files/system/systemd/ui-exports-cleanup.timer $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor-leader.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor-worker.target $SYSTEMD_DIR
+
+if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" = "zero_w_worker" ]; then
+    # Keep the boot-time write_ip.service, but avoid waking a Zero W every five minutes.
+    # Keep bootfs_wifi.service for wifi.ini bootstrap, but disable local AP support.
+    sudo sed -i 's/ local_access_point.service//; s/ network-info.timer//' "$SYSTEMD_DIR/pioreactor.target"
+    sudo sed -i 's/ local_access_point.service//' "$SYSTEMD_DIR/pioreactor_startup_run@.service"
+fi
 
 # Install tmpfiles.d rules to provision /run/pioreactor paths at boot
 sudo install -D -m 0644 /files/system/tmpfiles.d/pioreactor.conf /etc/tmpfiles.d/pioreactor.conf

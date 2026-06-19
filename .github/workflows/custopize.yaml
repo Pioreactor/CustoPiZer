@@ -85,7 +85,7 @@ jobs:
         scripts:  "${{ github.workspace }}/workspace/scripts"
         config: "${{ github.workspace }}/config.local"
         environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1, "HEADLESS": 1, "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}"}'
-        custopizer: "main"
+        custopizer: "1.5.0"
     
     - name: "✏ Rename image LW"
       run: |
@@ -117,7 +117,7 @@ jobs:
         scripts:  "${{ github.workspace }}/workspace/scripts"
         config: "${{ github.workspace }}/config.local"
         environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 0, "HEADLESS": 1, "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}"}'
-        custopizer: "main"
+        custopizer: "1.5.0"
 
     - name: "✏ Rename image L"
       run: |
@@ -150,7 +150,7 @@ jobs:
         scripts:  "${{ github.workspace }}/workspace/scripts"
         config: "${{ github.workspace }}/config.local"
         environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 0, "WORKER": 1, "HEADLESS": 1, "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}" }'
-        custopizer: "main"
+        custopizer: "1.5.0"
 
     - name: "✏ Rename image W"
       run: |
@@ -175,6 +175,38 @@ jobs:
         echo "Worker image size (bytes): ${{ steps.package-image-w.outputs.image_size }}" >> $GITHUB_STEP_SUMMARY
 
 
+    - name: "🏗 Run CustoPiZer Zero W Worker"
+      uses: Pioreactor/CustoPiZer@pioreactor
+      with:
+        workspace: "${{ github.workspace }}/build"
+        scripts:  "${{ github.workspace }}/workspace/scripts"
+        config: "${{ github.workspace }}/config.local"
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 0, "WORKER": 1, "HEADLESS": 1, "PIOREACTOR_IMAGE_PROFILE": "zero_w_worker", "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}" }'
+        custopizer: "1.5.0"
+
+    - name: "✏ Rename image Zero W Worker"
+      run: |
+        IMAGE_ZERO_W_WORKER="pioreactor_zero_w_worker.img"
+        echo "IMAGE_ZERO_W_WORKER=$IMAGE_ZERO_W_WORKER" >> $GITHUB_ENV
+        cd build
+        mv output.img $IMAGE_ZERO_W_WORKER
+
+    - name: "📦 Package the image Zero W Worker"
+      id: package-image-zero-w-worker
+      uses: OctoPrint/actions/package-rpi-image@main
+      with:
+        image_path: "build/${{ env.IMAGE_ZERO_W_WORKER }}"
+
+    - name: 📨 Export zip name to env Zero W Worker
+      run: |
+        IMAGE_ZERO_W_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-zero-w-worker.outputs.zip_name }}
+        echo "IMAGE_ZERO_W_WORKER_ZIP=${{ steps.package-image-zero-w-worker.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_ZERO_W_WORKER_SIZE=${{ steps.package-image-zero-w-worker.outputs.image_size }}" >> $GITHUB_ENV
+        echo "IMAGE_ZERO_W_WORKER_URL=$IMAGE_ZERO_W_WORKER_URL" >> $GITHUB_ENV
+        echo "Link to Zero W worker image: $IMAGE_ZERO_W_WORKER_URL" >> $GITHUB_STEP_SUMMARY
+        echo "Zero W worker image size (bytes): ${{ steps.package-image-zero-w-worker.outputs.image_size }}" >> $GITHUB_STEP_SUMMARY
+
+
     - name: "📝 Write image size metadata"
       run: |
         cat > build/image-sizes.json <<EOF
@@ -190,6 +222,10 @@ jobs:
           "worker": {
             "zip": "${{ env.IMAGE_WORKER_ZIP }}",
             "size_bytes": ${{ env.IMAGE_WORKER_SIZE }}
+          },
+          "zero_w_worker": {
+            "zip": "${{ env.IMAGE_ZERO_W_WORKER_ZIP }}",
+            "size_bytes": ${{ env.IMAGE_ZERO_W_WORKER_SIZE }}
           }
         }
         EOF
@@ -214,6 +250,9 @@ jobs:
           build/${{ env.IMAGE_WORKER_ZIP }}
           build/${{ env.IMAGE_WORKER }}.md5
           build/${{ env.IMAGE_WORKER }}.sha256
+          build/${{ env.IMAGE_ZERO_W_WORKER_ZIP }}
+          build/${{ env.IMAGE_ZERO_W_WORKER }}.md5
+          build/${{ env.IMAGE_ZERO_W_WORKER }}.sha256
           build/image-sizes.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -233,6 +272,9 @@ jobs:
         IMAGE_WORKER: ${{ env.IMAGE_WORKER }}
         IMAGE_WORKER_SIZE: ${{ env.IMAGE_WORKER_SIZE }}
         IMAGE_WORKER_ZIP: ${{ env.IMAGE_WORKER_ZIP }}
+        IMAGE_ZERO_W_WORKER: ${{ env.IMAGE_ZERO_W_WORKER }}
+        IMAGE_ZERO_W_WORKER_SIZE: ${{ env.IMAGE_ZERO_W_WORKER_SIZE }}
+        IMAGE_ZERO_W_WORKER_ZIP: ${{ env.IMAGE_ZERO_W_WORKER_ZIP }}
       run: |
         python3 - <<'PY'
         import json
@@ -271,6 +313,11 @@ jobs:
                     os.environ["IMAGE_WORKER"],
                     os.environ["IMAGE_WORKER_ZIP"],
                     os.environ["IMAGE_WORKER_SIZE"],
+                ),
+                asset_entry(
+                    os.environ["IMAGE_ZERO_W_WORKER"],
+                    os.environ["IMAGE_ZERO_W_WORKER_ZIP"],
+                    os.environ["IMAGE_ZERO_W_WORKER_SIZE"],
                 ),
                 asset_entry(
                     os.environ["IMAGE_LEADER"],

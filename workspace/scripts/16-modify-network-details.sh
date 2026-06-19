@@ -10,12 +10,16 @@ source /common.sh
 install_cleanup_trap
 PIO_VENV=/opt/pioreactor/venv
 
-cp /files/system/NetworkManager/PioreactorAP.nmconnection /etc/NetworkManager/system-connections/
+if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" != "zero_w_worker" ]; then
+  cp /files/system/NetworkManager/PioreactorAP.nmconnection /etc/NetworkManager/system-connections/
+fi
 cp /files/system/NetworkManager/PioreactorLocalLink.nmconnection /etc/NetworkManager/system-connections/
 cp /files/system/NetworkManager/PioreactorDefaultEth.nmconnection /etc/NetworkManager/system-connections/
 
 # 600 is required for security reasons, and nm won't register them if not 600
-sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorAP.nmconnection
+if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" != "zero_w_worker" ]; then
+  sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorAP.nmconnection
+fi
 sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorLocalLink.nmconnection
 sudo chmod 600 /etc/NetworkManager/system-connections/PioreactorDefaultEth.nmconnection
 

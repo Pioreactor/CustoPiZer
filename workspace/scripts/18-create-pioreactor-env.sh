@@ -15,6 +15,7 @@ PIOS_WRAPPER=/usr/local/bin/pios
 
 echo "Installing $ENV_FILE from template"
 sudo install -o root -g root -m 0644 "$ENV_FILE_SOURCE" "$ENV_FILE"
+echo "PIOREACTOR_IMAGE_PROFILE=${PIOREACTOR_IMAGE_PROFILE:-standard}" | sudo tee -a "$ENV_FILE" >/dev/null
 
 install_pioreactor_cli_wrapper() {
   local wrapper_path=$1

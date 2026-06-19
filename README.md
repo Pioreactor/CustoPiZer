@@ -23,6 +23,8 @@ With Docker running:
 bash make_leader_image.sh <version> ./config.local
 ```
 
+Other local image helpers are `make_leader_worker_image.sh`, `make_worker_image.sh`, and `make_zero_w_worker_image.sh`.
+
 **Systemd Targets**
 - Common: `pioreactor.target` — pulls up shared services (`pioreactor-web.target`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`).
 - Leader: `pioreactor-leader.target` — adds `mosquitto`, `pioreactor_startup_run@mqtt_to_db_streaming`, `backup-database.timer`, `ui-exports-cleanup.timer`.
@@ -69,10 +71,10 @@ These are applied by the top-level `make_*_image.sh` scripts and in CI.
 
 ## Repository Purpose and Usage
 - Builds Pioreactor-ready Raspberry Pi OS images from the official “lite” base by applying ordered customizations in `workspace/scripts/`.
-- Produces three headless image flavors (leader, worker, leader+worker) that differ only by enabled systemd targets; build locally with Docker via `make_leader_image.sh`, `make_worker_image.sh`, or `make_leader_worker_image.sh` (`bash <script> <pio_version> ./config.local`), which output zipped `.img` files in `workspace/`.
+- Produces four headless image flavors: leader, worker, leader+worker, and Zero W worker. The first three differ by enabled systemd targets; the Zero W worker is a worker-only profile built with `PIOREACTOR_IMAGE_PROFILE=zero_w_worker`, which is written to `/etc/pioreactor.env`, used for lower-pressure Huey startup, removes the periodic network-info timer, disables local access point support, and writes Zero W unit defaults into `unit_config.ini`. Build locally with Docker via `make_leader_image.sh`, `make_worker_image.sh`, `make_leader_worker_image.sh`, or `make_zero_w_worker_image.sh` (`bash <script> <pio_version> ./config.local`), which output zipped `.img` files in `workspace/`.
 - GitHub Actions receives dispatches from upstream `pioreactor` releases, runs the same containerized build (see `action.yml`), and attaches the images to the latest release; nightly images are hosted at `https://nightly.pioreactor.com/`.
 - Artifacts: `workspace/scripts/files/` (systemd units/targets/timers, bash helpers, lighttpd configs, tmpfiles rules, firstboot/everyboot scripts, NetworkManager profiles) and `src/` (CustoPiZer driver files used in the container build).
-- End users download the desired image (leader/worker/leader_worker) from GitHub releases or nightlies, flash to an SD card, and boot; services come pre-enabled via targets (`pioreactor.target`, `pioreactor-leader.target`, `pioreactor-worker.target`, `pioreactor-web.target`) so Pioreactor CLI/UI work immediately.
+- End users download the desired image (leader/worker/leader_worker/zero_w_worker) from GitHub releases or nightlies, flash to an SD card, and boot; services come pre-enabled via targets (`pioreactor.target`, `pioreactor-leader.target`, `pioreactor-worker.target`, `pioreactor-web.target`) so Pioreactor CLI/UI work immediately.
 
 ## Shared Pioreactor assets
 - The Pioreactor application repo owns shared provisioning assets under `packaging/shared-assets`, including SQL schema files, default config, exportable datasets, and UI descriptor YAML.

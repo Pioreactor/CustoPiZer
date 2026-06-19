@@ -102,6 +102,7 @@ ensure_dot_pioreactor_tree_group_is_www_data() {
 
 sudo -u $USERNAME touch $DOT_PIOREACTOR/.image_info
 echo -e "CUSTOPIZER_GIT_COMMIT=$CUSTOPIZER_GIT_COMMIT" | sudo -u $USERNAME tee -a $DOT_PIOREACTOR/.image_info > /dev/null
+echo -e "PIOREACTOR_IMAGE_PROFILE=${PIOREACTOR_IMAGE_PROFILE:-standard}" | sudo -u $USERNAME tee -a $DOT_PIOREACTOR/.image_info > /dev/null
 
 ensure_dot_pioreactor_tree_group_is_www_data
 
