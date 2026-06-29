@@ -52,6 +52,17 @@
         "default": false,
         "description": "Show every possible image",
         "matching_type": "inclusive"
+      },
+      {
+        "name": "Raspberry Pi Zero",
+        "tags": [
+          "pi1-32bit"
+        ],
+        "default": false,
+        "icon": "https://downloads.raspberrypi.com/imager/icons/RPi_Zero.png",
+        "description": "Raspberry Pi Zero, Zero W, and Zero WH",
+        "matching_type": "inclusive",
+        "capabilities": []
       }
     ]
   },
@@ -64,11 +75,93 @@
       "devices": [
         "pi5-32bit",
         "pi4-32bit",
-        "pi3-32bit"
+        "pi3-32bit",
+        "pi2-32bit",
+        "pi1-32bit"
       ],
       "subitems": [
         {
-          "name": "Pioreactor 26.5.3 (latest)",
+          "name": "Pioreactor 26.6.0 (latest)",
+          "description": "Leader & worker images for 26.6.0.",
+          "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+          "random": false,
+          "devices": [
+            "pi5-32bit",
+            "pi4-32bit",
+            "pi3-32bit",
+            "pi2-32bit",
+            "pi1-32bit"
+          ],
+          "subitems": [
+            {
+              "name": "Pioreactor Leader + Worker",
+              "description": "Pioreactor Leader + Worker image for Pioreactor 26.6.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.6.0/pioreactor_leader_worker.zip",
+              "image_download_size": 960182377,
+              "release_date": "2026-06-29",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 2571109376,
+              "extract_sha256": "af478f6495853b01493a3b5a551dbf1821c7ff266c275bf6174f8221ee9b517a"
+            },
+            {
+              "name": "Pioreactor Worker",
+              "description": "Pioreactor Worker image for Pioreactor 26.6.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.6.0/pioreactor_worker.zip",
+              "image_download_size": 961036458,
+              "release_date": "2026-06-29",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 2569012224,
+              "extract_sha256": "c11fbf97fe13fb226d751d76715ae152ce0cf4a50a2fb05c1a04a2451739a6e3"
+            },
+            {
+              "name": "Pioreactor Worker for Raspberry Pi Zero W",
+              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.6.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.6.0/pioreactor_zero_w_worker.zip",
+              "image_download_size": 967684055,
+              "release_date": "2026-06-29",
+              "init_format": "systemd",
+              "devices": [
+                "pi1-32bit"
+              ],
+              "extract_size": 2569012224,
+              "extract_sha256": "245f0a50bbeb1f801430571ad838d8924a218fd22782b6e27a2c8aea30342737"
+            },
+            {
+              "name": "Pioreactor Leader",
+              "description": "Pioreactor Leader image for Pioreactor 26.6.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.6.0/pioreactor_leader.zip",
+              "image_download_size": 961033533,
+              "release_date": "2026-06-29",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 2549089280,
+              "extract_sha256": "12f3c304755e8b83c741c5520bb1bc8c50c34b097186ed5a2ad924d31d6498c5"
+            }
+          ]
+        },
+        {
+          "name": "Pioreactor 26.5.3",
           "description": "Leader & worker images for 26.5.3.",
           "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
           "random": false,
@@ -140,7 +233,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -154,7 +248,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2501903360,
               "extract_sha256": "ad19f7e35728ec3ac1e447fc31fe4bd12ac49ac50a8ad286a2d0b8cdbc806430"
@@ -170,7 +265,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2498757632,
               "extract_sha256": "74846215957433ad889168ef735e509519e749e442a86e6617b4c1d2b8363944"
@@ -186,7 +282,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2478834688,
               "extract_sha256": "5503d3edc99bdb27fe0ba6fd3fbf40bd23a26bdca17599fef5ed6f6625bcf7eb"
@@ -201,7 +298,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -215,7 +313,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2500854784,
               "extract_sha256": "37bbc840bdaffe5cce88cad5e9b796aae2cc6b61c9bdf089afdec43e857ea2f1"
@@ -231,7 +330,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2498757632,
               "extract_sha256": "774dab9051cfa8dc340d0528d0055526dad51a7dcefe8e618c3f9c456fb8910a"
@@ -247,7 +347,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2477786112,
               "extract_sha256": "a9a117b596655953b64f4900e118102cac4b754491dd2ee6d0a1d4f5fc8b87c5"
@@ -262,7 +363,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -276,7 +378,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2500854784,
               "extract_sha256": "370b33a6a15b2e05b189abdf3825981fda5c8f343b6b0191f9c0e694d64dd9a3"
@@ -292,7 +395,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2497709056,
               "extract_sha256": "35990a657a557a16c420df34d9721c020212375b64bb11d2671a49120b5c5d7a"
@@ -308,7 +412,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2476737536,
               "extract_sha256": "8f7539b16254b87e45a10fb4a993cff912c495e03c8145826211bedc8d5e6810"
@@ -323,7 +428,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -337,7 +443,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2496660480,
               "extract_sha256": "addd30f592970d873cc73f0f676176329e732e3ec12b9c2b5cd930f181a1853a"
@@ -353,7 +460,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2494563328,
               "extract_sha256": "e178685c98c0b12e3c1d3315f35b28d12aeecca502b51a44090b739f303298d3"
@@ -369,7 +477,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2475688960,
               "extract_sha256": "dd1cef5e3bc2989f347112f220f3c5b38dfe33357b63be538e80cc674acbb6cb"
@@ -384,7 +493,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -398,7 +508,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2497709056,
               "extract_sha256": "f57f382117309301989f10ff0949db6b8149c88c381fc5d2ea232a9baba5bac0"
@@ -414,7 +525,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2495611904,
               "extract_sha256": "0204d885b53859638d9c1683a339a3d3caa2a42dcfaca2c79b31f0a3f3c69bd5"
@@ -430,7 +542,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2476737536,
               "extract_sha256": "9f592266668aa57a116c95e34cb233be259bffc23101f326cdb2715e4ab15029"
@@ -445,7 +558,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -459,7 +573,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2497709056,
               "extract_sha256": "5340c086ab8eccc27b4725c6723723715ccf198c98431b0becd934ed3bf8030e"
@@ -475,7 +590,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2494563328,
               "extract_sha256": "383a8a3862c65662fd4a0fbbf17e9b8b030d0ca8728f2a96f48c7bd3ff429beb"
@@ -491,7 +607,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2475688960,
               "extract_sha256": "dc2aa77493ad8c9907771a479dee11d9f0452703972f9e5317649720cd9c96ce"
@@ -506,7 +623,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -520,7 +638,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2497709056,
               "extract_sha256": "f740bf63cac1340d70a25e0c1755a362ec0da688d55c63454bb8da5757908222"
@@ -536,7 +655,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2494563328,
               "extract_sha256": "a3b9d4f12ec8eec114395b4f7a4fce4016a6135568ae24456873785dca9b07b5"
@@ -552,7 +672,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2475688960,
               "extract_sha256": "5de282079c30fa60eacc41b32605a571e687e77d2165395be938dfb7bb486e31"
@@ -567,7 +688,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -581,7 +703,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2502951936,
               "extract_sha256": "82089ff459e90698fa4a7cfab8c6f41ca328c544e3deedecba58ca7a837d2aa2"
@@ -597,7 +720,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2495611904,
               "extract_sha256": "f4eb0e85d8c4d52c1b36b9d27ecca4a473718604badb801550842ad2994d3bff"
@@ -613,7 +737,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2477786112,
               "extract_sha256": "76469a1eb3017e5ac55c6a80f9ea3566291ecea6b886fcc5da02a8bf408c7307"
@@ -628,7 +753,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -642,7 +768,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3198157824,
               "extract_sha256": "18f4c82d2df8b262f148b59b7c0fe954c12b33f499447ff99be93f95a34568f1"
@@ -658,7 +785,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3191866368,
               "extract_sha256": "f072ce414a37e93627ee1dcc8cc2c37a737907875ff341483c1dcd78015dd476"
@@ -674,7 +802,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3178234880,
               "extract_sha256": "8eaf2e369c1457157ac10e0b3b2c65d07c6ffc6a226574bbef1a5a34293ad112"
@@ -689,7 +818,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -703,7 +833,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3198157824,
               "extract_sha256": "91de247247ea4559c1e7e089119fee6bd3dd2cc2231ea52260fda1a8d9804401"
@@ -719,7 +850,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3191866368,
               "extract_sha256": "5881b9b8493f7035ce96f22bd26dd2d53425854bb857a1f10c66223d92f1d3bf"
@@ -735,7 +867,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3178234880,
               "extract_sha256": "3d0096ad8ad18406e7874b65486ad0bde312c78fc54282cf34f10fdf23d2d2d5"
@@ -750,7 +883,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -764,7 +898,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3193963520,
               "extract_sha256": "3040cd1f24b41f92c4d4342d4a171f371dc7e50abe2007cafb32c00d72289eb6"
@@ -780,7 +915,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3190817792,
               "extract_sha256": "023007e390ced6d1b2ca6692fe09ea0d3fdafae0db1081a0ce512d93a26b5ec1"
@@ -796,7 +932,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3177186304,
               "extract_sha256": "77d42958a6ab5b94f0ff085141985f7978da6190d6a662ddb2e6890c7a2b6ea0"
@@ -811,7 +948,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -825,7 +963,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3205497856,
               "extract_sha256": "4c008532ac1003483734f4d0fa9b59c086b00bf57c2aa327c85e1466f25932df"
@@ -841,7 +980,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3202352128,
               "extract_sha256": "cdcdc820a43addffa65354286a4fdb9ddd00061a3a6f13681c9ae18966d604a8"
@@ -857,7 +997,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3189769216,
               "extract_sha256": "5e24afdd59a9575bc283c1fb434e811e7ea118a9daf599ef39c423ba4e60d373"
@@ -872,7 +1013,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -886,7 +1028,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3205497856,
               "extract_sha256": "88ae2e1c8701f4ab14e000cdbadbf7cf3d9fd4b429eecb221fc0cedeb1b92232"
@@ -902,7 +1045,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3202352128,
               "extract_sha256": "1f25c5d403f3bcf011faab5c7ad1c7d128215df369665e2701c5c1eed1944624"
@@ -918,7 +1062,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3188720640,
               "extract_sha256": "c2963b926ffff150a19074a20b28460ddbc343230e9b76fdb705bac33ffa16ab"
@@ -933,7 +1078,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -947,7 +1093,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3206546432,
               "extract_sha256": "b775ab09e2d6de697980f867e0773b2fe39c27b2f10ffb54568efd0d23908f88"
@@ -963,7 +1110,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3203400704,
               "extract_sha256": "09646abd9af0395c8fe940af7d8d28074a5fdda670a9cba73c4037dcd2364c5e"
@@ -979,7 +1127,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3189769216,
               "extract_sha256": "e822e1a0c6454ca5d23ed2bbb0fb5fce10e473d8e6605edc53bc6a4adb32dfe5"
@@ -994,7 +1143,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1008,7 +1158,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3205497856,
               "extract_sha256": "bae1a1597841a6c81ccd589a4a73bf65de5d2465ea1a3c32f0145a48c754ac8c"
@@ -1024,7 +1175,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3202352128,
               "extract_sha256": "ec61c4f356dfb1e7fa1519094470ba8bbcf8cefce9822520c588df394c822498"
@@ -1040,7 +1192,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3189769216,
               "extract_sha256": "67642ced5feb01e8ecbc460b372cb876c38fcb1bb1447d89824525c72947bfb4"
@@ -1055,7 +1208,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1069,7 +1223,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3195012096,
               "extract_sha256": "07c9c4ed1f192a1c5659a6398adb14c04cf6a2f6c03b759520b2aeae406d1635"
@@ -1085,7 +1240,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3191866368,
               "extract_sha256": "77880b54f48af2e021fc78c62fd84c55d10f661be63436bab0462448d4ce8fd8"
@@ -1101,7 +1257,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3179283456,
               "extract_sha256": "db5c16ff00ee5da8f1841af7ad165005aad58c0cd3f23aaf234bcbaa4ad43bca"
@@ -1116,7 +1273,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1130,7 +1288,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3197109248,
               "extract_sha256": "92871a157f78cd8f815652be9d25e8604b8e022353de50188ddf9d41dd3e6bf1"
@@ -1146,7 +1305,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3190817792,
               "extract_sha256": "518a44238f8dba12bdd6be2187e0be7894f26fa73baa3b8a19a7ca0590257cc9"
@@ -1162,7 +1322,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3178234880,
               "extract_sha256": "e65c16c00c9cf68873848a4d8873d3df5128b6e45ed788ceea07c217ee205c1d"
@@ -1177,7 +1338,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1191,7 +1353,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3191866368,
               "extract_sha256": "94b9bd427ef2b66626df926dec629c1c2636c2c6540e301b6cc046ffed5f00df"
@@ -1207,7 +1370,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3188720640,
               "extract_sha256": "d2154e9d2072421303b9ebaddd50537444b14b389c06fc31532f0f564af65510"
@@ -1223,7 +1387,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3175089152,
               "extract_sha256": "2a8d4f7316b1f48cd96f724f996f5a08d33eeb5a401928689bf9651084e15d4b"
@@ -1238,7 +1403,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1252,7 +1418,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2886730752,
               "extract_sha256": "f095cc6d0f85631b961c829fc1cf9afa7df39c7e101c730ddad6dba550616688"
@@ -1268,7 +1435,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2835350528,
               "extract_sha256": "082fccc51cc6756f50aa97d09eb247f9badea5aa5b0840c8b3fb98287c46a961"
@@ -1284,7 +1452,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2821719040,
               "extract_sha256": "4655b033df7de19afddd0dc67cf0a7480d34df82bc1214f51651f1c2333df683"
@@ -1299,7 +1468,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1313,7 +1483,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2925528064,
               "extract_sha256": "4dcdcd63bd9f845735955850de2ea3ea9b9df09479a0e482502e69a1bd27deb1"
@@ -1329,7 +1500,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2846884864,
               "extract_sha256": "780fe77cca854bfe1d8cca426316caa47e221ecfe7ae79a9b6e97a7382cce193"
@@ -1345,7 +1517,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2859467776,
               "extract_sha256": "7f887583210a449d645ef482d770f0f3723ac6cb69ea92d6e5717c9b27109e4d"
@@ -1360,7 +1533,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1374,7 +1548,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3044017152,
               "extract_sha256": "5493fb1961bdd62410b4e576b93d75e9927c2a2a14a60d5cf40d32ed335996c9"
@@ -1390,7 +1565,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2833253376,
               "extract_sha256": "c8cebc5c156e9356f9ec9d9e29c5d50fc17a806e5685cf693f38062a647e28c3"
@@ -1406,7 +1582,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2846884864,
               "extract_sha256": "fd43eaaa26342681b623134ee0ea2cfdaac9a4058900889bf1c278ab54649d5b"
@@ -1421,7 +1598,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1435,7 +1613,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 3042968576,
               "extract_sha256": "5aa845548688672037ff74bd378a595091522972e435af59c2c188507adcfdc9"
@@ -1451,7 +1630,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2833253376,
               "extract_sha256": "5e2000c6a755517fcac5c9e42fdef173c2d58184ec4e089d6044fd302ef6fb52"
@@ -1467,7 +1647,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2845836288,
               "extract_sha256": "de553cad52c3ba287f6fcd9d2a7800d8d6b5e3525099fc2fe056d4862ca45650"
@@ -1482,7 +1663,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1496,7 +1678,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2835350528,
               "extract_sha256": "059f7ad687c5541c448fa138eee631045d8148c5f5a6d53f12dbcf7db526c848"
@@ -1512,7 +1695,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2833253376,
               "extract_sha256": "4bd655e6e3f4c22b8afea365222c35718e35b8a38248fea042a9a2015da1a415"
@@ -1528,7 +1712,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2772435968,
               "extract_sha256": "a95ff8018772bb1908ba88a2b9ca3401c5e76ea98bd67173c7474a1ce26ff6d5"
@@ -1543,7 +1728,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1557,7 +1743,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2836399104,
               "extract_sha256": "04fa8a541f94502710583ff43ee9c47c3f3cb114f893d6842991aa544cae32fe"
@@ -1573,7 +1760,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2834301952,
               "extract_sha256": "924cde7fb441866fc326b2157851cfa2c6926928d6188351456b3cc713231fb0"
@@ -1589,7 +1777,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2772435968,
               "extract_sha256": "4eb796b15d3d8b7dc6fb6552e74166d51f2f472f4eff03c87c41aaa9814ffcbb"
@@ -1604,7 +1793,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1618,7 +1808,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2850030592,
               "extract_sha256": "e2a30960bdcfde3539b611f0a38270a7f502e6f4428b8772858f67e9bdf7791d"
@@ -1634,7 +1825,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2846884864,
               "extract_sha256": "d694ccb088047c2f4c27728f3160bd2474306a631dd847cd34868c5c3c3e7a50"
@@ -1650,7 +1842,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2785018880,
               "extract_sha256": "db7deb10547510596253585db0f306f906ccb9b63e0722f6f40ad1224cfd8a44"
@@ -1665,7 +1858,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1679,7 +1873,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2848982016,
               "extract_sha256": "aa9f252fc023741e59aa52035e66ac218535861380c75b8c7bba653906b53d00"
@@ -1695,7 +1890,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2846884864,
               "extract_sha256": "83687808960eb660f16000cad1c3a6bbedaf24ac3127f3a299a33cfa3d5ce004"
@@ -1711,7 +1907,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2785018880,
               "extract_sha256": "5ab8081633ee922f541aa3cb43d9d9d02c90954c23f39959f91338f8a50bff0c"
@@ -1726,7 +1923,8 @@
           "devices": [
             "pi5-32bit",
             "pi4-32bit",
-            "pi3-32bit"
+            "pi3-32bit",
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -1740,7 +1938,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2848982016,
               "extract_sha256": "5d20b6d59b4da5631e4578c9bfd33bc6c37b87a7b46456c4b7ca64097ecfa35b"
@@ -1756,7 +1955,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2845836288,
               "extract_sha256": "6df0954e652ebde65585a79add084f0d8d72225865d7f86aef7ebef2c4183523"
@@ -1772,7 +1972,8 @@
               "devices": [
                 "pi5-32bit",
                 "pi4-32bit",
-                "pi3-32bit"
+                "pi3-32bit",
+                "pi2-32bit"
               ],
               "extract_size": 2785018880,
               "extract_sha256": "c43474b5adcf00775bc6351ab3edc2572fadc0eea7754f80e4ccaf6d40f5d3e0"
