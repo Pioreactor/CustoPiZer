@@ -1,8 +1,8 @@
 [Unit]
 Description=Connect to Wi-Fi from boot partition credentials
-Wants=network-online.target NetworkManager.service
-After=everyboot.service NetworkManager.service network-online.target
-Before=local_access_point.service
+Wants=NetworkManager.service
+After=everyboot.service NetworkManager.service
+Before=NetworkManager-wait-online.service network-online.target local_access_point.service
 ConditionPathExists=/boot/firmware/wifi.ini
 
 [Service]
