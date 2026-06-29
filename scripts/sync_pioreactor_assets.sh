@@ -39,7 +39,7 @@ rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/experiment_profiles/" "$TARGET_
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/ui/" "$TARGET_FILES/pioreactor/ui/"
 install -m 0644 "$PIOREACTOR_ASSETS/pioreactor/config.example.ini" "$TARGET_FILES/pioreactor/config.example.ini"
 
-for lighttpd_conf in 10-expire.conf 50-pioreactorui.conf 51-cors.conf lighttpd.conf; do
+for lighttpd_conf in 10-pioreactor-https.conf 10-expire.conf 50-pioreactorui.conf 51-cors.conf lighttpd.conf; do
   install -m 0644 "$PIOREACTOR_RUNTIME_FILES/lighttpd/$lighttpd_conf" "$TARGET_FILES/system/lighttpd/$lighttpd_conf"
 done
 install -m 0644 "$PIOREACTOR_RUNTIME_FILES/tmpfiles.d/pioreactor.conf" "$TARGET_FILES/system/tmpfiles.d/pioreactor.conf"

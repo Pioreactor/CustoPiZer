@@ -22,13 +22,14 @@ PIO_VENV=/opt/pioreactor/venv
 mkdir -p /var/www
 
 # install lighttpd and set up mods
-apt-get install -y lighttpd
+apt-get install -y lighttpd lighttpd-mod-openssl openssl
 
 # install our own lighttpd service (enablement handled by pioreactor.target)
 sudo cp /files/system/systemd/lighttpd.service $SYSTEMD_DIR
 
 
 cp /files/system/lighttpd/lighttpd.conf        /etc/lighttpd/lighttpd.conf
+cp /files/system/lighttpd/10-pioreactor-https.conf /etc/lighttpd/conf-available/10-pioreactor-https.conf
 cp /files/system/lighttpd/10-expire.conf       /etc/lighttpd/conf-available/10-expire.conf
 cp /files/system/lighttpd/50-pioreactorui.conf /etc/lighttpd/conf-available/50-pioreactorui.conf
 cp /files/system/lighttpd/51-cors.conf         /etc/lighttpd/conf-available/51-cors.conf
