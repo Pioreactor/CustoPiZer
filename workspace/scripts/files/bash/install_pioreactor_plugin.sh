@@ -100,9 +100,17 @@ fi
 # merge UI contribs
 if [ -d "$install_folder/ui/contrib/" ]; then
     # backwards compabitle
-    rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/
+    if [ "$am_i_leader" = true ]; then
+        rsync -a "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/
+    else
+        rsync -a --exclude /charts/ "$install_folder/ui/contrib/" /home/pioreactor/.pioreactor/plugins/ui/
+    fi
 elif [ -d "$install_folder/ui/" ]; then
-    rsync -a "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
+    if [ "$am_i_leader" = true ]; then
+        rsync -a "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
+    else
+        rsync -a --exclude /charts/ "$install_folder/ui/" /home/pioreactor/.pioreactor/plugins/ui/
+    fi
 fi
 
 # merge into unit_config.ini

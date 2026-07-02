@@ -98,9 +98,12 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins
 echo "Directory for adding Python code, see docs: https://docs.pioreactor.com/developer-guide/intro-plugins" | sudo -u $USERNAME tee $DOT_PIOREACTOR/plugins/README.txt > /dev/null
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/jobs
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/automations/{dosing,led,temperature}
-sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/charts
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/settings
-sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
+
+if [ "$LEADER" == "1" ]; then
+    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/charts
+    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
+fi
 
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
