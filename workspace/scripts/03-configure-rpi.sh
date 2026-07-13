@@ -62,10 +62,14 @@ if [ "$WORKER" == "1" ]; then
     # add hardware pwm
     echo "dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4" | sudo tee -a /boot/firmware/config.txt
 
+    # add camera
+    echo "dtoverlay=ov5647" | sudo tee -a /boot/firmware/config.txt
+
+
     if [ "$HEADLESS" == "1" ]; then
 
         # assign minimal memory to GPU
-        echo "gpu_mem=16"            | sudo tee /boot/firmware/config.txt -a
+        echo "gpu_mem=32"            | sudo tee /boot/firmware/config.txt -a
         echo "display_auto_detect=0" | sudo tee -a /boot/firmware/config.txt
         # disable HDMI:
 

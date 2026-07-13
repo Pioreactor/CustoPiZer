@@ -55,15 +55,11 @@ if [ "$HEADLESS" == "1" ]; then
         console-setup-linux \
         kbd \
         keyboard-configuration \
-        libcamera-ipa \
-        libcamera0.6 \
         mkvtoolnix \
         modemmanager \
         ntfs-3g \
         rpi-cloud-init-mods \
         rpi-connect-lite \
-        rpicam-apps-core \
-        rpicam-apps-lite \
         udisks2 \
         usb-modeswitch \
         usb-modeswitch-data \
