@@ -81,7 +81,87 @@
       ],
       "subitems": [
         {
-          "name": "Pioreactor 26.6.0 (latest)",
+          "name": "Pioreactor 26.7.0 (latest)",
+          "description": "Leader & worker images for 26.7.0.",
+          "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+          "random": false,
+          "devices": [
+            "pi5-32bit",
+            "pi4-32bit",
+            "pi3-32bit",
+            "pi2-32bit",
+            "pi1-32bit"
+          ],
+          "subitems": [
+            {
+              "name": "Pioreactor Leader + Worker",
+              "description": "Pioreactor Leader + Worker image for Pioreactor 26.7.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.7.0/pioreactor_leader_worker.zip",
+              "image_download_size": 1143881852,
+              "release_date": "2026-07-30",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 3055551488,
+              "extract_sha256": "952061fc71771faf31b95a54945140df04aaab3297751b1790a0492512a89ece"
+            },
+            {
+              "name": "Pioreactor Worker",
+              "description": "Pioreactor Worker image for Pioreactor 26.7.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.7.0/pioreactor_worker.zip",
+              "image_download_size": 1142541700,
+              "release_date": "2026-07-30",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 3052405760,
+              "extract_sha256": "ba757666db2101df616ce42c56de0a9cca3d8f0f97c8754e67b800c750c5eec3"
+            },
+            {
+              "name": "Pioreactor Worker for Raspberry Pi Zero W",
+              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.7.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.7.0/pioreactor_zero_w_worker.zip",
+              "image_download_size": 1144640138,
+              "release_date": "2026-07-30",
+              "init_format": "systemd",
+              "devices": [
+                "pi1-32bit"
+              ],
+              "extract_size": 3052405760,
+              "extract_sha256": "a88cda9c43864e2446a3ce473c10a4aeaeda3383edac9492201724d6f2e32f31"
+            },
+            {
+              "name": "Pioreactor Leader",
+              "description": "Pioreactor Leader image for Pioreactor 26.7.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.7.0/pioreactor_leader.zip",
+              "image_download_size": 1135196104,
+              "release_date": "2026-07-30",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 3032482816,
+              "extract_sha256": "23b0a5b565460dd2591a0610ee61b0c90c949bf2899a8e786c24b50bc83350fc"
+            }
+          ]
+        },
+        {
+          "name": "Pioreactor 26.6.0",
           "description": "Leader & worker images for 26.6.0.",
           "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
           "random": false,
