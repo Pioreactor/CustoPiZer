@@ -11,7 +11,7 @@ DOMAIN_ALIAS=$(sudo -u pioreactor "$PIO" config get ui domain_alias)
 publish_mdns() {
     local ip=$1
     echo "Publishing mDNS for $DOMAIN_ALIAS at IP $ip"
-    /usr/bin/avahi-publish -a -R "$DOMAIN_ALIAS" "$ip" || true &
+    /usr/bin/avahi-publish -a -R "$DOMAIN_ALIAS" "$ip" &
 }
 
 # Get all IP addresses, ignoring localhost
@@ -30,3 +30,11 @@ done
 for IP in $IP_ADDRESSES; do
     publish_mdns "$IP"
 done
+
+# avahi-publish keeps its record alive only while it runs, so this script must NOT exit
+# while the publishers are up. Stay in the foreground and block; if any publisher exits,
+# return non-zero so systemd (Type=simple, Restart=always) restarts the unit and the
+# alias is re-published. Previously the script backgrounded the publishers and exited,
+# so systemd reaped them and pioreactor.local silently stopped resolving.
+wait -n
+exit 1
