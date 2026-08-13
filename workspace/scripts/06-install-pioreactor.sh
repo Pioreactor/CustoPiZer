@@ -39,6 +39,9 @@ chmod g+s $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,od90,od135,media_p
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/hardware
 sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
 
+sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/camera"
+sudo -u "$USERNAME" cp -r /files/pioreactor/camera/. "$DOT_PIOREACTOR/camera/"
+
 copy_ui_jobs_and_automations() {
     sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/jobs"
     sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/automations"

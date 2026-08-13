@@ -18,6 +18,12 @@ sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEMD_DIR
 # systemd: remove wifi powersave - helps with mdns discovery
 sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 
+# Recover the Broadcom Wi-Fi device if its SDIO transport wedges.
+cp /files/bash/pioreactor-wifi-recovery.sh /usr/local/bin/pioreactor-wifi-recovery.sh
+chmod +x /usr/local/bin/pioreactor-wifi-recovery.sh
+sudo cp /files/system/systemd/pioreactor-wifi-recovery.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/pioreactor-wifi-recovery.timer $SYSTEMD_DIR
+
 # install optional hotspot service, both workers and leaders can do this.
 sudo cp /files/system/systemd/bootfs_wifi.service $SYSTEMD_DIR
 cp /files/bash/bootfs_wifi.sh /usr/local/bin/bootfs_wifi.sh

@@ -24,6 +24,7 @@ mkdir -p \
   "$TARGET_FILES/bash" \
   "$TARGET_FILES/agents" \
   "$TARGET_FILES/sql" \
+  "$TARGET_FILES/pioreactor/camera" \
   "$TARGET_FILES/pioreactor/exportable_datasets" \
   "$TARGET_FILES/pioreactor/experiment_profiles" \
   "$TARGET_FILES/pioreactor/ui" \
@@ -34,6 +35,7 @@ mkdir -p \
 
 rsync -a --delete "$PIOREACTOR_ASSETS/sql/" "$TARGET_FILES/sql/"
 rsync -a --delete "$PIOREACTOR_AGENTS/" "$TARGET_FILES/agents/"
+rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/camera/" "$TARGET_FILES/pioreactor/camera/"
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/exportable_datasets/" "$TARGET_FILES/pioreactor/exportable_datasets/"
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/experiment_profiles/" "$TARGET_FILES/pioreactor/experiment_profiles/"
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/ui/" "$TARGET_FILES/pioreactor/ui/"

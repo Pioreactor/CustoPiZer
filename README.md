@@ -26,7 +26,7 @@ bash make_leader_image.sh <version> ./config.local
 Other local image helpers are `make_leader_worker_image.sh`, `make_worker_image.sh`, and `make_zero_w_worker_image.sh`.
 
 **Systemd Targets**
-- Common: `pioreactor.target` — pulls up shared services (`pioreactor-web.target`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`).
+- Common: `pioreactor.target` — pulls up shared services (`pioreactor-web.target`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`, `pioreactor-wifi-recovery.timer`).
 - Leader: `pioreactor-leader.target` — adds `mosquitto`, `pioreactor_startup_run@mqtt_to_db_streaming`, `backup-database.timer`, `ui-exports-cleanup.timer`.
 - Worker: `pioreactor-worker.target` — adds `load_rp2040`.
 - Web: `pioreactor-web.target` — groups `lighttpd.service` and `huey.service` for joint start/stop/restart.
@@ -35,6 +35,7 @@ Enable only the appropriate targets during image build; individual units are not
 
 **Timers (replaces cron)**
 - `network-info.timer`: updates `/boot/firmware/network_info.txt` every 5 minutes.
+- `pioreactor-wifi-recovery.timer`: detects a wedged Broadcom Wi-Fi SDIO device and resets only its MMC host.
 - `backup-database.timer`: weekly database backup via `pio run backup_database`.
 - `ui-exports-cleanup.timer`: monthly cleanup of exported files in `/run/pioreactor/exports`.
 
