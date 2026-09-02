@@ -111,52 +111,55 @@ fi
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
 
-# pillow install and adafruit display library
-sudo apt install libjpeg-dev zlib1g-dev -y
+# Install system packages before Python packages that link against them.
+sudo apt-get install -y \
+    libjpeg-dev \
+    zlib1g-dev \
+    swig \
+    liblgpio-dev \
+    libyaml-dev \
+    libopenblas0-pthread \
+    liblapack3 \
+    jq \
+    rsyslog \
+    fswebcam \
+    libwebpmux3 \
+    liblcms2-2 \
+    libwebpdemux2 \
+    libopenjp2-7 \
+    libtiff6 \
+    libjpeg62-turbo \
+    libxcb1
+
+if [ "$LEADER" == "1" ]; then
+    sudo apt-get install -y sshpass
+fi
+
+sudo -u pioreactor "$PIO_VENV/bin/pip" install -U setuptools wheel
+
+# Install platform-specific wheels from the image build inputs.
 sudo -u pioreactor "$PIO_VENV/bin/pip" install pillow==12.0.0 \
   --no-index \
   --find-links /files/wheels \
   --only-binary pillow
-sudo -u pioreactor "$PIO_VENV/bin/pip" install adafruit-circuitpython-ssd1306==2.12.22
-
-
-# lgpio install
-sudo apt install swig liblgpio-dev -y
-sudo -u pioreactor "$PIO_VENV/bin/pip" install lgpio==0.2.2.0 \
-  --index-url https://www.piwheels.org/simple \
-  --extra-index-url https://pypi.org/simple
-
-# this is needed from some internal adafruit stuff! =(
-sudo -u pioreactor "$PIO_VENV/bin/pip" install rpi-lgpio==0.6
-
-# needed for fast yaml
-apt-get install libyaml-dev -y
 # https://github.com/yaml/pyyaml/issues/445
 sudo -u pioreactor "$PIO_VENV/bin/pip" install pyyaml==6.0.2 \
   --no-index \
   --find-links /files/wheels \
   --only-binary PyYAML
-
-# needed for the LED at boot
-sudo -u pioreactor "$PIO_VENV/bin/pip" install gpiozero \
-  --index-url https://www.piwheels.org/simple \
-  --extra-index-url https://pypi.org/simple
-
-
-
-# install numpy from piwheels into the venv to avoid long builds. But first install C deps.
-sudo apt-get install -y libopenblas0-pthread liblapack3
-
 sudo -u pioreactor "$PIO_VENV/bin/pip" install numpy==2.3.2 \
   --no-index \
   --find-links /files/wheels \
   --only-binary numpy
 
-sudo -u pioreactor "$PIO_VENV/bin/pip" install -U setuptools wheel
-
+# Install the GPIO compatibility layer before Pioreactor.
+sudo -u pioreactor "$PIO_VENV/bin/pip" install lgpio==0.2.2.0 \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
+# this is needed from some internal adafruit stuff! =(
+sudo -u pioreactor "$PIO_VENV/bin/pip" install rpi-lgpio==0.6
 
 if [ "$LEADER" == "1" ]; then
-    sudo apt-get install -y sshpass
     sudo -u $USERNAME cp /files/pioreactor/config.example.ini $DOT_PIOREACTOR/config.ini
 
     sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/exportable_datasets
@@ -180,12 +183,12 @@ elif [ "$WORKER" == "1" ]; then
     install_pioreactor_package worker
 fi
 
-
-# useful libs
-sudo apt-get install -y jq
-sudo apt-get install -y rsyslog
-sudo apt-get install -y fswebcam
-sudo apt-get install libwebpmux3 liblcms2-2 libwebpdemux2 libopenjp2-7 libtiff6 libjpeg62-turbo libxcb1 -y # used for Pillow
+# Install display and boot-LED packages after Pioreactor has established its
+# pinned Adafruit dependency versions.
+sudo -u pioreactor "$PIO_VENV/bin/pip" install adafruit-circuitpython-ssd1306==2.12.22
+sudo -u pioreactor "$PIO_VENV/bin/pip" install gpiozero \
+  --index-url https://www.piwheels.org/simple \
+  --extra-index-url https://pypi.org/simple
 
 
 # Create/refresh symlink for static assets to package location (leaders and workers)
