@@ -47,10 +47,10 @@ done
 install -m 0644 "$PIOREACTOR_RUNTIME_FILES/tmpfiles.d/pioreactor.conf" "$TARGET_FILES/system/tmpfiles.d/pioreactor.conf"
 install -m 0644 "$PIOREACTOR_RUNTIME_FILES/logrotate/pioreactor" "$TARGET_FILES/system/logrotate/pioreactor"
 install -m 0644 "$PIOREACTOR_RUNTIME_FILES/pioreactor.env" "$TARGET_FILES/system/pioreactor.env"
-for bash_helper in start_pioreactor_huey.sh add_new_pioreactor_worker_from_leader.sh; do
+for bash_helper in start_pioreactor_huey.sh add_new_pioreactor_worker_from_leader.sh pioreactor-wifi-recovery.sh; do
   install -m 0755 "$PIOREACTOR_RUNTIME_FILES/bash/$bash_helper" "$TARGET_FILES/bash/$bash_helper"
 done
-for systemd_unit in huey.service lighttpd.service pioreactor-web.target; do
+for systemd_unit in huey.service lighttpd.service pioreactor-web.target pioreactor-wifi-recovery.service pioreactor-wifi-recovery.timer; do
   install -m 0644 "$PIOREACTOR_RUNTIME_FILES/systemd/$systemd_unit" "$TARGET_FILES/system/systemd/$systemd_unit"
 done
 

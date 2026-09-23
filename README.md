@@ -35,7 +35,7 @@ Enable only the appropriate targets during image build; individual units are not
 
 **Timers (replaces cron)**
 - `network-info.timer`: updates `/boot/firmware/network_info.txt` every 5 minutes.
-- `pioreactor-wifi-recovery.timer`: detects a wedged Broadcom Wi-Fi SDIO device and resets only its MMC host.
+- `pioreactor-wifi-recovery.timer`: retries stranded autoconnect Wi-Fi clients at most every five minutes; resets the Wi-Fi MMC host only for the existing Broadcom SDIO failure checks. Its script and units are synced from Pioreactor `packaging/runtime-files/`.
 - `backup-database.timer`: weekly database backup via `pio run backup_database`.
 - `ui-exports-cleanup.timer`: monthly cleanup of exported files in `/run/pioreactor/exports`.
 

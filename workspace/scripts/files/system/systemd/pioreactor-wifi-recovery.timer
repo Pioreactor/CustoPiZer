@@ -1,5 +1,5 @@
 [Unit]
-Description=Periodically check for a wedged Pioreactor Wi-Fi SDIO device
+Description=Periodically check Pioreactor Wi-Fi connectivity
 
 [Timer]
 OnBootSec=3min

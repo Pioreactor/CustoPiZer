@@ -5,8 +5,8 @@ set -euxo pipefail
 PIOREACTOR_BRANCH=${PIOREACTOR_BRANCH:-develop}
 CUSTOPIZER_BRANCH=${CUSTOPIZER_BRANCH:-pioreactor}
 
-ARMHF_IMAGE_URL="https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2026-04-21/2026-04-21-raspios-trixie-armhf-lite.img.xz"
-ARM64_IMAGE_URL="https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2026-04-21/2026-04-21-raspios-trixie-arm64-lite.img.xz"
+ARMHF_IMAGE_URL="https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2026-09-15/2026-09-15-raspios-trixie-armhf-lite.img.xz"
+ARM64_IMAGE_URL="https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2026-09-15/2026-09-15-raspios-trixie-arm64-lite.img.xz"
 
 DATE=$(date +%F)
 NIGHTLY_ROOT=/var/www/nightlies/nightly

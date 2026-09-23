@@ -6,6 +6,7 @@ export LC_ALL=C
 
 readonly TAG="pioreactor-wifi-recovery"
 readonly FAILED_ATTEMPT_STAMP="/run/pioreactor/wifi-recovery-failed"
+readonly RECONNECT_STAMP="/run/pioreactor/wifi-reconnect-attempt"
 
 log() {
     /usr/bin/logger -t "$TAG" -- "$1"
@@ -22,6 +23,60 @@ mmc_host="$(printf '%s\n' "$wifi_device" | /usr/bin/sed -n 's#.*\/mmc_host\/\(mm
 
 if [ -z "$mmc_host" ]; then
     exit 0
+fi
+
+# Retry a stranded client connection without resetting hardware or creating a
+# profile. Respect radio-off, unmanaged devices and intentional disconnects.
+if [ "$(/usr/bin/nmcli -g GENERAL.STATE device show wlan0)" = "30 (disconnected)" ]; then
+    if [ "$(/usr/bin/nmcli -g GENERAL.AUTOCONNECT device show wlan0)" != "yes" ] ||
+        [ "$(/usr/bin/nmcli -g GENERAL.REASON device show wlan0 | /usr/bin/cut -d ' ' -f 1)" = "39" ]; then
+        exit 0
+    fi
+
+    # Failed authentication must not trigger another attempt every minute.
+    if [ -f "$RECONNECT_STAMP" ] &&
+        [ -n "$(/usr/bin/find "$RECONNECT_STAMP" -mmin -5 -print)" ]; then
+        exit 0
+    fi
+
+    # Only consider profiles NetworkManager reports as available on wlan0.
+    # Prefer autoconnect priority, then the most recently successful profile.
+    best_uuid=""
+    best_priority=-1000
+    best_timestamp=0
+    available_uuids="$(/usr/bin/nmcli -t -f CONNECTIONS device show wlan0 |
+        /usr/bin/sed -n 's/^CONNECTIONS\.AVAILABLE-CONNECTIONS\[[0-9]*\]:\([^ ]*\) | .*/\1/p')"
+    for uuid in $available_uuids; do
+        settings="$(/usr/bin/nmcli -g connection.autoconnect,802-11-wireless.mode,connection.autoconnect-priority,connection.timestamp connection show uuid "$uuid")"
+        {
+            read -r autoconnect
+            read -r mode
+            read -r priority
+            read -r timestamp
+        } <<< "$settings"
+        if [ "$autoconnect" != "yes" ] || [ "$mode" != "infrastructure" ]; then
+            continue
+        fi
+        if [ -z "$best_uuid" ] || [ "$priority" -gt "$best_priority" ] ||
+            { [ "$priority" -eq "$best_priority" ] && [ "$timestamp" -gt "$best_timestamp" ]; }; then
+            best_uuid="$uuid"
+            best_priority="$priority"
+            best_timestamp="$timestamp"
+        fi
+    done
+
+    [ -n "$best_uuid" ] || exit 0
+    # NetworkManager may have started connecting while we selected a profile.
+    [ "$(/usr/bin/nmcli -g GENERAL.STATE device show wlan0)" = "30 (disconnected)" ] || exit 0
+    /usr/bin/mkdir -p "$(dirname "$RECONNECT_STAMP")"
+    /usr/bin/touch "$RECONNECT_STAMP"
+    log "Wi-Fi is disconnected; retrying saved autoconnect profile $best_uuid."
+    if /usr/bin/timeout 65s /usr/bin/nmcli --wait 60 connection up uuid "$best_uuid" ifname wlan0; then
+        log "Wi-Fi reconnect succeeded."
+        exit 0
+    fi
+    log "Wi-Fi reconnect failed; will retry in five minutes if still disconnected."
+    exit 1
 fi
 
 # A gateway failure alone is not enough: local-only or ICMP-filtering networks
