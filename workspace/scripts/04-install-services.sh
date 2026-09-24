@@ -31,6 +31,11 @@ if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" != "zero_w_worker" ]; then
     sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
     cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 fi
+
+# install plugin wheels staged on the boot partition (pioreactor/plugins/*.whl), both workers and leaders.
+sudo cp /files/system/systemd/bootfs_plugins.service $SYSTEMD_DIR
+sudo cp /files/system/systemd/bootfs_plugins.path $SYSTEMD_DIR
+cp /files/bash/bootfs_plugins.sh /usr/local/bin/bootfs_plugins.sh
 cp /files/bash/start_pioreactor_huey.sh /usr/local/bin/start_pioreactor_huey.sh
 
 # Keep time roughly monotonic on Raspberry Pis without RTC or internet.

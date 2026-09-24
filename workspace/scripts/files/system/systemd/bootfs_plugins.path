@@ -1,0 +1,12 @@
+[Unit]
+Description=Start bootfs_plugins.service once this unit has a config.ini
+# A worker has no config.ini until the leader adds it, and pio cannot run before then.
+# A leader has one at boot, so the service runs immediately after firstboot.
+ConditionDirectoryNotEmpty=/boot/firmware/pioreactor/plugins
+
+[Path]
+PathExists=/home/pioreactor/.pioreactor/config.ini
+Unit=bootfs_plugins.service
+
+[Install]
+WantedBy=multi-user.target

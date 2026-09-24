@@ -26,7 +26,7 @@ bash make_leader_image.sh <version> ./config.local
 Other local image helpers are `make_leader_worker_image.sh`, `make_worker_image.sh`, and `make_zero_w_worker_image.sh`.
 
 **Systemd Targets**
-- Common: `pioreactor.target` — pulls up shared services (`pioreactor-web.target`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`, `pioreactor-wifi-recovery.timer`).
+- Common: `pioreactor.target` — pulls up shared services (`pioreactor-web.target`, `avahi_aliases`, `everyboot`, `firstboot`, `wifi_powersave`, `write_ip`, `bootfs_wifi`, `bootfs_plugins.path`, `local_access_point`, `pioreactor_startup_run@monitor`, `network-info.timer`, `pioreactor-wifi-recovery.timer`).
 - Leader: `pioreactor-leader.target` — adds `mosquitto`, `pioreactor_startup_run@mqtt_to_db_streaming`, `backup-database.timer`, `ui-exports-cleanup.timer`.
 - Worker: `pioreactor-worker.target` — adds `load_rp2040`.
 - Web: `pioreactor-web.target` — groups `lighttpd.service` and `huey.service` for joint start/stop/restart.
@@ -40,6 +40,14 @@ Enable only the appropriate targets during image build; individual units are not
 - `ui-exports-cleanup.timer`: monthly cleanup of exported files in `/run/pioreactor/exports`.
 
 Check with `systemctl list-dependencies pioreactor*.target` and `systemctl list-timers` on a device.
+
+**Boot Partition Inputs**
+
+The boot partition (`bootfs`, mounted at `/boot/firmware`) is a FAT volume that shows up as a drive when the flashed card is put in a PC, so files placed there reach the unit without SSH or a network. Each input is consumed once and then removed from the card.
+- `config.ini`: merged into `unit_config.ini` by `everyboot.sh` on every boot.
+- `wifi.ini`: `[wifi] ssid`/`passphrase`, applied by `bootfs_wifi.service` before `network-online.target`.
+- `local_access_point`: presence enables the hotspot; the first two characters set the Wi-Fi regulatory country.
+- `pioreactor/plugins/*.whl`: plugin wheels (the same layout as a USB drive), installed by `bootfs_plugins.service`. Each wheel with a `[pioreactor.plugins]` entry point is installed with `pip --no-index --find-links` against that folder, so dependency wheels dropped alongside resolve offline, then handed to `pio plugins install --source`, which merges UI assets and `additional_config.ini` exactly as the UI does. `LEADER_ONLY` plugins are skipped on workers. A plugin that fails to install is moved to `pioreactor/plugins/failed/` next to a `.log` of the attempt. `bootfs_plugins.path` starts the service only once `/home/pioreactor/.pioreactor/config.ini` exists, since `pio` cannot run on a worker before the leader adds it; the service is ordered after `firstboot.service`. Reassigning a `[PWM]` or `[leds]` channel that is already in use is logged at WARNING level.
 
 **Web Stack Ops**
 - Restart both web services: `sudo systemctl restart pioreactor-web.target`
