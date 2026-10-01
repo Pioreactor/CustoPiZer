@@ -21,10 +21,10 @@
 # A plugin that fails to install is moved to pioreactor/plugins/failed/ next to a .log
 # of the attempt, so a user with no SSH can read why by putting the card back in a PC.
 #
-# Runs as root from bootfs_plugins.service, ordered after firstboot.service and only
-# once config.ini exists: `pio` refuses to start on a worker that has not yet been
-# added to a cluster, so bootfs_plugins.path re-triggers the service when the leader
-# delivers config.ini.
+# Runs as root at boot from bootfs_plugins.service, after firstboot.service and
+# everyboot.service. Workers without config.ini leave their wheels for the next
+# boot: cluster addition delivers config.ini and reboots the worker. Config arrival
+# must not trigger installation while that onboarding reboot is still pending.
 
 set -u
 export LC_ALL=C
@@ -93,7 +93,7 @@ main() {
 
     if [ ! -f "$DOT_PIOREACTOR/config.ini" ]; then
         # A worker that has not been added to a cluster yet. Leave the wheels where they
-        # are; bootfs_plugins.path starts this service again once config.ini arrives.
+        # are; cluster addition delivers config.ini and reboots into the next attempt.
         echo "bootfs_plugins: no config.ini yet; leaving ${#wheels[@]} wheel(s) on the boot partition" >&2
         exit 0
     fi
