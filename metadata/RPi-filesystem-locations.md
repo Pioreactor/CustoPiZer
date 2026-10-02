@@ -8,6 +8,7 @@ Reference list of on-device paths that matter once a custom Pioreactor Raspberry
 | `/home/pioreactor/.pioreactor/` | Pioreactor home (`$DOT_PIOREACTOR`) | Contains configs, plugins, storage, hardware definitions, logs, and other per-device state. Ensure ownership stays `pioreactor:pioreactor`. |
 | `/home/pioreactor/.pioreactor/config.ini` | Cluster-wide configuration | Holds network, MQTT, UI, logging, and automation settings replicated to workers. |
 | `/home/pioreactor/.pioreactor/unit_config.ini` | Unit overrides | Optional per-device overrides synced from the leader when a worker is added. |
+| `/boot/firmware/pioreactor/plugins/` | Plugin wheels staged on the card before first boot | FAT `bootfs` partition, writable from any PC. `bootfs_plugins.service` installs each `.whl` offline and deletes it; failures land in `failed/` with a `.log`. Same layout as a USB drive's `pioreactor/plugins/`. |
 | `/home/pioreactor/.pioreactor/plugins/` | Plugin root | Mirrors the `.pioreactor` layout for plugin-provided files; typically subdivided into `python/`, `ui/`, `exportable_datasets/`, etc. |
 | `/home/pioreactor/.pioreactor/plugins/ui/` | UI plugin assets | Static contrib YAML, templates, and other UI resources merged into the Pioreactor UI. |
 | `/home/pioreactor/.pioreactor/plugins/exportable_datasets/` | Exportable dataset plugins | Each plugin ships SQL queries or serializers that surface new datasets to the UI. |
