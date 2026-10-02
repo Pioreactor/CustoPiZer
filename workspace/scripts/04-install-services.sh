@@ -34,7 +34,6 @@ fi
 
 # install plugin wheels staged on the boot partition (pioreactor/plugins/*.whl), both workers and leaders.
 sudo cp /files/system/systemd/bootfs_plugins.service $SYSTEMD_DIR
-sudo cp /files/system/systemd/bootfs_plugins.path $SYSTEMD_DIR
 cp /files/bash/bootfs_plugins.sh /usr/local/bin/bootfs_plugins.sh
 cp /files/bash/start_pioreactor_huey.sh /usr/local/bin/start_pioreactor_huey.sh
 
