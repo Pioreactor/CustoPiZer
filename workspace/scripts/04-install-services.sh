@@ -32,6 +32,10 @@ if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" != "zero_w_worker" ]; then
     cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 fi
 
+# Import staged YAML assets before application services start, on either role.
+sudo cp /files/system/systemd/bootfs_files.service $SYSTEMD_DIR
+cp /files/bash/bootfs_files.sh /usr/local/bin/bootfs_files.sh
+
 # install plugin wheels staged on the boot partition (pioreactor/plugins/*.whl), both workers and leaders.
 sudo cp /files/system/systemd/bootfs_plugins.service $SYSTEMD_DIR
 cp /files/bash/bootfs_plugins.sh /usr/local/bin/bootfs_plugins.sh

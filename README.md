@@ -47,7 +47,7 @@ The boot partition (`bootfs`, mounted at `/boot/firmware`) is a FAT volume that 
 - `config.ini`: merged into `unit_config.ini` by `everyboot.sh` on every boot.
 - `wifi.ini`: `[wifi] ssid`/`passphrase`, applied by `bootfs_wifi.service` before `network-online.target`.
 - `local_access_point`: presence enables the hotspot; the first two characters set the Wi-Fi regulatory country.
-- `pioreactor/plugins/*.whl`: plugin wheels (the same layout as a USB drive), installed by `bootfs_plugins.service`. Each wheel with a `[pioreactor.plugins]` entry point is installed with `pip --no-index --find-links` against that folder, so dependency wheels dropped alongside resolve offline, then handed to `pio plugins install --source`, which merges UI assets and `additional_config.ini` exactly as the UI does. `LEADER_ONLY` plugins are skipped on workers. A plugin that fails to install is moved to `pioreactor/plugins/failed/` next to a `.log` of the attempt. The service runs at boot after `firstboot.service` and `everyboot.service`. Workers without `/home/pioreactor/.pioreactor/config.ini` leave the wheels untouched; installation runs on the next boot after cluster addition delivers the config and reboots the worker. Config arrival does not trigger installation during onboarding.
+- `pioreactor/plugins/*.whl`: plugin wheels (the same layout as a USB drive), installed by `bootfs_plugins.service`. Each wheel with a `[pioreactor.plugins]` entry point is installed with `pip --no-index --find-links` against that folder, so dependency wheels dropped alongside resolve offline, then handed to `pio plugins install --source`, which merges UI assets and `additional_config.ini` exactly as the UI does. `LEADER_ONLY` plugins are skipped on workers. Corrupt wheels and wheels with direct URL dependencies are rejected before installation and moved to `failed/` with diagnostics. Archive checks and installation commands have timeouts, and the complete service is bounded to one hour. A plugin that fails to install is moved to `pioreactor/plugins/failed/` next to a `.log` of the attempt. The service runs at boot after `firstboot.service` and `everyboot.service`. Workers without `/home/pioreactor/.pioreactor/config.ini` leave the wheels untouched; installation runs on the next boot after cluster addition delivers the config and reboots the worker. Config arrival does not trigger installation during onboarding.
 
 **Web Stack Ops**
 - Restart both web services: `sudo systemctl restart pioreactor-web.target`
@@ -92,3 +92,25 @@ These are applied by the top-level `make_*_image.sh` scripts and in CI.
 - The GitHub workflow checks out the matching Pioreactor ref and syncs those assets before each image build.
 - The synced destinations under `workspace/scripts/files/sql/`, `workspace/scripts/files/pioreactor/config.example.ini`, `workspace/scripts/files/pioreactor/exportable_datasets/`, `workspace/scripts/files/pioreactor/ui/`, and the shared leader service/config files are generated build inputs and intentionally ignored by Git here.
 - CustoPiZer still owns image-only boot and hardware services such as firstboot, worker targets, local access point setup, and RP2040 loading.
+
+### Boot-partition YAML assets
+
+Place `.yaml` or `.yml` files under `pioreactor/experiment_profiles/`,
+`pioreactor/models/`, or `pioreactor/hardware/` on the SD card's boot partition.
+Experiment profiles import on leaders only; models and hardware import on either
+role. Preserve hardware subdirectories such as `hardware/hats/1.2/pwm.yaml` and
+`hardware/models/my_model/1.0/adc.yaml`. Profile and model files must be directly
+inside their respective directories.
+
+After firstboot/everyboot and before application services start, the importer
+validates each file and atomically replaces its matching `$DOT_PIOREACTOR` file,
+without a backup. Imported files belong to `pioreactor:www-data`. Successful
+inputs are removed; failures remain with an adjacent `<filename>.log` for retry
+on the next boot. Hardware validation checks YAML mappings; runtime checks still
+determine layered hardware compatibility. Profiles are made available, never
+started automatically. Workers without `config.ini` defer imports until the
+onboarding reboot. Other files and profiles staged on workers remain untouched.
+
+Plugin wheels retain their separate boot installer. YAML importer runtime assets
+are synced from Pioreactor's `packaging/runtime-files/`. This applies to leader,
+leader-worker, worker, and Zero W worker image builds.

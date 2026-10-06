@@ -37,8 +37,32 @@ log() {
 
 is_leader() {
     local leader_hostname
-    leader_hostname=$(sudo -u pioreactor -i "$PIO" config get cluster.topology leader_hostname 2>/dev/null || :)
+    leader_hostname=$(timeout --kill-after=30 30 sudo -u pioreactor -i "$PIO" config get cluster.topology leader_hostname 2>/dev/null || :)
     [ -n "$leader_hostname" ] && [ "$leader_hostname" = "$(hostname)" ]
+}
+
+# Check every wheel before pip can consume it through --find-links, including
+# dependency wheels. Direct URL requirements bypass pip's --no-index option.
+validate_wheel() {
+    timeout --kill-after=30 60 sudo -u pioreactor "$VENV_BIN/python" - "$1" <<'PYTHON'
+import sys
+from email.parser import BytesParser
+from zipfile import ZipFile
+
+from pip._vendor.packaging.requirements import Requirement
+
+with ZipFile(sys.argv[1]) as wheel:
+    bad_member = wheel.testzip()
+    if bad_member is not None:
+        raise ValueError(f"Corrupt wheel member: {bad_member}")
+    metadata_paths = [name for name in wheel.namelist() if name.endswith(".dist-info/METADATA")]
+    if len(metadata_paths) != 1:
+        raise ValueError("Expected exactly one wheel METADATA file")
+    metadata = BytesParser().parsebytes(wheel.read(metadata_paths[0]))
+    for requirement in metadata.get_all("Requires-Dist", []):
+        if Requirement(requirement).url is not None:
+            raise ValueError(f"Boot-partition wheels cannot use direct URL dependencies: {requirement}")
+PYTHON
 }
 
 is_plugin_wheel() {
@@ -67,6 +91,24 @@ main() {
     is_leader && leader=true
 
     local failures=0 whl file name logfile
+    mkdir -p "$FAILED_DIR"
+    for whl in "${wheels[@]}"; do
+        file=$(basename "$whl")
+        logfile="$FAILED_DIR/$file.log"
+        if validate_wheel "$whl" >"$logfile" 2>&1; then
+            rm -f "$logfile"
+        else
+            echo "Wheel validation failed or timed out; no installation attempted." >>"$logfile"
+            mv -f "$whl" "$FAILED_DIR/$file"
+            log error "Invalid wheel $file; see $logfile"
+            failures=$((failures + 1))
+        fi
+    done
+
+    # Re-scan after quarantining invalid archives and URL dependencies.
+    shopt -s nullglob
+    wheels=("$PLUGINS_DIR"/*.whl)
+    shopt -u nullglob
     for whl in "${wheels[@]}"; do
         file=$(basename "$whl")
         name=${file%%-*}
@@ -83,20 +125,19 @@ main() {
             continue
         fi
 
-        logfile=$(mktemp)
+        # Keep diagnostics on the card even if systemd terminates the service.
+        logfile="$FAILED_DIR/$file.log"
         # shellcheck disable=SC2024  # the log file is ours (root); only pip runs as pioreactor
-        if sudo -u pioreactor "$PIP" install --no-index --find-links "$PLUGINS_DIR" "$whl" >"$logfile" 2>&1 &&
-            timeout 900 sudo -u pioreactor -i "$PIO" plugins install "$name" --source "$whl" >>"$logfile" 2>&1; then
+        if timeout --kill-after=30 900 sudo -u pioreactor "$PIP" --isolated install --no-index --find-links "$PLUGINS_DIR" "$whl" >"$logfile" 2>&1 &&
+            timeout --kill-after=30 900 sudo -u pioreactor -i "$PIO" plugins install "$name" --source "$whl" >>"$logfile" 2>&1; then
             log notice "Installed plugin $name from the boot partition ($file)"
-            rm -f "$whl"
+            rm -f "$whl" "$logfile"
         else
-            mkdir -p "$FAILED_DIR"
+            echo "Plugin installation failed or timed out." >>"$logfile"
             mv -f "$whl" "$FAILED_DIR/$file"
-            cp "$logfile" "$FAILED_DIR/$file.log"
             log error "Failed to install plugin $name from the boot partition; see $FAILED_DIR/$file.log"
             failures=$((failures + 1))
         fi
-        rm -f "$logfile"
     done
 
     if [ "$failures" -eq 0 ]; then

@@ -186,7 +186,7 @@ fi
 # Install display and boot-LED packages after Pioreactor has established its
 # pinned Adafruit dependency versions.
 sudo -u pioreactor "$PIO_VENV/bin/pip" install adafruit-circuitpython-ssd1306==2.12.22
-sudo -u pioreactor "$PIO_VENV/bin/pip" install gpiozero \
+sudo -u pioreactor "$PIO_VENV/bin/pip" install "gpiozero>=2.0.1.post3" \
   --index-url https://www.piwheels.org/simple \
   --extra-index-url https://pypi.org/simple
 

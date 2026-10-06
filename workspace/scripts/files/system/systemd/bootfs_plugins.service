@@ -8,3 +8,5 @@ EnvironmentFile=/etc/pioreactor.env
 ExecStart=/bin/bash /usr/local/bin/bootfs_plugins.sh
 Type=oneshot
 RemainAfterExit=yes
+# Bound the complete boot operation, including plugin hooks and filesystem work.
+TimeoutStartSec=1h
