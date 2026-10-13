@@ -131,9 +131,7 @@ sudo apt-get install -y \
     libjpeg62-turbo \
     libxcb1
 
-if [ "$LEADER" == "1" ]; then
-    sudo apt-get install -y sshpass
-fi
+sudo apt-get install -y sshpass
 
 sudo -u pioreactor "$PIO_VENV/bin/pip" install -U setuptools wheel
 
