@@ -458,5 +458,21 @@
   "https://github.com/Pioreactor/CustoPiZer/releases/download/26.10.0/pioreactor_zero_w_worker.zip": {
     "extract_size": 3054502912,
     "extract_sha256": "dcafb9f85303e58b7498679e4c48a18f7dcddaea542f8514333c97652d63c6d7"
+  },
+  "https://github.com/Pioreactor/CustoPiZer/releases/download/26.11.0/pioreactor_leader.zip": {
+    "extract_size": 2771387392,
+    "extract_sha256": "1ae1dfa00d28ed6fd1a2bae347999080da177902a56f1ac89205657af7659a65"
+  },
+  "https://github.com/Pioreactor/CustoPiZer/releases/download/26.11.0/pioreactor_leader_worker.zip": {
+    "extract_size": 2793407488,
+    "extract_sha256": "5dd97e43423e443eb02b0634ab7a40500e9fe252207973ca5b9836c89ca45d1f"
+  },
+  "https://github.com/Pioreactor/CustoPiZer/releases/download/26.11.0/pioreactor_worker.zip": {
+    "extract_size": 2792358912,
+    "extract_sha256": "31a0af0b5437c34d80849c75a7488700cb3275ad6975f3e390ec2114c842d7cb"
+  },
+  "https://github.com/Pioreactor/CustoPiZer/releases/download/26.11.0/pioreactor_zero_w_worker.zip": {
+    "extract_size": 2792358912,
+    "extract_sha256": "378590e5653fca369591a976fb3eaca6f948b0e280c0cea0870b1fd64ea746c7"
   }
 }
