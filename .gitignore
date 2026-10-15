@@ -26,3 +26,18 @@ workspace/scripts/files/wheels/
 
 # temp
 workspace/scripts/files/experimental-display/
+
+# Canonical sources now live in Pioreactor packaging. Builds regenerate these.
+workspace/scripts/files/pioreactor/hardware/
+workspace/scripts/files/bash/bootfs_plugins.sh
+workspace/scripts/files/bash/avahi_aliases.sh
+workspace/scripts/files/system/lighttpd/52-api-only.conf
+workspace/scripts/files/system/systemd/bootfs_plugins.service
+workspace/scripts/files/system/systemd/avahi_aliases.service
+workspace/scripts/files/system/systemd/backup-database.service
+workspace/scripts/files/system/systemd/backup-database.timer
+workspace/scripts/files/system/systemd/pioreactor-leader.target
+workspace/scripts/files/system/systemd/ui-exports-cleanup.service
+workspace/scripts/files/system/systemd/ui-exports-cleanup.timer
+workspace/scripts/files/common-assets/
+workspace/scripts/files/system/mosquitto/

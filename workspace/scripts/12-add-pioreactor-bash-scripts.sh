@@ -10,6 +10,5 @@ source /common.sh
 install_cleanup_trap
 
 
-if [ "$LEADER" == "1" ]; then
-    cp /files/bash/add_new_pioreactor_worker_from_leader.sh /usr/local/bin/
-fi
+# Same additive payload as release upgrades: does not select a role or enable services.
+bash /files/common-assets/install_common_assets.sh /files/common-assets

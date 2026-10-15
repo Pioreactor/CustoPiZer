@@ -22,17 +22,21 @@ die() {
 
 mkdir -p \
   "$TARGET_FILES/bash" \
+  "$TARGET_FILES/common-assets" \
   "$TARGET_FILES/agents" \
   "$TARGET_FILES/sql" \
   "$TARGET_FILES/pioreactor/camera" \
+  "$TARGET_FILES/pioreactor/hardware" \
   "$TARGET_FILES/pioreactor/exportable_datasets" \
   "$TARGET_FILES/pioreactor/experiment_profiles" \
   "$TARGET_FILES/pioreactor/ui" \
   "$TARGET_FILES/system/lighttpd" \
+  "$TARGET_FILES/system/mosquitto" \
   "$TARGET_FILES/system/systemd" \
   "$TARGET_FILES/system/logrotate" \
   "$TARGET_FILES/system/tmpfiles.d"
 
+rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/hardware/" "$TARGET_FILES/pioreactor/hardware/"
 rsync -a --delete "$PIOREACTOR_ASSETS/sql/" "$TARGET_FILES/sql/"
 rsync -a --delete "$PIOREACTOR_AGENTS/" "$TARGET_FILES/agents/"
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/camera/" "$TARGET_FILES/pioreactor/camera/"
@@ -41,20 +45,24 @@ rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/experiment_profiles/" "$TARGET_
 rsync -a --delete "$PIOREACTOR_ASSETS/pioreactor/ui/" "$TARGET_FILES/pioreactor/ui/"
 install -m 0644 "$PIOREACTOR_ASSETS/pioreactor/config.example.ini" "$TARGET_FILES/pioreactor/config.example.ini"
 
-for lighttpd_conf in 10-pioreactor-https.conf 10-expire.conf 50-pioreactorui.conf 51-cors.conf lighttpd.conf; do
+for lighttpd_conf in 10-pioreactor-https.conf 10-expire.conf 50-pioreactorui.conf 51-cors.conf 52-api-only.conf lighttpd.conf; do
   install -m 0644 "$PIOREACTOR_RUNTIME_FILES/lighttpd/$lighttpd_conf" "$TARGET_FILES/system/lighttpd/$lighttpd_conf"
 done
 install -m 0644 "$PIOREACTOR_RUNTIME_FILES/tmpfiles.d/pioreactor.conf" "$TARGET_FILES/system/tmpfiles.d/pioreactor.conf"
 install -m 0644 "$PIOREACTOR_RUNTIME_FILES/logrotate/pioreactor" "$TARGET_FILES/system/logrotate/pioreactor"
 install -m 0644 "$PIOREACTOR_RUNTIME_FILES/pioreactor.env" "$TARGET_FILES/system/pioreactor.env"
-for bash_helper in bootfs_files.sh start_pioreactor_huey.sh add_new_pioreactor_worker_from_leader.sh pioreactor-wifi-recovery.sh; do
+for bash_helper in bootfs_plugins.sh avahi_aliases.sh bootfs_files.sh start_pioreactor_huey.sh add_new_pioreactor_worker_from_leader.sh pioreactor-wifi-recovery.sh; do
   install -m 0755 "$PIOREACTOR_RUNTIME_FILES/bash/$bash_helper" "$TARGET_FILES/bash/$bash_helper"
 done
-for systemd_unit in bootfs_files.service huey.service lighttpd.service pioreactor-web.target pioreactor-wifi-recovery.service pioreactor-wifi-recovery.timer; do
+for systemd_unit in avahi_aliases.service backup-database.service backup-database.timer pioreactor-leader.target ui-exports-cleanup.service ui-exports-cleanup.timer bootfs_plugins.service bootfs_files.service huey.service lighttpd.service pioreactor-web.target pioreactor-wifi-recovery.service pioreactor-wifi-recovery.timer; do
   install -m 0644 "$PIOREACTOR_RUNTIME_FILES/systemd/$systemd_unit" "$TARGET_FILES/system/systemd/$systemd_unit"
 done
 
-# Systemd targets and service ordering are image-owned here: CustoPiZer keeps
+# Stage the same additive payload used by release updates.
+bash "$PIOREACTOR_REPO/scripts/stage_common_assets.sh" "$TARGET_FILES/common-assets"
+install -m 0644 "$PIOREACTOR_RUNTIME_FILES/mosquitto/pioreactor.conf" "$TARGET_FILES/system/mosquitto/pioreactor.conf"
+
+# Other systemd targets and service ordering are image-owned here: CustoPiZer keeps
 # firstboot, worker, hardware, local access point, and monitor boot semantics.
 
 echo "Synced Pioreactor assets from $PIOREACTOR_ASSETS"

@@ -36,25 +36,10 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,o
 chown -R $USERNAME:www-data $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,od90,od135,media_pump,waste_pump,alt_media_pump}
 chmod g+s $DOT_PIOREACTOR/storage/calibrations/{stirring,od45,od90,od135,media_pump,waste_pump,alt_media_pump}
 
+# Fresh images seed hardware from the canonical shared tree. Upgrades preserve it.
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/hardware
 sudo -u $USERNAME cp -r /files/pioreactor/hardware/. $DOT_PIOREACTOR/hardware/
-
-sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/camera"
-sudo -u "$USERNAME" cp -r /files/pioreactor/camera/. "$DOT_PIOREACTOR/camera/"
-
-copy_ui_jobs_and_automations() {
-    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/jobs"
-    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/automations"
-    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui/settings"
-    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/jobs/. "$DOT_PIOREACTOR/ui/jobs/"
-    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/automations/. "$DOT_PIOREACTOR/ui/automations/"
-    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/settings/. "$DOT_PIOREACTOR/ui/settings/"
-}
-
-copy_full_ui_tree() {
-    sudo -u "$USERNAME" mkdir -p "$DOT_PIOREACTOR/ui"
-    sudo -u "$USERNAME" cp -r /files/pioreactor/ui/. "$DOT_PIOREACTOR/ui/"
-}
+# Camera defaults are installed by the common payload in step 12.
 
 apply_zero_w_worker_unit_defaults() {
     {
@@ -83,14 +68,6 @@ install_pioreactor_package() {
 }
 
 
-if [ "$LEADER" == "1" ]; then
-
-  sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/experiment_profiles
-  rsync -a --ignore-existing --chown=$USERNAME:www-data /files/pioreactor/experiment_profiles/ $DOT_PIOREACTOR/experiment_profiles/
-  chown -R $USERNAME:www-data $DOT_PIOREACTOR/experiment_profiles
-  chmod g+s $DOT_PIOREACTOR/experiment_profiles
-fi
-
 sudo -u $USERNAME touch $DOT_PIOREACTOR/unit_config.ini
 if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" = "zero_w_worker" ]; then
     apply_zero_w_worker_unit_defaults
@@ -103,10 +80,6 @@ sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/jobs
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/automations/{dosing,led,temperature}
 sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/settings
 
-if [ "$LEADER" == "1" ]; then
-    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/ui/charts
-    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/plugins/exportable_datasets
-fi
 
 # Expose web exports from /run (ephemeral). No exports under ~/.pioreactor.
 # /run/pioreactor/exports is created at boot via systemd-tmpfiles.
@@ -159,19 +132,9 @@ sudo -u pioreactor "$PIO_VENV/bin/pip" install rpi-lgpio==0.6
 
 if [ "$LEADER" == "1" ]; then
     sudo -u $USERNAME cp /files/pioreactor/config.example.ini $DOT_PIOREACTOR/config.ini
-
-    sudo -u $USERNAME mkdir -p $DOT_PIOREACTOR/exportable_datasets
-    sudo -u $USERNAME cp /files/pioreactor/exportable_datasets/*.yaml $DOT_PIOREACTOR/exportable_datasets/
-
-    copy_full_ui_tree
-
-
 fi
 
-
-if [ "$WORKER" == "1" ]; then
-    copy_ui_jobs_and_automations
-fi
+# Common descriptors and provisioning seeds are installed in step 12 on every image.
 
 if [ "$LEADER" == "1" ] && [ "$WORKER" == "1" ]; then
     install_pioreactor_package leader_worker
