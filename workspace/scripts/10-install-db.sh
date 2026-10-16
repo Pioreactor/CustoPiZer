@@ -29,6 +29,10 @@ fi
 DB=$STORAGE_DIR/local_persistent_pioreactor_metadata.sqlite
 sqlite3 $DB < /files/sql/sqlite_configuration.sql
 
+# A unit boots for the first time active (pioreactor.unit_active). Workers have no config.ini
+# until they join a cluster, so read the storage paths from the example config.
+GLOBAL_CONFIG=/files/pioreactor/config.example.ini /opt/pioreactor/venv/bin/python -c \
+    "from pioreactor.unit_active import save_local_active; save_local_active(True)"
 
 
 chmod -R 770 $STORAGE_DIR
