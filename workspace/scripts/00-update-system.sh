@@ -11,6 +11,10 @@ install_cleanup_trap
 
 apt-get install -y lsof
 
+# The base Raspberry Pi OS image can lag behind trixie-security, and images never update themselves after flashing.
+apt-get update
+apt-get install -y --only-upgrade ca-certificates
+
 # Include Tailscale in every image; users authenticate after boot with tailscale up.
 install -d -m 0755 /usr/share/keyrings
 curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg \

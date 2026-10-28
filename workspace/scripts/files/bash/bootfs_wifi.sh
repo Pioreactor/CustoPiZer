@@ -21,5 +21,19 @@ fi
 
 nmcli radio wifi on
 
+# Recreate matching client profiles: nmcli's password update can fail on saved
+# connections. Match the actual SSID, since connection names may differ.
+connections=$(nmcli -t -f UUID,TYPE connection show)
+while IFS=: read -r uuid type; do
+    [ "$type" = "802-11-wireless" ] || continue
+    mode=$(nmcli -g 802-11-wireless.mode connection show uuid "$uuid")
+    # An unset mode defaults to infrastructure. Preserve hotspots and ad-hoc profiles.
+    [ -z "$mode" ] || [ "$mode" = "infrastructure" ] || continue
+    saved_ssid=$(nmcli --escape no -g 802-11-wireless.ssid connection show uuid "$uuid")
+    if [ "$saved_ssid" = "$SSID" ]; then
+        nmcli connection delete uuid "$uuid"
+    fi
+done <<< "$connections"
+
 nmcli dev wifi connect "$SSID" password "$PASSPHRASE"
 rm "$WIFI_CONFIG"

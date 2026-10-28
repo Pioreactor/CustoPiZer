@@ -151,6 +151,12 @@ net.ipv6.conf.lo.disable_ipv6 = 1"
 
 echo "$lines" | sudo tee "$file" > /dev/null
 
+# resolve .local names through avahi without first asking unicast DNS for a `local.` SOA. mdns4_minimal sends that
+# query on every lookup (~20 ms per lookup on a typical LAN); mdns4 skips it when /etc/mdns.allow exists.
+# Tradeoff: IPv4 reverse lookups (IP -> name) of non-mDNS hosts now stall ~5 s, e.g. `ping -4` without -n.
+sudo sed -i 's/^hosts:.*/hosts:          files mdns4 [NOTFOUND=return] dns/' /etc/nsswitch.conf
+printf ".local.\n.local\n" | sudo tee /etc/mdns.allow > /dev/null
+
 # remove man page refreshes
 sudo rm /var/lib/man-db/auto-update
 
