@@ -8,9 +8,13 @@ User=pioreactor
 EnvironmentFile=/etc/pioreactor.env
 ExecStart=/bin/bash /usr/local/bin/avahi_aliases.sh
 ExecStartPost=/opt/pioreactor/venv/bin/pio log -m "%n successful" -n systemd  --local-only
-Type=forking
-Restart=on-abnormal
-RuntimeMaxSec=1d
+# avahi_aliases.sh runs the avahi-publish process(es) in the foreground, so the service is a
+# simple long-running unit. Restart=always brings the alias back if a publisher ever dies.
+# (Was Type=forking + Restart=on-abnormal + RuntimeMaxSec=1d, which let the publishers be
+# reaped at boot and never restarted -> pioreactor.local silently stopped resolving.)
+Type=simple
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
