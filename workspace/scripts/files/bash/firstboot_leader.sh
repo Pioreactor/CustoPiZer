@@ -35,7 +35,7 @@ sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set $DOT_PIORE
 sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set $DOT_PIOREACTOR/config.ini cluster.topology leader_address "$HOSTNAME".local
 sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set $DOT_PIOREACTOR/config.ini mqtt broker_address "$HOSTNAME".local
 
-sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around.  When you are ready, create a new experiment in the dropdown to the left.');"
+sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO experiments (started_at, created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around.  When you are ready, create a new experiment in the dropdown to the left.');"
 
 
 # create the leader's local unit-specific config file.
