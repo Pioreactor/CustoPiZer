@@ -38,7 +38,6 @@ sudo -u $USERNAME "$PIO_VENV/bin/crudini" --ini-options=nospace --set $DOT_PIORE
 sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO experiments (started_at, created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around. When you are ready, create a new experiment in the dropdown to the left.');"
 # the model name and version will be populated on first UI load, see MissingWorkerModelModal.jsx
 sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO workers (pioreactor_unit, added_at, is_active, model_name, model_version) VALUES ('$HOSTNAME', STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 1, NULL, NULL);"
-sqlite3 "$DB_LOC" "INSERT OR IGNORE INTO experiment_worker_assignments (pioreactor_unit, experiment, assigned_at) VALUES ('$HOSTNAME', 'Demo experiment', STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'));"
 
 # create our local unit-specific config file.
 sudo -u $USERNAME touch "$DOT_PIOREACTOR/unit_config.ini" # set with the correct read/write permissions
