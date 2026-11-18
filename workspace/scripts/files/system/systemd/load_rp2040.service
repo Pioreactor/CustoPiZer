@@ -1,7 +1,11 @@
 [Unit]
 Description=Load program into RP2040
-Wants=network-online.target
-After=network-online.target firstboot.service
+# Loading firmware into the RP2040 is purely local (openocd over GPIO/SWD of a
+# local main.elf) and has no network dependency. Ordering it after
+# network-online.target needlessly held actuators/sensors dark until the network
+# was up (~12s on a good boot, up to the wait-online timeout when Wi-Fi can't
+# associate). Decouple hardware bring-up from network state.
+After=firstboot.service
 
 [Service]
 User=pioreactor
