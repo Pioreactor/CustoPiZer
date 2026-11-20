@@ -16,26 +16,14 @@ CACHE_PATH = DATA_REPOSITORY_DIR / "pioreactor_image_cache.json"
 
 ICON_PLACEHOLDER = "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948"
 DEVICE_TAGS = ["pi5-32bit", "pi4-32bit", "pi3-32bit", "pi2-32bit"]
-ZERO_W_DEVICE_TAGS = ["pi1-32bit"]
-ZERO_DEVICE = {
-    "name": "Raspberry Pi Zero",
-    "tags": ZERO_W_DEVICE_TAGS,
-    "default": False,
-    "icon": "https://downloads.raspberrypi.com/imager/icons/RPi_Zero.png",
-    "description": "Raspberry Pi Zero, Zero W, and Zero WH",
-    "matching_type": "inclusive",
-    "capabilities": [],
-}
+# The original Raspberry Pi Zero W is no longer supported, so Imager no longer offers that device.
+DROPPED_DEVICE_TAG = "pi1-32bit"
 ZIP_ASSETS = {
     "Pioreactor Leader": "pioreactor_leader.zip",
     "Pioreactor Leader + Worker": "pioreactor_leader_worker.zip",
     "Pioreactor Worker": "pioreactor_worker.zip",
-    "Pioreactor Worker for Raspberry Pi Zero W": "pioreactor_zero_w_worker.zip",
 }
 ZIP_ASSET_ORDER = {filename: index for index, filename in enumerate(ZIP_ASSETS.values())}
-ASSET_DEVICE_TAGS = {
-    "Pioreactor Worker for Raspberry Pi Zero W": ZERO_W_DEVICE_TAGS,
-}
 
 
 def unique_preserving_order(values: Iterable[str]) -> list[str]:
@@ -51,10 +39,9 @@ def unique_preserving_order(values: Iterable[str]) -> list[str]:
 
 def pioreactor_imager_metadata(reference: dict) -> dict:
     imager = dict(reference.get("imager", {}))
-    devices = list(imager.get("devices", []))
-    if not any(device.get("tags") == ZERO_W_DEVICE_TAGS for device in devices):
-        devices.append(ZERO_DEVICE)
-    imager["devices"] = devices
+    imager["devices"] = [
+        device for device in imager.get("devices", []) if DROPPED_DEVICE_TAG not in device.get("tags", [])
+    ]
     return imager
 
 
@@ -285,10 +272,9 @@ def build_release_subitems(
     positions = {
         "Pioreactor Leader + Worker": 0,
         "Pioreactor Worker": 1,
-        "Pioreactor Worker for Raspberry Pi Zero W": 2,
-        "Pioreactor Leader": 3,
+        "Pioreactor Leader": 2,
     }
-    ordered: list[dict | None] = [None, None, None, None]
+    ordered: list[dict | None] = [None, None, None]
     for label, filename in ZIP_ASSETS.items():
         asset = assets_by_name.get(filename)
         if not asset:
@@ -312,7 +298,7 @@ def build_release_subitems(
             "image_download_size": asset.get("size"),
             "release_date": release_date,
             "init_format": "systemd",
-            "devices": ASSET_DEVICE_TAGS.get(label, DEVICE_TAGS),
+            "devices": DEVICE_TAGS,
             "extract_size": extract_size,
             "extract_sha256": extract_sha256,
         }

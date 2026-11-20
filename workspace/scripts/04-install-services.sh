@@ -27,10 +27,8 @@ sudo cp /files/system/systemd/pioreactor-wifi-recovery.timer $SYSTEMD_DIR
 # install optional hotspot service, both workers and leaders can do this.
 sudo cp /files/system/systemd/bootfs_wifi.service $SYSTEMD_DIR
 cp /files/bash/bootfs_wifi.sh /usr/local/bin/bootfs_wifi.sh
-if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" != "zero_w_worker" ]; then
-    sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
-    cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
-fi
+sudo cp /files/system/systemd/local_access_point.service $SYSTEMD_DIR
+cp /files/bash/local_access_point.sh /usr/local/bin/local_access_point.sh
 
 # Import staged YAML assets before application services start, on either role.
 sudo cp /files/system/systemd/bootfs_files.service $SYSTEMD_DIR
@@ -38,7 +36,7 @@ cp /files/bash/bootfs_files.sh /usr/local/bin/bootfs_files.sh
 
 # install plugin wheels staged on the boot partition (pioreactor/plugins/*.whl), both workers and leaders.
 sudo cp /files/system/systemd/bootfs_plugins.service $SYSTEMD_DIR
-cp /files/bash/bootfs_plugins.sh /usr/local/bin/bootfs_plugins.sh
+install -m 0755 /files/bash/bootfs_plugins.sh /usr/local/bin/bootfs_plugins.sh
 cp /files/bash/start_pioreactor_huey.sh /usr/local/bin/start_pioreactor_huey.sh
 
 # Keep time roughly monotonic on Raspberry Pis without RTC or internet.
@@ -59,13 +57,6 @@ sudo cp /files/system/systemd/pioreactor-web.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/log-failure@.service $SYSTEMD_DIR
 sudo cp /files/system/scripts/led_control.py /usr/local/bin/led_control.py
 
-
-if [ "$LEADER" == "1" ]; then
-    # systemd: alias hostname to pioreactor.local
-    sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
-    sudo systemctl enable avahi_aliases.service
-    cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
-fi
 
 if [ "$WORKER" == "1" ]; then
     # add avahi services
@@ -89,13 +80,6 @@ sudo cp /files/system/systemd/pioreactor.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor-leader.target $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor-worker.target $SYSTEMD_DIR
 
-if [ "${PIOREACTOR_IMAGE_PROFILE:-standard}" = "zero_w_worker" ]; then
-    # Keep the boot-time write_ip.service, but avoid waking a Zero W every five minutes.
-    # Keep bootfs_wifi.service for wifi.ini bootstrap, but disable local AP support.
-    sudo sed -i 's/ local_access_point.service//; s/ network-info.timer//' "$SYSTEMD_DIR/pioreactor.target"
-    sudo sed -i 's/ local_access_point.service//' "$SYSTEMD_DIR/pioreactor_startup_run@.service"
-fi
-
 # Install tmpfiles.d rules to provision /run/pioreactor paths at boot
 sudo install -D -m 0644 /files/system/tmpfiles.d/pioreactor.conf /etc/tmpfiles.d/pioreactor.conf
 
@@ -104,6 +88,9 @@ sudo systemctl enable fake-hwclock-load.service
 sudo systemctl enable fake-hwclock-save.timer
 sudo systemctl enable pioreactor.target
 if [ "$LEADER" == "1" ]; then
+    for service in pioreactor_startup_run@mqtt_to_db_streaming.service backup-database.service; do
+        install -D -m 0644 /files/system/systemd/pioreactor-leader-only.conf "/etc/systemd/system/$service.d/10-pioreactor-leader-only.conf"
+    done
     sudo systemctl enable pioreactor-leader.target
 fi
 if [ "$WORKER" == "1" ]; then

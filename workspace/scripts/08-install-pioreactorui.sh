@@ -51,7 +51,7 @@ if [ "$LEADER" != "1" ]; then
 fi
 
 
-# we add entries to mDNS: pioreactor.local, see avahi_aliases.service
+# avahi-browse finds workers on the network (_pio-worker._tcp)
 sudo apt-get install -y avahi-utils
 
 # install ufw since this is pretty commonly needed in larger networks

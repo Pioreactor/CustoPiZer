@@ -50,7 +50,7 @@ install -m 0644 "$PIOREACTOR_RUNTIME_FILES/pioreactor.env" "$TARGET_FILES/system
 for bash_helper in bootfs_files.sh start_pioreactor_huey.sh add_new_pioreactor_worker_from_leader.sh pioreactor-wifi-recovery.sh; do
   install -m 0755 "$PIOREACTOR_RUNTIME_FILES/bash/$bash_helper" "$TARGET_FILES/bash/$bash_helper"
 done
-for systemd_unit in bootfs_files.service huey.service lighttpd.service pioreactor-web.target pioreactor-wifi-recovery.service pioreactor-wifi-recovery.timer; do
+for systemd_unit in bootfs_files.service huey.service lighttpd.service pioreactor-web.target pioreactor-wifi-recovery.service pioreactor-wifi-recovery.timer pioreactor-leader-only.conf; do
   install -m 0644 "$PIOREACTOR_RUNTIME_FILES/systemd/$systemd_unit" "$TARGET_FILES/system/systemd/$systemd_unit"
 done
 
