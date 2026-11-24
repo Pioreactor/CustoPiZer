@@ -52,17 +52,6 @@
         "default": false,
         "description": "Show every possible image",
         "matching_type": "inclusive"
-      },
-      {
-        "name": "Raspberry Pi Zero",
-        "tags": [
-          "pi1-32bit"
-        ],
-        "default": false,
-        "icon": "https://downloads.raspberrypi.com/imager/icons/RPi_Zero.png",
-        "description": "Raspberry Pi Zero, Zero W, and Zero WH",
-        "matching_type": "inclusive",
-        "capabilities": []
       }
     ]
   },
@@ -76,12 +65,59 @@
         "pi5-32bit",
         "pi4-32bit",
         "pi3-32bit",
-        "pi2-32bit",
-        "pi1-32bit"
+        "pi2-32bit"
       ],
       "subitems": [
         {
-          "name": "Pioreactor 26.12.0 (latest)",
+          "name": "Pioreactor 26.13.0 (latest)",
+          "description": "Leader & worker images for 26.13.0.",
+          "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+          "random": false,
+          "devices": [
+            "pi5-32bit",
+            "pi4-32bit",
+            "pi3-32bit",
+            "pi2-32bit"
+          ],
+          "subitems": [
+            {
+              "name": "Pioreactor Leader + Worker",
+              "description": "Pioreactor Leader + Worker image for Pioreactor 26.13.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.13.0/pioreactor_leader_worker.zip",
+              "image_download_size": 1070496520,
+              "release_date": "2026-11-24",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 2795504640,
+              "extract_sha256": "53ec2369f42b9d23262e0e7b797ac432051612b82c8181a57e8a1949aaead227"
+            },
+            {
+              "name": "Pioreactor Leader",
+              "description": "Pioreactor Leader image for Pioreactor 26.13.0",
+              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
+              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.13.0/pioreactor_leader.zip",
+              "image_download_size": 1075655133,
+              "release_date": "2026-11-24",
+              "init_format": "systemd",
+              "devices": [
+                "pi5-32bit",
+                "pi4-32bit",
+                "pi3-32bit",
+                "pi2-32bit"
+              ],
+              "extract_size": 2771387392,
+              "extract_sha256": "e8023fbae5653ce979e9b9ce64576e232558f5bac30834615e6db340ae6622f7"
+            }
+          ]
+        },
+        {
+          "name": "Pioreactor 26.12.0",
           "description": "Leader & worker images for 26.12.0.",
           "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
           "random": false,
@@ -89,8 +125,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -128,20 +163,6 @@
               "extract_sha256": "69f8c219432a02fbd23d2f7ab7b05d051a206e6fda0c3141205a89c01d9285d0"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.12.0",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.12.0/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1064199644,
-              "release_date": "2026-11-04",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 2795504640,
-              "extract_sha256": "ae6a726f7ea2c746228075f199e15cdb8c8770708e1a1c9aa1117a148d0c5255"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.12.0",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -169,8 +190,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -208,20 +228,6 @@
               "extract_sha256": "15c9ebb59c2a0b392684a0c075b717049c3122932504c37cce7b7bf159a4d71e"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.11.1",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.11.1/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1075384608,
-              "release_date": "2026-10-22",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 2793407488,
-              "extract_sha256": "35917cd011d36070962ab0132fa26cfcdce88347e42a26169ebbb98641767c2c"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.11.1",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -249,8 +255,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -288,20 +293,6 @@
               "extract_sha256": "31a0af0b5437c34d80849c75a7488700cb3275ad6975f3e390ec2114c842d7cb"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.11.0",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.11.0/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1039289244,
-              "release_date": "2026-10-14",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 2792358912,
-              "extract_sha256": "378590e5653fca369591a976fb3eaca6f948b0e280c0cea0870b1fd64ea746c7"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.11.0",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -329,8 +320,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -368,20 +358,6 @@
               "extract_sha256": "9c811ef25262d64b730f2f28f31d7f9819d2658fb6ca0427cb12ece8d15475b6"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.10.0",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.10.0/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1120375356,
-              "release_date": "2026-09-23",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 3054502912,
-              "extract_sha256": "dcafb9f85303e58b7498679e4c48a18f7dcddaea542f8514333c97652d63c6d7"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.10.0",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -409,8 +385,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -448,20 +423,6 @@
               "extract_sha256": "caaa0681b7f8671c4cc1b8d1db7575fda726d3fdafb18236c5bbdb808ad8e00d"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.9.0",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.9.0/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1145643777,
-              "release_date": "2026-09-09",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 3051357184,
-              "extract_sha256": "6cc2087d8ba219c6d22a9e6eb271b777b9906ea99b14421c1ece27ba28a03d1a"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.9.0",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -489,8 +450,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -528,20 +488,6 @@
               "extract_sha256": "17258fa25127423cd99797de182e7d4090bb3951a8c7bc98032f2fb414782819"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.8.1",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.8.1/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1140471743,
-              "release_date": "2026-08-19",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 3052405760,
-              "extract_sha256": "5b6e242b9f7a57587b6027e1cb95cc5cca48ae8040a906f7794f5953970327b1"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.8.1",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -569,8 +515,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -608,20 +553,6 @@
               "extract_sha256": "a2a4ff9a836576158124b3275ea9d7d6ab95bae381dc58e86279a0dcbaa8d9f8"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.8.0",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.8.0/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1124634538,
-              "release_date": "2026-08-17",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 3052405760,
-              "extract_sha256": "1754a95755c13d545729c7605e004b4a4edc4e87381cae9df8702e0b56a9eb73"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.8.0",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -649,8 +580,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -688,20 +618,6 @@
               "extract_sha256": "9541e04de47075a1c84f348a322a1cda0e89c815861d0a19569285725577e746"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.7.2",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.7.2/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1132911428,
-              "release_date": "2026-08-04",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 3053454336,
-              "extract_sha256": "ee1255f78d5c4bd04b57da52589ae19f53a8d78f2dea94b8ce481c87c2c7d296"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.7.2",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -729,8 +645,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -768,20 +683,6 @@
               "extract_sha256": "ba757666db2101df616ce42c56de0a9cca3d8f0f97c8754e67b800c750c5eec3"
             },
             {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.7.0",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.7.0/pioreactor_zero_w_worker.zip",
-              "image_download_size": 1144640138,
-              "release_date": "2026-07-30",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 3052405760,
-              "extract_sha256": "a88cda9c43864e2446a3ce473c10a4aeaeda3383edac9492201724d6f2e32f31"
-            },
-            {
               "name": "Pioreactor Leader",
               "description": "Pioreactor Leader image for Pioreactor 26.7.0",
               "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
@@ -809,8 +710,7 @@
             "pi5-32bit",
             "pi4-32bit",
             "pi3-32bit",
-            "pi2-32bit",
-            "pi1-32bit"
+            "pi2-32bit"
           ],
           "subitems": [
             {
@@ -846,20 +746,6 @@
               ],
               "extract_size": 2569012224,
               "extract_sha256": "c11fbf97fe13fb226d751d76715ae152ce0cf4a50a2fb05c1a04a2451739a6e3"
-            },
-            {
-              "name": "Pioreactor Worker for Raspberry Pi Zero W",
-              "description": "Pioreactor Worker for Raspberry Pi Zero W image for Pioreactor 26.6.0",
-              "icon": "https://cdn.shopify.com/s/files/1/0678/1739/files/pioreactor_square_logo.png?v=1674681948",
-              "url": "https://github.com/Pioreactor/CustoPiZer/releases/download/26.6.0/pioreactor_zero_w_worker.zip",
-              "image_download_size": 967684055,
-              "release_date": "2026-06-29",
-              "init_format": "systemd",
-              "devices": [
-                "pi1-32bit"
-              ],
-              "extract_size": 2569012224,
-              "extract_sha256": "245f0a50bbeb1f801430571ad838d8924a218fd22782b6e27a2c8aea30342737"
             },
             {
               "name": "Pioreactor Leader",
