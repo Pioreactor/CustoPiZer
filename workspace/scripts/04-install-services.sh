@@ -53,9 +53,8 @@ sudo cp /files/system/systemd/fake-hwclock-save.timer $SYSTEMD_DIR
 sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
 sudo cp /files/system/systemd/pioreactor-web.target $SYSTEMD_DIR
 
-# systemd: log failures and a python blink code that is nearly independent from Pioreactor code.
+# systemd: log failures
 sudo cp /files/system/systemd/log-failure@.service $SYSTEMD_DIR
-sudo cp /files/system/scripts/led_control.py /usr/local/bin/led_control.py
 
 
 if [ "$WORKER" == "1" ]; then

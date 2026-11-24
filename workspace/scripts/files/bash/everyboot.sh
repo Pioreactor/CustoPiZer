@@ -12,19 +12,6 @@ CRUDINI="$VENV_BIN/crudini"
 
 DOT_PIOREACTOR=/home/pioreactor/.pioreactor
 
-# Check if config file exists (if not: likely a worker)
-if [ ! -f "$DOT_PIOREACTOR/config.ini" ]; then
-    # start the blue LED to signal to the user that it's working.
-    (
-        until /opt/pioreactor/venv/bin/python /usr/local/bin/led_control.py --static; do
-            echo "Boot LED failed; retrying in 5 seconds" >&2
-            sleep 5
-        done
-    ) &
-
-fi
-
-
 # Check if a new config file exists
 if [ -f "/boot/firmware/config.ini" ]; then
     # Merge the configurations and remove the extra file
