@@ -143,38 +143,6 @@ jobs:
 
 
 
-    - name: "🏗 Run CustoPiZer W"
-      uses: Pioreactor/CustoPiZer@pioreactor
-      with:
-        workspace: "${{ github.workspace }}/build"
-        scripts:  "${{ github.workspace }}/workspace/scripts"
-        config: "${{ github.workspace }}/config.local"
-        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 0, "WORKER": 1, "HEADLESS": 1, "CUSTOPIZER_GIT_COMMIT": "${{ github.sha }}" }'
-        custopizer: "1.5.0"
-
-    - name: "✏ Rename image W"
-      run: |
-        IMAGE_WORKER="pioreactor_worker.img"
-        echo "IMAGE_WORKER=$IMAGE_WORKER" >> $GITHUB_ENV
-        cd build
-        mv output.img $IMAGE_WORKER
-
-    - name: "📦 Package the image W"
-      id: package-image-w
-      uses: OctoPrint/actions/package-rpi-image@main
-      with:
-        image_path: "build/${{ env.IMAGE_WORKER }}"
-
-    - name: 📨 Export zip name to env W
-      run: |
-        IMAGE_WORKER_URL=https://github.com/Pioreactor/CustoPiZer/releases/download/${{ env.RELEASE_TAG }}/${{ steps.package-image-w.outputs.zip_name }}
-        echo "IMAGE_WORKER_ZIP=${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
-        echo "IMAGE_WORKER_SIZE=${{ steps.package-image-w.outputs.image_size }}" >> $GITHUB_ENV
-        echo "IMAGE_WORKER_URL=$IMAGE_WORKER_URL" >> $GITHUB_ENV
-        echo "Link to worker image: $IMAGE_WORKER_URL" >> $GITHUB_STEP_SUMMARY
-        echo "Worker image size (bytes): ${{ steps.package-image-w.outputs.image_size }}" >> $GITHUB_STEP_SUMMARY
-
-
     - name: "📝 Write image size metadata"
       run: |
         cat > build/image-sizes.json <<EOF
@@ -186,10 +154,6 @@ jobs:
           "leader": {
             "zip": "${{ env.IMAGE_LEADER_ZIP }}",
             "size_bytes": ${{ env.IMAGE_LEADER_SIZE }}
-          },
-          "worker": {
-            "zip": "${{ env.IMAGE_WORKER_ZIP }}",
-            "size_bytes": ${{ env.IMAGE_WORKER_SIZE }}
           }
         }
         EOF
@@ -211,9 +175,6 @@ jobs:
           build/${{ env.IMAGE_LEADER_ZIP }}
           build/${{ env.IMAGE_LEADER }}.md5
           build/${{ env.IMAGE_LEADER }}.sha256
-          build/${{ env.IMAGE_WORKER_ZIP }}
-          build/${{ env.IMAGE_WORKER }}.md5
-          build/${{ env.IMAGE_WORKER }}.sha256
           build/image-sizes.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -230,9 +191,6 @@ jobs:
         IMAGE_LEADER_WORKER: ${{ env.IMAGE_LEADER_WORKER }}
         IMAGE_LEADER_WORKER_SIZE: ${{ env.IMAGE_LEADER_WORKER_SIZE }}
         IMAGE_LEADER_WORKER_ZIP: ${{ env.IMAGE_LEADER_WORKER_ZIP }}
-        IMAGE_WORKER: ${{ env.IMAGE_WORKER }}
-        IMAGE_WORKER_SIZE: ${{ env.IMAGE_WORKER_SIZE }}
-        IMAGE_WORKER_ZIP: ${{ env.IMAGE_WORKER_ZIP }}
       run: |
         python3 - <<'PY'
         import json
@@ -266,11 +224,6 @@ jobs:
                     os.environ["IMAGE_LEADER_WORKER"],
                     os.environ["IMAGE_LEADER_WORKER_ZIP"],
                     os.environ["IMAGE_LEADER_WORKER_SIZE"],
-                ),
-                asset_entry(
-                    os.environ["IMAGE_WORKER"],
-                    os.environ["IMAGE_WORKER_ZIP"],
-                    os.environ["IMAGE_WORKER_SIZE"],
                 ),
                 asset_entry(
                     os.environ["IMAGE_LEADER"],
